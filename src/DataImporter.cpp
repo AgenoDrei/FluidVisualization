@@ -5,7 +5,7 @@
 
 DataSet* DataImporter::load(std::string path) {
     std::ifstream file(path.c_str(), std::ifstream::binary);
-    if(file.bad()) {
+    if(file.fail()) {
         file.close();
         throw "File not found";
     }
