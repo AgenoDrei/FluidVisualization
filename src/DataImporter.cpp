@@ -1,0 +1,55 @@
+#include "DataImporter.h"
+#include "Timestep.h"
+#include "Particle.h"
+#include <iostream>
+
+DataSet* DataImporter::load(std::string path) {
+    std::ifstream file(path.c_str(), std::ifstream::binary);
+    if(file.bad()) {
+        file.close();
+        throw "File not found";
+    }
+
+    int32_t numberParticles = 0;
+    int32_t numberTimesteps = 0;
+
+    file.read(reinterpret_cast<char*>(&numberTimesteps), 4);
+    file.read(reinterpret_cast<char*>(&numberParticles), 4);
+
+    std::cout<<"Found: "<<numberTimesteps<<" timesteps"<<std::endl;
+    std::cout<<"Found: "<<numberParticles<<" particles per timestep"<<std::endl;
+
+    auto timesteps = new Timestep*[numberTimesteps];
+    for(auto i = 0; i < numberTimesteps; i++) {
+        timesteps[i] = loadTimestep(file, numberParticles);
+    }
+
+    file.close();
+}
+
+Timestep* DataImporter::loadTimestep(std::ifstream& file, int32_t numberParticles) {
+    auto particles = new Particle[numberParticles];
+    for(auto i = 0; i < numberParticles; i++) {
+        particles[i] = loadParticle(file);
+    }
+
+    return new Timestep(particles);
+}
+
+Particle DataImporter::loadParticle(std::ifstream& file) {
+    glm::vec3 position;
+    glm::vec3 normal;
+    glm::vec3 velocity;
+    float density;
+    float pressure;
+
+    file.read(reinterpret_cast<char*>(&position), sizeof(glm::vec3));
+    file.read(reinterpret_cast<char*>(&normal), sizeof(glm::vec3));
+    file.read(reinterpret_cast<char*>(&velocity), sizeof(glm::vec3));
+    file.read(reinterpret_cast<char*>(&density), sizeof(float));
+    file.read(reinterpret_cast<char*>(&pressure), sizeof(float));
+
+    auto particle = Particle(position, normal, velocity, density, pressure);
+    //std::cout<<"Particle: "<<particle<<std::endl;
+    return particle;
+}

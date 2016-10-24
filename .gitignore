@@ -11,3 +11,6 @@ build/CMakeCache.txt
 
 ###### vim ######
 *.swp
+
+###### clion ######
+.idea/
