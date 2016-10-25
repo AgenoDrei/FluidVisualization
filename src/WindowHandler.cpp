@@ -40,7 +40,7 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
 
     // Setup some OpenGL options
     glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback(debugOutput, NULL);
+    glDebugMessageCallback((GLDEBUGPROC)debugOutput, NULL);
 
     currentTime = 0;
 

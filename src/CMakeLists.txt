@@ -23,5 +23,5 @@ if(GLEW_FOUND)
   target_link_libraries(FluidVisualisation ${GLEW_LIBRARIES})
 endif()
 
-file(COPY ../shader DESTINATION shader)
+file(COPY ../shader DESTINATION .)
 
