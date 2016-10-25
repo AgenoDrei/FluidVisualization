@@ -1,7 +1,7 @@
-SET(SRC_CPP main.cpp DataImporter.cpp DataSet.cpp Timestep.cpp Particle.cpp)
-SET(SRC_H DataImporter.h DataSet.h Timestep.h Particle.h)
+SET(SRC_CPP main.cpp DataImporter.cpp DataSet.cpp Timestep.cpp Particle.cpp WindowHandler.cpp Shader.cpp Camera.cpp)
+SET(SRC_H DataImporter.h DataSet.h Timestep.h Particle.h WindowHandler.h Shader.h Camera.h)
 
-SET(SRC ${SRC_CPP} ${SRC_H} WindowHandler.cpp WindowHandler.h WindowHandler.cpp WindowHandler.h Shader.cpp Shader.h Camera.cpp Camera.h)
+SET(SRC ${SRC_CPP} ${SRC_H})
 
 add_executable(FluidVisualisation ${SRC})
 
@@ -22,4 +22,6 @@ if(GLEW_FOUND)
   include_directories(${GLEW_INCLUDE_DIRS})
   target_link_libraries(FluidVisualisation ${GLEW_LIBRARIES})
 endif()
+
+file(COPY ../shader DESTINATION shader)
 

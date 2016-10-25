@@ -28,7 +28,8 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
     }
     catch (std::ifstream::failure e)
     {
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+        std::cout << "Log> Shader not found or corrupted" << std::endl;
+        throw "Error: Shader not found or corrupted";
     }
     const GLchar* vShaderCode = vertexCode.c_str();
     const GLchar * fShaderCode = fragmentCode.c_str();
@@ -45,7 +46,8 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
     if (!success)
     {
         glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cout << "Log> Error vertex shader compilation failed\n" << infoLog << std::endl;
+        throw "Log> Error vertex shader compilation failed";
     }
     // Fragment Shader
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -56,7 +58,8 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
     if (!success)
     {
         glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cout << "Log> Error fragment shader compilation failed\n" << infoLog << std::endl;
+        throw "Log> Error fragment shader compilation failed";
     }
     // Shader Program
     this->Program = glCreateProgram();
@@ -68,7 +71,8 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
     if (!success)
     {
         glGetProgramInfoLog(this->Program, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+        std::cout << "Log> Error shader program linking failed\n" << infoLog << std::endl;
+        throw "Log> Error shader program linking failed";
     }
     // Delete the shaders as they're linked into our program now and no longer necessery
     glDeleteShader(vertex);
@@ -76,7 +80,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
 
 }
 // Uses the current shader
-void Shader::Use()
+void Shader::use()
 {
     glUseProgram(this->Program);
 }

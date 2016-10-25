@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
 	//auto data = DataImporter::load("/home/nils/Downloads/drop.dat");
 	//auto data = DataImporter::load("/home/nils/Downloads/six_iterdfdations.dat");
 
-    //Window Initaliation
+    //Window Initialisation
     window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop);
     return 0;
@@ -31,7 +31,7 @@ void init() {
     camera = new Camera(glm::vec3(0.0f, 0.0f, 2.0f));
     window->setCamera(camera);
 
-    ourShader = new Shader("/home/simon/Code/Studienarbeit/Code/shader/basic.vert", "/home/simon/Code/Studienarbeit/Code/shader/basic.frag");
+    ourShader = new Shader("shader/basic.vert", "shader/basic.frag");
     GLfloat vertices[] {
             -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
             0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
@@ -60,9 +60,8 @@ void mainLoop() {
     window->calculateFPS();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearColor(0.1,0.1,0.1,0);
 
-    ourShader->Use();
+    ourShader->use();
     glm::mat4 model;
     model = glm::translate(model, glm::vec3(0.0f));
     glm::mat4 view;
