@@ -1,7 +1,5 @@
 #include "main.h"
 #include "DataImporter.h"
-#include "WindowHandler.h"
-#include "Camera.h"
 #include "Shader.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
