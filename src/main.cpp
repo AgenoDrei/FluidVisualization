@@ -1,3 +1,4 @@
+#include "main.h"
 #include "DataImporter.h"
 #include "WindowHandler.h"
 #include "Camera.h"
@@ -6,10 +7,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <GL/freeglut.h>
-
-void mainLoop();
-void init();
-void doMovement(Camera* camera, WindowHandler* wHandler);
 
 WindowHandler* window;
 Camera* camera;
