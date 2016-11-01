@@ -1,7 +1,6 @@
 #include "Shader.h"
 
-Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
-{
+Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {
     // 1. Retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
     std::string fragmentCode;
@@ -10,10 +9,10 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
     // ensures ifstream objects can throw exceptions:
     vShaderFile.exceptions (std::ifstream::badbit);
     fShaderFile.exceptions (std::ifstream::badbit);
-    try
-    {
+    try {
         // Open files
         vShaderFile.open(vertexPath);
+
         fShaderFile.open(fragmentPath);
         std::stringstream vShaderStream, fShaderStream;
         // Read file's buffer contents into streams
@@ -25,39 +24,35 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
         // Convert stream into string
         vertexCode = vShaderStream.str();
         fragmentCode = fShaderStream.str();
-    }
-    catch (std::ifstream::failure e)
-    {
+    }  catch (std::ifstream::failure e) {
         std::cout << "Log> Shader not found or corrupted" << std::endl;
         throw "Error: Shader not found or corrupted";
     }
     const GLchar* vShaderCode = vertexCode.c_str();
     const GLchar * fShaderCode = fragmentCode.c_str();
     // 2. Compile shaders
-    GLuint vertex, fragment;
     GLint success;
-    GLchar infoLog[512];
+    GLchar infoLog[512] = {};
     // Vertex Shader
-    vertex = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex, 1, &vShaderCode, NULL);
+	auto a = glCreateShader;
+    auto vertex = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertex, 1, &vShaderCode, nullptr);
     glCompileShader(vertex);
     // Print compile errors if any
     glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+    if(!success) {
+        glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
         std::cout << "Log> Error vertex shader compilation failed\n" << infoLog << std::endl;
         throw "Log> Error vertex shader compilation failed";
     }
     // Fragment Shader
-    fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment, 1, &fShaderCode, NULL);
+    auto fragment = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragment, 1, &fShaderCode, nullptr);
     glCompileShader(fragment);
     // Print compile errors if any
     glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(fragment, 512, NULL, infoLog);
+    if(!success) {
+        glGetShaderInfoLog(fragment, 512, nullptr, infoLog);
         std::cout << "Log> Error fragment shader compilation failed\n" << infoLog << std::endl;
         throw "Log> Error fragment shader compilation failed";
     }
@@ -68,9 +63,8 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
     glLinkProgram(this->Program);
     // Print linking errors if any
     glGetProgramiv(this->Program, GL_LINK_STATUS, &success);
-    if (!success)
-    {
-        glGetProgramInfoLog(this->Program, 512, NULL, infoLog);
+    if(!success) {
+        glGetProgramInfoLog(this->Program, 512, nullptr, infoLog);
         std::cout << "Log> Error shader program linking failed\n" << infoLog << std::endl;
         throw "Log> Error shader program linking failed";
     }
@@ -80,7 +74,6 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
 
 }
 // Uses the current shader
-void Shader::use()
-{
+void Shader::use() const {
     glUseProgram(this->Program);
 }

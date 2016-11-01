@@ -14,5 +14,5 @@ public:
     // Constructor generates the shader on the fly
     Shader(const GLchar* vertexPath, const GLchar* fragmentPath);
     // Uses the current shader
-    void use();
+    void use() const;
 };

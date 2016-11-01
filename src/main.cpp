@@ -65,7 +65,8 @@ void mainLoop() {
     projection = glm::perspective(camera->Zoom, window->getWidth()/window->getHeight(), 1.0f, 100.0f);
 
     // Pass the matrices to the shader
-    glUniformMatrix4fv(glGetUniformLocation(ourShader->Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	auto modelLocation = glGetUniformLocation(ourShader->Program, "model");
+    glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(glGetUniformLocation(ourShader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(ourShader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 

@@ -21,7 +21,7 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE |
                         GLUT_RGBA);
-    glutInitContextVersion (3, 3);
+    //glutInitContextVersion (3, 3);
     glutInitContextFlags (GLUT_CORE_PROFILE | GLUT_DEBUG);
     //glutInitContextProfile(GLUT_FORWARD_COMPATIBLE);
     glutInitWindowSize(width, height);
@@ -29,18 +29,21 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
 
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
-    if (GLEW_OK != err){
-        std::cout << "Log> Glew initalization failed" << std::endl;
-        throw glewGetErrorString(err);
-    } else {
-        if (GLEW_VERSION_3_3)
-            std::cout << "Log> Driver supports OpenGL 3.3" << std::endl;
-    }
+	if(GLEW_OK != err) {
+		std::cout << "Log> Glew initalization failed" << std::endl;
+		throw glewGetErrorString(err);
+	}
+	if(GLEW_VERSION_3_3) {
+		std::cout << "Log> Driver supports OpenGL 3.3" << std::endl;
+	}
+	if(GLEW_VERSION_4_1) {
+		std::cout << "Log> Driver supports OpenGL 4.1" << std::endl;
+	}
     glViewport(0, 0, width, height);
 
     // Setup some OpenGL options
     glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback((GLDEBUGPROC)debugOutput, NULL);
+    glDebugMessageCallback(reinterpret_cast<GLDEBUGPROC>(debugOutput), nullptr);
 
     currentTime = 0;
 
@@ -56,14 +59,13 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
 
 
     glutMainLoop(); //Start Rendering Loop
-
 }
 
 void WindowHandler::setCamera(Camera *camera) {
     this->camera = camera;
 }
 
-void WindowHandler::resize(int newWidth, int newHeight) {
+void WindowHandler::resize(int newWidth, int newHeight) const {
     glutReshapeWindow(width, height);
 }
 
@@ -85,24 +87,24 @@ void WindowHandler::processMouse(int x, int y) {
         lastY = y = height/2;
         firstMouse = false;
     }
-    GLfloat xoffset = x - lastX;
-    GLfloat yoffset = lastY - y;  // Reversed since y-coordinates go from bottom to left
+    auto xoffset = x - lastX;
+    auto yoffset = lastY - y;  // Reversed since y-coordinates go from bottom to left
 
     lastX = x;
     lastY = y;
 
-    camera->ProcessMouseMovement(xoffset, yoffset, true);
+    camera->ProcessMouseMovement(static_cast<GLfloat>(xoffset), static_cast<GLfloat>(yoffset), true);
 }
 
 bool WindowHandler::getKey(int key) {
     return keys[key];
 }
 
-float WindowHandler::getWidth() {
-    return width;
+float WindowHandler::getWidth() const {
+    return static_cast<float>(width);
 }
-float WindowHandler::getHeight() {
-    return height;
+float WindowHandler::getHeight() const {
+    return static_cast<float>(height);
 }
 
 //TODO Include correct FPS Calculation
@@ -112,7 +114,7 @@ void WindowHandler::calculateFPS() {
     lastTime = currentTime;
 }
 
-double WindowHandler::getDeltaTime() {
+double WindowHandler::getDeltaTime() const {
     return deltaTime / 1000.0f;
 }
 

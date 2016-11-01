@@ -4,6 +4,8 @@ project(FluidVisualisation)
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-std=gnu++0x)
 endif()

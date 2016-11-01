@@ -6,7 +6,6 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include <iostream>
 #include "Camera.h"
 
 void debugOutput(unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, const void* userParam);
@@ -23,14 +22,15 @@ public:
     ~WindowHandler();
     void initWindow(int argc, char* argv[], void (*init)(),void (*mainLoop)());
     void setCamera(Camera* camera);
-    void resize(int newWidth, int newHeight);
+    void resize(int newWidth, int newHeight) const;
     void processKeyboard(bool pressed, unsigned char key, int x, int y);
     void processMouse(int x, int y);
 
     static WindowHandler* instance;
     bool getKey(int key);
-    double getDeltaTime();
-    float getWidth(), getHeight();
+    double getDeltaTime() const;
+	float getWidth() const;
+	float getHeight() const;
     void calculateFPS();
 
 private:
