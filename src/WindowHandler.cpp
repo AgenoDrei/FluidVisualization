@@ -3,6 +3,7 @@
 //
 
 #include "WindowHandler.h"
+#include <iostream>
 
 WindowHandler* WindowHandler::instance = nullptr;
 

@@ -1,4 +1,7 @@
 #include "Shader.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {
     // 1. Retrieve the vertex/fragment source code from filePath
@@ -34,7 +37,6 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {
     GLint success;
     GLchar infoLog[512] = {};
     // Vertex Shader
-	auto a = glCreateShader;
     auto vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, nullptr);
     glCompileShader(vertex);

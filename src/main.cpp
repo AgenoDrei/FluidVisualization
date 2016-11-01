@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <GL/freeglut.h>
+#include <iostream>
 
 WindowHandler* window;
 Camera* camera;
@@ -38,9 +39,9 @@ void init() {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);     // Position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), static_cast<GLvoid*>(nullptr));     // Position attribute
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));     // TexCoord attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat)));     // TexCoord attribute
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
@@ -77,15 +78,19 @@ void mainLoop() {
 }
 
 // Moves/alters the camera positions based on user input
-void doMovement(Camera* camera, WindowHandler* wHandler)
-{
-    if(wHandler->getKey(87) || wHandler->getKey(119))
-        camera->ProcessKeyboard(FORWARD, wHandler->getDeltaTime());
-    if(wHandler->getKey(83) || wHandler->getKey(115))
-        camera->ProcessKeyboard(BACKWARD, wHandler->getDeltaTime());
-    if(wHandler->getKey(65) || wHandler->getKey(97))
-        camera->ProcessKeyboard(LEFT, wHandler->getDeltaTime());
-    if(wHandler->getKey(68) || wHandler->getKey(100))
-        camera->ProcessKeyboard(RIGHT, wHandler->getDeltaTime());
+// TODO für Simon: Remove magic numbers! greetz: nils
+void doMovement(Camera* camera, WindowHandler* wHandler) {
+	if(wHandler->getKey(87) || wHandler->getKey(119)) {
+		camera->ProcessKeyboard(FORWARD, static_cast<float>(wHandler->getDeltaTime()));
+	}
+	if(wHandler->getKey(83) || wHandler->getKey(115)) {
+		camera->ProcessKeyboard(BACKWARD, static_cast<float>(wHandler->getDeltaTime()));
+	}
+	if(wHandler->getKey(65) || wHandler->getKey(97)) {
+		camera->ProcessKeyboard(LEFT, static_cast<float>(wHandler->getDeltaTime()));
+	}
+	if(wHandler->getKey(68) || wHandler->getKey(100)) {
+		camera->ProcessKeyboard(RIGHT, static_cast<float>(wHandler->getDeltaTime()));
+	}
 }
 

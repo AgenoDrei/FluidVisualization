@@ -1,4 +1,7 @@
 #include "Camera.h"
+#include <iostream>
+#include <glm/gtc/matrix_transform.inl>
+
 // Constructor with vectors
 Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
 {
@@ -21,8 +24,7 @@ Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat up
 }
 
 // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
-glm::mat4 Camera::GetViewMatrix()
-{
+glm::mat4 Camera::GetViewMatrix() const {
     return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
 }
 

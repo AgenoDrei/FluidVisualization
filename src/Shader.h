@@ -1,14 +1,8 @@
 #pragma once
 
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-
 #include <GL/glew.h>
 
-class Shader
-{
+class Shader {
 public:
     GLuint Program;
     // Constructor generates the shader on the fly

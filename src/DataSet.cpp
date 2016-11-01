@@ -6,9 +6,16 @@ DataSet::DataSet(uint32_t numberParticles, uint32_t numberTimesteps) :
     _numberTimesteps(numberTimesteps) {
 
     _timesteps = new Timestep*[numberTimesteps];
-    for(auto i = 0; i < numberTimesteps; i++) {
+    for(auto i = 0u; i < numberTimesteps; i++) {
         _timesteps[i] = new Timestep(numberParticles);
     }
+}
+
+DataSet::DataSet(uint32_t numberParticles, uint32_t numberTimesteps, Timestep** timesteps) :
+	_numberParticles(numberParticles),
+	_numberTimesteps(numberTimesteps),
+	_timesteps(timesteps) {
+	
 }
 
 DataSet::~DataSet() {

@@ -1,7 +1,9 @@
 #include "Particle.h"
 #include "glm/ext.hpp"
 
-Particle::Particle() {
+Particle::Particle() : 
+	density(0), 
+	pressure(0) {
 }
 
 Particle::Particle(glm::vec3 position, glm::vec3 normal, glm::vec3 velocity, float density, float pressure) :
