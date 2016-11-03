@@ -1,6 +1,7 @@
 #include "DataImporter.h"
 #include "Timestep.h"
 #include "Particle.h"
+#include "DataSet.h"
 #include <iostream>
 
 DataSet* DataImporter::load(std::string path) {
@@ -25,6 +26,8 @@ DataSet* DataImporter::load(std::string path) {
     }
 
     file.close();
+
+	return new DataSet(numberParticles, numberTimesteps, timesteps);
 }
 
 Timestep* DataImporter::loadTimestep(std::ifstream& file, int32_t numberParticles) {

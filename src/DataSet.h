@@ -13,6 +13,7 @@ private:
 
 public:
     DataSet(uint32_t numberParticles, uint32_t numberTimesteps);
+	DataSet(uint32_t numberParticles, uint32_t numberTimesteps, Timestep** timesteps);
     ~DataSet();
 
     uint32_t getNumberParticles() const;
