@@ -22,9 +22,8 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE |
                         GLUT_RGBA);
-    //glutInitContextVersion (3, 3);
+    glutInitContextVersion (3, 3);
     glutInitContextFlags (GLUT_CORE_PROFILE | GLUT_DEBUG);
-    //glutInitContextProfile(GLUT_FORWARD_COMPATIBLE);
     glutInitWindowSize(width, height);
     glutCreateWindow("Fluid Simulation");
 
@@ -73,10 +72,11 @@ void WindowHandler::resize(int newWidth, int newHeight) const {
 void WindowHandler::processKeyboard(bool pressed, unsigned char key, int x, int y) {
     //std::cout << "Log> Key pressed: " << pressed << " - Specifc key: " << (int)key << std::endl;
     if (key >= 0 && key < 1024){
-        if(pressed)
+        if(pressed) {
             keys[key] = true;
-        else if(!pressed)
+        } else if(!pressed) {
             keys[key] = false;
+        }
     }
 }
 
@@ -97,7 +97,7 @@ void WindowHandler::processMouse(int x, int y) {
     camera->ProcessMouseMovement(static_cast<GLfloat>(xoffset), static_cast<GLfloat>(yoffset), true);
 }
 
-bool WindowHandler::getKey(int key) {
+bool WindowHandler::getKey(char key) {
     return keys[key];
 }
 
@@ -123,23 +123,27 @@ double WindowHandler::getDeltaTime() const {
  **** WRAPPER FUNCTIONS FOR FREEGLUT ****************************
  ****************************************************************/
 void onResize(int nw, int nh) {
-    if(WindowHandler::instance != nullptr)
+    if(WindowHandler::instance != nullptr) {
         WindowHandler::instance->resize(nw, nh);
+    }
 }
 
 void onKeyDown(unsigned char key, int x, int y) {
-    if(WindowHandler::instance != nullptr)
+    if(WindowHandler::instance != nullptr) {
         WindowHandler::instance->processKeyboard(true, key, x, y);
+    }
 }
 
 void onKeyUp(unsigned char key, int x, int y) {
-    if(WindowHandler::instance != nullptr)
+    if(WindowHandler::instance != nullptr) {
         WindowHandler::instance->processKeyboard(false, key, x, y);
+    }
 }
 
 void onMouse(int x, int y) {
-    if(WindowHandler::instance != nullptr)
+    if(WindowHandler::instance != nullptr) {
         WindowHandler::instance->processMouse(x, y);
+    }
 }
 
 void onShutdown() {

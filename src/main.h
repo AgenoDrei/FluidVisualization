@@ -1,7 +1,6 @@
 #pragma once
-
-#include "WindowHandler.h"
-#include "Camera.h"
+class Camera;
+class WindowHandler;
 
 void mainLoop();
 void init();

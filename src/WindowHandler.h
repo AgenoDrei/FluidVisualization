@@ -27,7 +27,7 @@ public:
     void processMouse(int x, int y);
 
     static WindowHandler* instance;
-    bool getKey(int key);
+    bool getKey(char key);
     double getDeltaTime() const;
 	float getWidth() const;
 	float getHeight() const;

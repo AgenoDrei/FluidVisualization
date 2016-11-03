@@ -1,11 +1,14 @@
 #include "main.h"
 #include "DataImporter.h"
+#include "WindowHandler.h"
+#include "Camera.h"
 #include "Shader.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <GL/freeglut.h>
 #include <iostream>
+
 
 WindowHandler* window;
 Camera* camera;
@@ -78,18 +81,17 @@ void mainLoop() {
 }
 
 // Moves/alters the camera positions based on user input
-// TODO für Simon: Remove magic numbers! greetz: nils
 void doMovement(Camera* camera, WindowHandler* wHandler) {
-	if(wHandler->getKey(87) || wHandler->getKey(119)) {
+	if(wHandler->getKey('w')) {
 		camera->ProcessKeyboard(FORWARD, static_cast<float>(wHandler->getDeltaTime()));
 	}
-	if(wHandler->getKey(83) || wHandler->getKey(115)) {
+	if(wHandler->getKey('s')) {
 		camera->ProcessKeyboard(BACKWARD, static_cast<float>(wHandler->getDeltaTime()));
 	}
-	if(wHandler->getKey(65) || wHandler->getKey(97)) {
+	if(wHandler->getKey('a')) {
 		camera->ProcessKeyboard(LEFT, static_cast<float>(wHandler->getDeltaTime()));
 	}
-	if(wHandler->getKey(68) || wHandler->getKey(100)) {
+	if(wHandler->getKey('d')) {
 		camera->ProcessKeyboard(RIGHT, static_cast<float>(wHandler->getDeltaTime()));
 	}
 }
