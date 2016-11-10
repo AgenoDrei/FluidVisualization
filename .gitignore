@@ -16,3 +16,4 @@ build/CMakeCache.txt
 .idea/
 
 build/
+cmake-build-debug/

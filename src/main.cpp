@@ -9,6 +9,11 @@
 #include "RendererParticles.h"
 #include "RendererDebugQuad.h"
 #include "TextRenderer.h"
+#include "DataSet.h"
+#include "Camera.h"
+#include "Shader.h"
+#include "MarchingCubes.h"
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -27,9 +32,15 @@ int main(int argc, char* argv[]) {
     std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
 	data = DataImporter::load(path + "/Downloads/drop.dat");
 
+    auto firstTimestep = data->getTimestep(0);
+
+/*    auto algorithm = MarchingCubes(0.03f);
+    algorithm.calculate(firstTimestep);*/
+
     //Window Initialisation
-    window = new WindowHandler(800, 600);
-    window->initWindow(argc, argv, &init, &mainLoop);
+    /*window = new WindowHandler(800, 600);
+    window->initWindow(argc, argv, &init, &mainLoop);*/
+
     return 0;
 }
 

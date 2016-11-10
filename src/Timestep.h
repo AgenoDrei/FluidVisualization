@@ -3,13 +3,15 @@
 #include <cstdint>
 #include <vector>
 #include "Particle.h"
-
+#include <glm/vec3.hpp>
 
 
 class Timestep {
 private:
-    std::vector<Particle> _particles;
+    Particle* _particles;
+    uint32_t _numberParticles;
 
+    bool isInArea(Particle* p, glm::vec3 center, float area);
 public:
     Timestep(uint32_t numberParticles);
     Timestep(Particle* particles, uint32_t numberParticles);
@@ -17,7 +19,9 @@ public:
 
     Particle getParticle(uint32_t index) const;
     uint32_t getSize() const;
-    void removeParticle(uint32_t index);
 
     glm::vec4* getPositionDensity();
+    glm::vec3 getDimension();
+    glm::vec3 getMinimum();
+    float getAverageDensityAt(glm::vec3 position, float area);
 };
