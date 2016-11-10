@@ -18,7 +18,7 @@ Timestep::~Timestep() {
     delete [] _particles;
 }
 
-Particle Timestep::getParticle(uint32_t index) const{
+Particle Timestep::getParticle(uint32_t index) const {
     return _particles[index];
 }
 
@@ -122,7 +122,7 @@ Particle* Timestep::getParticleAt(glm::vec3 position) {
     Particle* closestParticle = &_particles[0]; // start with the first one to avoid nullptr handling
     auto closestDistance = glm::length2(closestParticle->position - position);
 
-    for(auto i = 1; i < _numberParticles; i++) { // start with the second one because the first is preselected
+    for(auto i = 1u; i < _numberParticles; i++) { // start with the second one because the first is preselected
         auto currentParticle = &_particles[i];
         auto currentDistance = glm::length2(currentParticle->position - position);
 

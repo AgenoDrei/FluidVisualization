@@ -5,7 +5,6 @@
 #include "Particle.h"
 #include <glm/vec3.hpp>
 
-
 class Timestep {
 private:
     Particle* _particles;

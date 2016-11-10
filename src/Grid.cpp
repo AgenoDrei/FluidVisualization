@@ -13,7 +13,7 @@ Grid::~Grid() {
 }
 
 Grid* Grid::CreateFromTimestep(Timestep* timestep, float stepSize) {
-    auto timestepSize = timestep->getSize();
+    auto timestepSize = timestep->getDimension();
     auto timestepMinimum = timestep->getMinimum();
     auto gridSize = timestepSize / stepSize;
 
@@ -38,8 +38,9 @@ Grid* Grid::CreateFromTimestep(Timestep* timestep, float stepSize) {
                 particles[6] = timestep->getParticleAt(localPosition + glm::vec3(0, stepSize, stepSize));
                 particles[7] = timestep->getParticleAt(localPosition + glm::vec3(stepSize, stepSize, stepSize));
 
-                auto resultOffset = x * + y * static_cast<int>(ceil(gridSize.x)) + z * static_cast<int>(ceil(gridSize.y));
-                result->_cells[resultOffset] = GridCell(localPosition, particles);
+                localPosition = glm::vec3(timestepMinimum.x * x, timestepMinimum.y * y, timestepMinimum.z * z);
+                auto density = timestep->getAverageDensityAt(localPosition, stepSize);
+//                result->_cells[x * + y * static_cast<int>(ceil(gridSize.x)) + z * static_cast<int>(ceil(gridSize.y))] = GridCell(localPosition, density);
             }
         }
     }

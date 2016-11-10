@@ -431,5 +431,7 @@ glm::vec3 MarchingCubes::VertexInterp(float isolevel, glm::vec3 p1, glm::vec3 p2
 }
 
 void MarchingCubes::draw() {
+//    auto grid = Grid::CreateFromTimestep(timestep, _stepSize);
 
+    auto test = 1;
 }
