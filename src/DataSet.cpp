@@ -29,3 +29,7 @@ uint32_t DataSet::getNumberParticles() const {
 uint32_t DataSet::getNumberTimesteps() const {
     return _numberTimesteps;
 }
+
+Timestep* DataSet::getTimestep(int index) {
+    return _timesteps[index];
+}

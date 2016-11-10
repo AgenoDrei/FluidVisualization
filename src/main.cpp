@@ -1,8 +1,10 @@
 #include "main.h"
 #include "DataImporter.h"
 #include "WindowHandler.h"
+#include "DataSet.h"
 #include "Camera.h"
 #include "Shader.h"
+#include "MarchingCubes.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -16,12 +18,18 @@ GLuint VBO, VAO;
 Shader* ourShader;
 
 int main(int argc, char* argv[]) {
-	//auto data = DataImporter::load("/home/nils/Downloads/drop.dat");
+	auto data = DataImporter::load("/home/nils/Downloads/drop.dat");
 	//auto data = DataImporter::load("/home/nils/Downloads/six_iterdfdations.dat");
 
+    auto firstTimestep = data->getTimestep(0);
+
+    auto algorithm = MarchingCubes(0.03f);
+    algorithm.calculate(firstTimestep);
+
     //Window Initialisation
-    window = new WindowHandler(800, 600);
-    window->initWindow(argc, argv, &init, &mainLoop);
+    /*window = new WindowHandler(800, 600);
+    window->initWindow(argc, argv, &init, &mainLoop);*/
+
     return 0;
 }
 
