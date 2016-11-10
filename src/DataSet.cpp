@@ -33,4 +33,3 @@ uint32_t DataSet::getNumberTimesteps() const {
 Timestep* DataSet::getTimestep(uint32_t index) const {
     return _timesteps[index];
 }
-

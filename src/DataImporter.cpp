@@ -11,8 +11,8 @@ DataSet* DataImporter::load(std::string path) {
         throw "File not found";
     }
 
-    int32_t numberParticles = 0;
-    int32_t numberTimesteps = 0;
+    uint32_t numberParticles = 0;
+    uint32_t numberTimesteps = 0;
 
     file.read(reinterpret_cast<char*>(&numberTimesteps), 4);
     file.read(reinterpret_cast<char*>(&numberParticles), 4);
@@ -30,13 +30,13 @@ DataSet* DataImporter::load(std::string path) {
 	return new DataSet(numberParticles, numberTimesteps, timesteps);
 }
 
-Timestep* DataImporter::loadTimestep(std::ifstream& file, int32_t numberParticles) {
+Timestep* DataImporter::loadTimestep(std::ifstream& file, uint32_t numberParticles) {
     auto particles = new Particle[numberParticles];
     for(auto i = 0; i < numberParticles; i++) {
         particles[i] = loadParticle(file);
     }
 
-    return new Timestep(particles);
+    return new Timestep(particles, numberParticles);
 }
 
 Particle DataImporter::loadParticle(std::ifstream& file) {
