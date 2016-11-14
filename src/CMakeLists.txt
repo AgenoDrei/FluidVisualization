@@ -1,5 +1,5 @@
-SET(SRC_CPP main.cpp DataImporter.cpp DataSet.cpp Timestep.cpp Particle.cpp WindowHandler.cpp Shader.cpp Camera.cpp MarchingCubes.cpp Grid.cpp GridCell.cpp ParticleGpuLoader.cpp)
-SET(SRC_H main.h DataImporter.h DataSet.h Timestep.h Particle.h WindowHandler.h Shader.h Camera.h MarchingCubes.h Grid.h GridCell.h ParticleGpuLoader.h)
+SET(SRC_CPP main.cpp DataImporter.cpp DataSet.cpp Timestep.cpp Particle.cpp WindowHandler.cpp Shader.cpp Camera.cpp MarchingCubes.cpp Grid.cpp GridCell.cpp ParticleGpuLoader.cpp Triangle.cpp)
+SET(SRC_H main.h DataImporter.h DataSet.h Timestep.h Particle.h WindowHandler.h Shader.h Camera.h MarchingCubes.h Grid.h GridCell.h ParticleGpuLoader.h Triangle.h)
 
 SET(SRC ${SRC_CPP} ${SRC_H})
 
