@@ -1,12 +1,21 @@
 #pragma once
 
+#include "Triangle.h"
+#include <vector>
+#include <glm/vec3.hpp>
+
 class Timestep;
+class GridCell;
+
 
 class MarchingCubes {
 private:
     float _stepSize;
 protected:
-    void polygonise();
+    std::vector<Triangle> polygonise(GridCell* cell, float isolevel);
+    int getCubeIndex(GridCell* cell, float isolevel);
+
+    glm::vec3 VertexInterp(float isolevel, glm::vec3 p1, glm::vec3 p2, float vlaueP1, float vlaueP2);
 public:
     MarchingCubes(float stepSize);
 
