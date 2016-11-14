@@ -13,7 +13,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) :
     this->Yaw = yaw;
     this->Pitch = pitch;
     this->updateCameraVectors();
-    std::cout << "Log> Camera created!" << std::endl;
+    std::cout << "Log> Camera created with pos: " << glm::to_string(this->Position) << std::endl;
 }
 // Constructor with scalar values
 Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) :
@@ -49,6 +49,13 @@ void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {
     if (direction == RIGHT) {
         this->Position += glm::vec3(this->Right.x, 0, this->Right.z) * velocity;
     }
+    if (direction == UP) {
+        this->Position += glm::vec3(0, this->Up.z, 0) * velocity;
+    }
+    if (direction == DOWN) {
+        this->Position -= glm::vec3(0, this->Up.z, 0) * velocity;
+    }
+
 }
 
 // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.

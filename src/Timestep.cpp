@@ -13,3 +13,7 @@ Timestep::Timestep(Particle* particles) {
 Timestep::~Timestep() {
     delete[] _particles;
 }
+
+Particle Timestep::getParticle(uint32_t index) const{
+    return _particles[index];
+}

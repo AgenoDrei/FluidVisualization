@@ -1,8 +1,7 @@
 #pragma once
 
 #include <cstdint>
-
-class Particle;
+#include "Particle.h"
 
 class Timestep {
 private:
@@ -12,4 +11,6 @@ public:
     Timestep(uint32_t numberParticles);
     Timestep(Particle* particles);
     ~Timestep();
+
+    Particle getParticle(uint32_t index) const;
 };

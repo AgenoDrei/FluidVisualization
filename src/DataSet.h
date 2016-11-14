@@ -18,4 +18,5 @@ public:
 
     uint32_t getNumberParticles() const;
     uint32_t getNumberTimesteps() const;
+    Timestep* getTimestep(uint32_t index) const;
 };
