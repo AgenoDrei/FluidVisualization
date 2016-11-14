@@ -1,6 +1,5 @@
 #include "GridCell.h"
 
-
 GridCell::GridCell(const glm::vec3 &position, Particle* value[8]) :
         position(position) {
     for(auto i = 0; i < 8; i++) {
