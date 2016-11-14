@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Timestep.h"
+#include "ParticleGpuLoader.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -30,38 +31,13 @@ int main(int argc, char* argv[]) {
 
 void init() {
     std::cout << "Log> Render initialization running" << std::endl;
-    camera = new Camera(glm::vec3(0.0f, 2.0f, -3.0f));
+    camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
     window->setCamera(camera);
-
-    GLfloat vertices[data->getNumberParticles()*4];
-    Timestep* step = data->getTimestep(0);
-    uint32_t index = 0;
-    for(auto j = 0; j < data->getNumberParticles(); j++) {
-        Particle particle = step->getParticle(j);
-        vertices[index] = particle.position.x;
-        vertices[index + 1] = particle.position.y;
-        vertices[index + 2] = particle.position.z;
-        vertices[j + 4] = particle.density;
-        index+=4;
-
-    }
-
-    std::cout << vertices << std::endl;
-
     ourShader = new Shader("shader/basic.vert", "shader/basic.frag");
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+    GLfloat* vertices = ParticleGpuLoader::bufferGPUParticles(data, 0, data->getNumberParticles());
 
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), static_cast<GLvoid*>(nullptr));     // Position attribute
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat)));     // TexCoord attribute
-    glEnableVertexAttribArray(1);
-
-    glBindVertexArray(0);
+    VAO = ParticleGpuLoader::loadParticlesToGpu(vertices, data->getNumberParticles());
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -94,8 +70,6 @@ void mainLoop() {
     glDrawArrays(GL_POINTS, 0, 1000000);
     glBindVertexArray(0);
     glutSwapBuffers();
-
-    std::cout << "Camera postion: " << glm::to_string(camera->Position) << std::endl;
 }
 
 // Moves/alters the camera positions based on user input

@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include <iostream>
 #include <glm/gtc/matrix_transform.inl>
+#include <math.h>
 
 // Constructor with vectors
 Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) :
@@ -36,6 +37,7 @@ glm::mat4 Camera::GetViewMatrix() const {
 
 // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {
+    //std::cout << "Process Keyboard called: " << direction << std::endl;
     GLfloat velocity = this->MovementSpeed * deltaTime;
     if (direction == FORWARD) {
         this->Position += glm::vec3(this->Front.x, 0, this->Front.z) * velocity;
