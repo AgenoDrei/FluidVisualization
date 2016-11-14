@@ -2,12 +2,14 @@
 
 #include <glm/vec3.hpp>
 
+class Particle;
+
 class GridCell {
 public:
     GridCell();
-    GridCell(const glm::vec3 &position, float value);
+    GridCell(const glm::vec3 &position, Particle* value[8]);
 
     glm::vec3 position;
-    float value;
+    Particle* value[8];
 };
 
