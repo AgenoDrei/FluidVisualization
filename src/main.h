@@ -1,6 +1,7 @@
 #pragma once
 class Camera;
 class WindowHandler;
+class DataSet;
 
 void mainLoop();
 void init();

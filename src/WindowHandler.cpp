@@ -4,11 +4,13 @@
 
 #include "WindowHandler.h"
 #include <iostream>
+#include <cstring>
 
 WindowHandler* WindowHandler::instance = nullptr;
 
 WindowHandler::WindowHandler(unsigned int windowWidth, unsigned int windowHeight) {
     WindowHandler::instance = this;
+    std::memset(keys, 0, sizeof(keys));
     width = windowWidth;
     height = windowHeight;
     std::cout << "Log> Created window handler" << std::endl;
@@ -51,8 +53,9 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
     glutCloseFunc(onShutdown);
     glutKeyboardFunc(onKeyDown); //Keyboard
     glutKeyboardUpFunc(onKeyUp);
-    glutIgnoreKeyRepeat(true);
-    glutPassiveMotionFunc(onMouse); //Mouse
+    glutIgnoreKeyRepeat(false);
+    //glutPassiveMotionFunc(onMouse); //Mouse
+    glutMotionFunc(onMouse);
     glutDisplayFunc(mainLoop); //Rendering Loop
     glutIdleFunc(mainLoop);
     glutReshapeFunc(onResize); //Resize
@@ -94,6 +97,7 @@ void WindowHandler::processMouse(int x, int y) {
     lastX = x;
     lastY = y;
 
+    //glutWarpPointer(width/2, height/2);
     camera->ProcessMouseMovement(static_cast<GLfloat>(xoffset), static_cast<GLfloat>(yoffset), true);
 }
 
@@ -129,12 +133,14 @@ void onResize(int nw, int nh) {
 }
 
 void onKeyDown(unsigned char key, int x, int y) {
+    //std::cout << "Key down: " << key << std::endl;
     if(WindowHandler::instance != nullptr) {
         WindowHandler::instance->processKeyboard(true, key, x, y);
     }
 }
 
 void onKeyUp(unsigned char key, int x, int y) {
+    //std::cout << "Key up: " << key << std::endl;
     if(WindowHandler::instance != nullptr) {
         WindowHandler::instance->processKeyboard(false, key, x, y);
     }
@@ -152,5 +158,5 @@ void onShutdown() {
 }
 
 void debugOutput(unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, const void* userParam) {
-    std::cout<< "ERROR> Source: "<< source << " Message: "<<message<<std::endl;
+    std::cout<< "GlLog> Source: "<< source << " Message: "<<message<<std::endl;
 }

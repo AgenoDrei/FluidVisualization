@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include <iostream>
 #include <glm/gtc/matrix_transform.inl>
+#include <math.h>
 
 // Constructor with vectors
 Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) :
@@ -13,7 +14,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) :
     this->Yaw = yaw;
     this->Pitch = pitch;
     this->updateCameraVectors();
-    std::cout << "Log> Camera created!" << std::endl;
+    std::cout << "Log> Camera created with pos: " << glm::to_string(this->Position) << std::endl;
 }
 // Constructor with scalar values
 Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) :
@@ -36,6 +37,7 @@ glm::mat4 Camera::GetViewMatrix() const {
 
 // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {
+    //std::cout << "Process Keyboard called: " << direction << std::endl;
     GLfloat velocity = this->MovementSpeed * deltaTime;
     if (direction == FORWARD) {
         this->Position += glm::vec3(this->Front.x, 0, this->Front.z) * velocity;
@@ -49,6 +51,13 @@ void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {
     if (direction == RIGHT) {
         this->Position += glm::vec3(this->Right.x, 0, this->Right.z) * velocity;
     }
+    if (direction == UP) {
+        this->Position += glm::vec3(0, this->Up.z, 0) * velocity;
+    }
+    if (direction == DOWN) {
+        this->Position -= glm::vec3(0, this->Up.z, 0) * velocity;
+    }
+
 }
 
 // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
