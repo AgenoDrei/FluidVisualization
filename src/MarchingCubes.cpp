@@ -304,9 +304,10 @@ MarchingCubes::MarchingCubes(float stepSize) :
 }
 
 void MarchingCubes::calculate(Timestep* timestep) {
+    triangleMesh.clear();
+
     auto grid = Grid::CreateFromTimestep(timestep, _stepSize);
 
-    std::vector<Triangle> triangleMesh;
     for(auto x = 0; x < grid->getDimension().x; x++) {
         for(auto y = 0; y < grid->getDimension().y; y++) {
             for(auto z = 0; z < grid->getDimension().z; z++) {
@@ -316,7 +317,6 @@ void MarchingCubes::calculate(Timestep* timestep) {
         }
     }
 
-    auto test = 1;
 }
 
 int MarchingCubes::getCubeIndex(GridCell* cell, float isolevel) {
@@ -430,3 +430,6 @@ glm::vec3 MarchingCubes::VertexInterp(float isolevel, glm::vec3 p1, glm::vec3 p2
     return(p);
 }
 
+void MarchingCubes::draw() {
+
+}
