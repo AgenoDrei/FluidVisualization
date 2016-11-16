@@ -24,4 +24,6 @@ public:
     glm::vec3 getDimension();
     glm::vec3 getMinimum();
     float getAverageDensityAt(glm::vec3 position, float area);
+
+    Particle* getParticleAt(glm::vec3 position);
 };

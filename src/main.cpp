@@ -36,12 +36,13 @@ int main(int argc, char* argv[]) {
 
 /*    auto algorithm = MarchingCubes(0.03f);
     algorithm.calculate(firstTimestep);*/
-
     //Window Initialisation
     /*window = new WindowHandler(800, 600);
-    window->initWindow(argc, argv, &init, &mainLoop);*/
+    window->initWindow(argc, argv, &init, &mainLoop);
 
-    return 0;
+    algorithm.draw();
+
+    return 0;*/
 }
 
 void init() {

@@ -12,6 +12,8 @@ class MarchingCubes {
 private:
     float _stepSize;
 protected:
+    std::vector<Triangle> triangleMesh
+
     std::vector<Triangle> polygonise(GridCell* cell, float isolevel);
     int getCubeIndex(GridCell* cell, float isolevel);
 
@@ -20,6 +22,8 @@ public:
     MarchingCubes(float stepSize);
 
     void calculate(Timestep* timestep);
+
+    void draw();
 };
 
 
