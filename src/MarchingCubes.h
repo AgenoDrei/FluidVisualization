@@ -12,7 +12,7 @@ class MarchingCubes {
 private:
     float _stepSize;
 protected:
-    std::vector<Triangle> triangleMesh
+    std::vector<Triangle> triangleMesh;
 
     std::vector<Triangle> polygonise(GridCell* cell, float isolevel);
     int getCubeIndex(GridCell* cell, float isolevel);
