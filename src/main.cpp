@@ -36,9 +36,9 @@ int main(int argc, char* argv[]) {
     /*window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop);
 
-    algorithm.draw();
+    algorithm.draw();*/
 
-    return 0;*/
+    return 0;
 }
 
 void init() {

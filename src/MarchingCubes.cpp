@@ -308,7 +308,6 @@ void MarchingCubes::calculate(Timestep* timestep) {
 
     auto grid = Grid::CreateFromTimestep(timestep, _stepSize);
 
-    std::vector<Triangle> triangleMesh;
     for(auto x = 0; x < grid->getDimension().x; x++) {
         for(auto y = 0; y < grid->getDimension().y; y++) {
             for(auto z = 0; z < grid->getDimension().z; z++) {
