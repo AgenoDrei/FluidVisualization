@@ -1,3 +1,4 @@
+#include <glm/gtx/norm.hpp>
 #include "Timestep.h"
 #include "Particle.h"
 
@@ -91,4 +92,21 @@ bool Timestep::isInArea(Particle* p, glm::vec3 center, float area) {
     return p->position.x > center.x - area && p->position.x < center.x + area &&
            p->position.y > center.y - area && p->position.y < center.y + area &&
            p->position.z > center.z - area && p->position.z < center.x + area;
+}
+
+Particle* Timestep::getParticleAt(glm::vec3 position) {
+    Particle* closestParticle = &_particles[0]; // start with the first one to avoid nullptr handling
+    auto closestDistance = glm::length2(closestParticle->position - position);
+
+    for(auto i = 1; i < _numberParticles; i++) { // start with the second one because the first is preselected
+        auto currentParticle = &_particles[i];
+        auto currentDistance = glm::length2(currentParticle->position - position);
+
+        if(currentDistance < closestDistance) {
+            closestDistance = currentDistance;
+            closestParticle = currentParticle;
+        }
+    }
+
+    return closestParticle;
 }
