@@ -24,7 +24,7 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE |
                         GLUT_RGBA);
-    glutInitContextVersion (3, 3);
+    glutInitContextVersion (4, 4);
     glutInitContextFlags (GLUT_CORE_PROFILE | GLUT_DEBUG);
     glutInitWindowSize(width, height);
     glutCreateWindow("Fluid Simulation");
@@ -41,6 +41,9 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
 	if(GLEW_VERSION_4_1) {
 		std::cout << "Log> Driver supports OpenGL 4.1" << std::endl;
 	}
+    if(GLEW_VERSION_4_4) {
+        std::cout << "Log> Driver supports OpenGL 4.4" << std::endl;
+    }
     glViewport(0, 0, width, height);
 
     // Setup some OpenGL options

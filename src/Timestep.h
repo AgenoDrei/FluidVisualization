@@ -18,4 +18,6 @@ public:
     Particle getParticle(uint32_t index) const;
     uint32_t getSize() const;
     void removeParticle(uint32_t index);
+
+    glm::vec4* getPositionDensity();
 };
