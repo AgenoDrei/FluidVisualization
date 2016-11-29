@@ -13,7 +13,7 @@ void onShutdown();
 void onResize(int nw, int nh);
 void onKeyDown(unsigned char key, int x, int y);
 void onKeyUp(unsigned char key, int x, int y);
-void onMouse(int x, int y);
+void onMouse(int button, int state, int x, int y);
 
 
 class WindowHandler {
@@ -24,7 +24,7 @@ public:
     void setCamera(Camera* camera);
     void resize(int newWidth, int newHeight) const;
     void processKeyboard(bool pressed, unsigned char key, int x, int y);
-    void processMouse(int x, int y);
+    void processMouse(int button, int state, int x, int y);
 
     static WindowHandler* instance;
     bool getKey(char key);

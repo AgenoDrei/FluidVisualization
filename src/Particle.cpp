@@ -16,5 +16,6 @@ Particle::Particle(glm::vec3 position, glm::vec3 normal, glm::vec3 velocity, flo
 }
 
 std::ostream &operator<<(std::ostream &os, Particle const &particle) {
-    return os<<"Position: "<<glm::to_string(particle.position)<< " Normal: "<<glm::to_string(particle.normal)<<" Velocity: "<<glm::to_string(particle.velocity)<<" Density: "<<particle.density<<" Pressure: "<<particle.pressure;
+    //return os<<"Position: "<<glm::to_string(particle.position)<< " Normal: "<<glm::to_string(particle.normal)<<" Velocity: "<<glm::to_string(particle.velocity)<<" Density: "<<particle.density<<" Pressure: "<<particle.pressure;
+	return os<<"Position: "<<glm::to_string(particle.position) << " Density: " << particle.density;
 }

@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "Timestep.h"
 #include "ParticleGpuLoader.h"
+#include "DataInterpolator.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -23,6 +24,8 @@ int main(int argc, char* argv[]) {
 	data = DataImporter::load("/home/simon/Downloads/drop.dat");
 	//auto data = DataImporter::load("/home/nils/Downloads/six_iterdfdations.dat");
 
+    data = DataInterpolator::interpolateDataset(*data);
+
     //Window Initialisation
     window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop);
@@ -35,9 +38,8 @@ void init() {
     window->setCamera(camera);
     ourShader = new Shader("shader/basic.vert", "shader/basic.frag");
 
-    GLfloat* vertices = ParticleGpuLoader::bufferGPUParticles(data, 0, data->getNumberParticles());
-
-    VAO = ParticleGpuLoader::loadParticlesToGpu(vertices, data->getNumberParticles());
+    GLfloat* buffer = ParticleGpuLoader::bufferGPUParticles(data, 0, data->getNumberParticles());
+    VAO = ParticleGpuLoader::loadParticlesToGpu(buffer, data->getNumberParticles());
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -67,7 +69,7 @@ void mainLoop() {
     glUniformMatrix4fv(glGetUniformLocation(ourShader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
     glBindVertexArray(VAO);
-    glDrawArrays(GL_POINTS, 0, 1000000);
+    glDrawArrays(GL_POINTS, 0, 4000000);
     glBindVertexArray(0);
     glutSwapBuffers();
 }
