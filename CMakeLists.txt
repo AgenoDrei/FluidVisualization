@@ -9,7 +9,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    add_definitions(-std=gnu++0x -O3)
+    add_definitions(-std=gnu++0x -Wall -O3)
 endif()
 
 include_directories("src/")

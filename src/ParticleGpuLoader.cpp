@@ -14,7 +14,7 @@ GLfloat* ParticleGpuLoader::bufferGPUParticles(DataSet* data, uint32_t timestepI
     GLfloat* vertices = new GLfloat[particleCount*4];
     Timestep* step = data->getTimestep(0);
     uint32_t index = 0;
-    for(auto j = 0; j < particleCount; j++) {
+    for(auto j = 0u; j < particleCount; j++) {
         Particle particle = step->getParticle(j);
         vertices[index] = particle.position.x;
         vertices[index + 1] = particle.position.y;

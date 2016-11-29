@@ -97,7 +97,7 @@ void WindowHandler::processMouse(int button, int state, int x, int y) {
 }
 
 bool WindowHandler::getKey(char key) {
-    return keys[key];
+    return keys[static_cast<int>(key)] != 0;
 }
 
 float WindowHandler::getWidth() const {

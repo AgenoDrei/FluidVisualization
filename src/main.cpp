@@ -18,13 +18,13 @@ WindowHandler* window;
 Camera* camera;
 GLuint VBO, VAO;
 Shader* ourShader;
-DataSet* data;
+DataSet* data = nullptr, *data2 = nullptr;
 
 int main(int argc, char* argv[]) {
-	data = DataImporter::load("/home/simon/Downloads/drop.dat");
-	//auto data = DataImporter::load("/home/nils/Downloads/six_iterdfdations.dat");
+	//data = DataImporter::load("/home/simon/Downloads/drop.dat");
+	auto data = DataImporter::load("/home/nils/Downloads/drop.dat");
 
-    data = DataInterpolator::interpolateDataset(*data);
+    data2 = DataInterpolator::interpolateDataset(*data);
 
     //Window Initialisation
     window = new WindowHandler(800, 600);
@@ -38,13 +38,14 @@ void init() {
     window->setCamera(camera);
     ourShader = new Shader("shader/basic.vert", "shader/basic.frag");
 
-    GLfloat* buffer = ParticleGpuLoader::bufferGPUParticles(data, 0, data->getNumberParticles());
-    VAO = ParticleGpuLoader::loadParticlesToGpu(buffer, data->getNumberParticles());
+    GLfloat* buffer = ParticleGpuLoader::bufferGPUParticles(data2, 0, data2->getNumberParticles());
+    VAO = ParticleGpuLoader::loadParticlesToGpu(buffer, data2->getNumberParticles());
 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    //glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
 
+    glPointSize(10);
     std::cout << "Log> Initalization done" << std::endl;
 }
 
@@ -69,7 +70,7 @@ void mainLoop() {
     glUniformMatrix4fv(glGetUniformLocation(ourShader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
     glBindVertexArray(VAO);
-    glDrawArrays(GL_POINTS, 0, 4000000);
+    glDrawArrays(GL_POINTS, 0, data2->getNumberParticles());
     glBindVertexArray(0);
     glutSwapBuffers();
 }
