@@ -13,6 +13,8 @@ public:
     glm::vec3 velocity;
     float density;
     float pressure;
+
+    void reset();
 };
 
 std::ostream &operator<<(std::ostream &os, Particle const &particle);

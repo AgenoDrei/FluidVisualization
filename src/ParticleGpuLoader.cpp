@@ -19,7 +19,7 @@ GLfloat* ParticleGpuLoader::bufferGPUParticles(DataSet* data, uint32_t timestepI
         vertices[index] = particle.position.x;
         vertices[index + 1] = particle.position.y;
         vertices[index + 2] = particle.position.z;
-        vertices[index + 4] = particle.density;
+        vertices[index + 3] = particle.density;
         index+=4;
     }
     //std::cout << "Index: " << index  << std::endl;

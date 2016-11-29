@@ -11,10 +11,10 @@
 //Remove Magicnumbers
 DataSet* DataInterpolator::interpolateDataset(DataSet data) {
     long found = 0;
-    uint32_t gridSize = 10;
+    uint32_t gridSize = 50;
     const float maxDistance = 0.02f;
     auto arraySize = gridSize * gridSize * gridSize;
-    Particle** grid = new Particle*[arraySize];
+    Particle* grid = new Particle[arraySize];
     uint32_t index = 0;
     for(float z = 0.0f; z < 1.0f; z+= 1.0f / gridSize) { //z
         std::cout << "Log> " << z*100 << " Percent done" << std::endl;
@@ -37,28 +37,37 @@ DataSet* DataInterpolator::interpolateDataset(DataSet data) {
                         break;
                     }*/
                 }
+                grid[index].reset();
+                grid[index].position = position;
                 //std::cout << "Found particle: " << data.getTimestep(0)->getParticle(nearestNeighbor) << " for: " << glm::to_string(position) << std::endl;
                 if(distance <= maxDistance && nearestNeighbor != -1u) {
                     density = data.getTimestep(0)->getParticle(nearestNeighbor).density;
-                    grid[index]= new Particle(position, glm::vec3(0.0f), glm::vec3(0.0f),density, 0);
+                    //grid[index]= new Particle(position, glm::vec3(0.0f), glm::vec3(0.0f),density, 0);
+                    grid[index].density = density;
                     //data.getTimestep(0)->removeParticle(nearestNeighbor);
                     found++;
                     //std::cout << "Log> Interpolated lattice " << newParticle << " with Particle" << data.getTimestep(0)->getParticle(nearestNeighbor) << "with distance " << distance << std::endl;
                 } else {
                     //std::cout << "No particle found with distance: " << distance << std::endl;
-                    grid[index] = new Particle(position, glm::vec3(0.0f), glm::vec3(0.0f), 0, 0);
+                    grid[index].density = 0;
+                    //grid[index] = new Particle(position, glm::vec3(0.0f), glm::vec3(0.0f), 0, 0);
                 }
-                //std::cout<<"Position: "<<position.x<< " "<<position.y<<" "<<position.z<<std::endl;
+                //std::cout<<"Position: "<<grid[index]->position.x<< " "<<grid[index]->position.y<<" "<<grid[index]->position.z<<std::endl;
                 index++;
             }
         }
     }
+
     std::cout << "Found lattices: " << found << std::endl;
-    Timestep** tmpArray = new Timestep*[1] {new Timestep(*grid, arraySize)};
+    /*Timestep** tmpArray = new Timestep*[1] {new Timestep(*grid, arraySize)};
     DataSet* rtn = new DataSet(arraySize, 1, tmpArray);
-    return rtn;
+    return rtn;*/
 
+    auto timesteps = new Timestep*[1];
+    timesteps[0] = new Timestep(grid, arraySize);
+    auto result = new DataSet(arraySize, 1, timesteps);
 
+    return result;
 }
 
 

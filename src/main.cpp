@@ -25,6 +25,7 @@ int main(int argc, char* argv[]) {
 	auto data = DataImporter::load("/home/nils/Downloads/drop.dat");
 
     data2 = DataInterpolator::interpolateDataset(*data);
+    //data2 = data;
 
     //Window Initialisation
     window = new WindowHandler(800, 600);
@@ -41,11 +42,15 @@ void init() {
     GLfloat* buffer = ParticleGpuLoader::bufferGPUParticles(data2, 0, data2->getNumberParticles());
     VAO = ParticleGpuLoader::loadParticlesToGpu(buffer, data2->getNumberParticles());
 
+    for(auto i = 0u; i < data2->getNumberParticles(); i++) {
+        std::cout<<data2->getTimestep(0)->getParticle(i).position.x<<" "<<data2->getTimestep(0)->getParticle(i).position.y<<" "<<data2->getTimestep(0)->getParticle(i).position.z<<std::endl;
+    }
+
     //glEnable(GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
     //glCullFace(GL_BACK);
 
-    glPointSize(10);
+    glPointSize(1);
     std::cout << "Log> Initalization done" << std::endl;
 }
 
