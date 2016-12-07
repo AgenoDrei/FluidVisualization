@@ -13,6 +13,6 @@ public:
 
     static GLfloat* bufferGPUParticles(DataSet* data, uint32_t timestepIndex, uint32_t particleCount);
     static GLfloat* bufferGPUParticles(glm::vec3* data, uint32_t particleCount);
-    static GLuint loadParticlesToGpu(GLfloat* vertices, uint32_t particleCount);
+    static GLuint loadParticlesToGpu(GLfloat* vertices, uint32_t particleCount, uint32_t bufferElementSize, bool loadDensity);
 };
 

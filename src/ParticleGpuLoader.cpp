@@ -40,7 +40,7 @@ GLfloat* ParticleGpuLoader::bufferGPUParticles(glm::vec3* data, uint32_t particl
     return vertices;
 }
 
-GLuint ParticleGpuLoader::loadParticlesToGpu(GLfloat* vertices, uint32_t particleCount) {
+GLuint ParticleGpuLoader::loadParticlesToGpu(GLfloat* vertices, uint32_t particleCount, uint32_t bufferElementSize, bool loadDensity) {
     std::cout << "Vertices size: " << sizeof(vertices) << std::endl;
     GLuint VAO, VBO;
 
@@ -49,11 +49,16 @@ GLuint ParticleGpuLoader::loadParticlesToGpu(GLfloat* vertices, uint32_t particl
 
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * particleCount * 3, vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), static_cast<GLvoid*>(nullptr));     // Position attribute
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * particleCount * bufferElementSize, vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, bufferElementSize * sizeof(GLfloat), static_cast<GLvoid*>(nullptr));     // Position attribute
     glEnableVertexAttribArray(0);
-    /*glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);*/
+
+    if(loadDensity && bufferElementSize > 3) {
+        glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, bufferElementSize * sizeof(GLfloat), reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(1);
+    }
+
+
 
     glBindVertexArray(0);
 

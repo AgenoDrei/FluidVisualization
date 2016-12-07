@@ -7,6 +7,8 @@
 #include "Timestep.h"
 #include "ParticleGpuLoader.h"
 #include "DataInterpolator.h"
+#include "InterpolationController.h"
+#include "CpuInterpolationController.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -18,16 +20,17 @@ WindowHandler* window;
 Camera* camera;
 GLuint VBO, VAO;
 Shader* ourShader;
-DataSet* data = nullptr, *data2 = nullptr;
+DataSet* data = nullptr, *interpolatedData = nullptr;
+CpuInterpolationController *ctrl;
 
 GLuint texture;
 
 int main(int argc, char* argv[]) {
-	//data = DataImporter::load("/home/simon/Downloads/drop.dat");
-	data = DataImporter::load("/home/nils/Downloads/drop.dat");
+	data = DataImporter::load("/home/simon/Downloads/drop.dat");
+    ctrl = new CpuInterpolationController(20);
+	//data = DataImporter::load("/home/nils/Downloads/drop.dat");
 
-    //data2 = DataInterpolator::interpolateDataset(*data);
-    data2 = data;
+    //interpolatedData = DataInterpolator::interpolateDataset(*data);
 
     //Window Initialisation
     window = new WindowHandler(800, 600);
@@ -40,8 +43,13 @@ void init() {
     camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
     window->setCamera(camera);
     //ourShader = new Shader("shader/basic.vert", "shader/basic.frag");
+    ctrl->createShader();
+    //GLfloat * buffer = ParticleGpuLoader::bufferGPUParticles(interpolatedData, 1, interpolatedData->getNumberParticles());
+    //VAO = ParticleGpuLoader::loadParticlesToGpu(buffer, interpolatedData->getNumberParticles(), 4, true);
+    ctrl->prepareGpuBuffer(data, 0);
+    ctrl->loadGpuBuffer();
 
-    ourShader =  new Shader("shader/interpolater.vert", "shader/interpolater.frag");
+    /*ourShader =  new Shader("shader/interpolater.vert", "shader/interpolater.frag");
 
     auto gridSize = 10;
     auto arraySize = gridSize * gridSize * gridSize;
@@ -56,29 +64,29 @@ void init() {
     }
 
     /*GLfloat* buffer = ParticleGpuLoader::bufferGPUParticles(data2, 0, data2->getNumberParticles());
-    VAO = ParticleGpuLoader::loadParticlesToGpu(buffer, data2->getNumberParticles());*/
+    VAO = ParticleGpuLoader::loadParticlesToGpu(buffer, data2->getNumberParticles());
 
     GLfloat* buffer = ParticleGpuLoader::bufferGPUParticles(cubeVertices, arraySize);
-    VAO = ParticleGpuLoader::loadParticlesToGpu(buffer, arraySize);
+    VAO = ParticleGpuLoader::loadParticlesToGpu(buffer, arraySize, 3, false);
 
     for(auto i = 0; i < 1000; i += 3) {
         //std::cout<<cubeVertices[i].x<<" "<<cubeVertices[i].y<<" "<<cubeVertices[i].z<<std::endl;
         std::cout<<buffer[i]<<" "<<buffer[i + 1]<<" "<<buffer[i + 2]<<std::endl;
-    }
+    }*/
 
-    auto positionDensityData = data->getTimestep(0)->getPositionDensity();
+    //auto positionDensityData = data->getTimestep(0)->getPositionDensity();
 
     /*for(auto i = 0; i < 250000; i++) {
         std::cout<<positionDensityData[i].x<<" "<<positionDensityData[i].y<<" "<<positionDensityData[i].z<<" "<<positionDensityData[i].w<<std::endl;
     }*/
 
-    GLint bla = 0;
+    /*GLint bla = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &bla);
 
     glGenTextures( 1, &texture );
     glBindTexture( GL_TEXTURE_2D, texture );
     auto height = data->getNumberParticles() / bla;
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16, bla, height, 0, GL_RGBA, GL_FLOAT, positionDensityData);// GL_RGBA aka position + density
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16, bla, height, 0, GL_RGBA, GL_FLOAT, positionDensityData);// GL_RGBA aka position + density*/
 
 
 
@@ -103,7 +111,7 @@ void mainLoop() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    ourShader->use();
+    /*ourShader->use();
     glm::mat4 model;
     model = glm::translate(model, glm::vec3(0.0f));
     glm::mat4 view;
@@ -115,24 +123,25 @@ void mainLoop() {
 	auto modelLocation = glGetUniformLocation(ourShader->Program, "model");
     glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(glGetUniformLocation(ourShader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(ourShader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(glGetUniformLocation(ourShader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));*/
 
-    glUniform1i(glGetUniformLocation(ourShader->Program, "size"), 250000);
-    glUniform1f(glGetUniformLocation(ourShader->Program, "maxDistance"), 0.5f);
+    //glUniform1i(glGetUniformLocation(ourShader->Program, "size"), 250000);
+    //glUniform1f(glGetUniformLocation(ourShader->Program, "maxDistance"), 0.5f);
 
 
-    GLint bla = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &bla);
-    glUniform1i(glGetUniformLocation(ourShader->Program, "width"), bla);
+    //GLint bla = 0;
+    //glGetIntegerv(GL_MAX_TEXTURE_SIZE, &bla);
+    //glUniform1i(glGetUniformLocation(ourShader->Program, "width"), bla);
 
-    GLuint samplerLocation = glGetUniformLocation(ourShader->Program, "values");
-    glUniform1i(samplerLocation, 0);
-    glActiveTexture(GL_TEXTURE0 + 0);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    //GLuint samplerLocation = glGetUniformLocation(ourShader->Program, "values");
+    //glUniform1i(samplerLocation, 0);
+    //glActiveTexture(GL_TEXTURE0 + 0);
+    //glBindTexture(GL_TEXTURE_2D, texture);
 
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_POINTS, 0, 1000);
-    glBindVertexArray(0);
+    /*glBindVertexArray(VAO);
+    glDrawArrays(GL_POINTS, 0, interpolatedData->getNumberParticles());
+    glBindVertexArray(0);*/
+    ctrl->renderParticles(camera, window);
     glutSwapBuffers();
 }
 

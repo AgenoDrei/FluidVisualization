@@ -7,5 +7,5 @@
 
 class DataInterpolator {
 public:
-    static DataSet* interpolateDataset(DataSet data);
+    static DataSet* interpolateDataset(DataSet data, uint32_t quality);
 };

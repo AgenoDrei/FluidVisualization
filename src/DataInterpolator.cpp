@@ -9,9 +9,9 @@
 #include "Timestep.h"
 
 //Remove Magicnumbers
-DataSet* DataInterpolator::interpolateDataset(DataSet data) {
+DataSet* DataInterpolator::interpolateDataset(DataSet data, uint32_t quality) {
     long found = 0;
-    uint32_t gridSize = 50;
+    uint32_t gridSize = quality;
     const float maxDistance = 0.02f;
     auto arraySize = gridSize * gridSize * gridSize;
     Particle* grid = new Particle[arraySize];
