@@ -13,7 +13,7 @@
 #include "Camera.h"
 #include "WindowHandler.h"
 
-GpuInterpolationController::GpuInterpolationController(uint32_t q) :
+/*GpuInterpolationController::GpuInterpolationController(uint32_t q) :
         buffer( nullptr ),
         shader( nullptr ),
         quality( q ){}
@@ -80,3 +80,5 @@ void GpuInterpolationController::renderParticles(Camera* camera, WindowHandler* 
     glDrawArrays(GL_POINTS, 0, particleCount);
     glBindVertexArray(0);
 }
+
+ */

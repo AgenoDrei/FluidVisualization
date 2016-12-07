@@ -12,25 +12,18 @@
 #include "Timestep.h"
 #include "Camera.h"
 #include "WindowHandler.h"
-#include "DataInterpolator.h"
 
 CpuInterpolationController::CpuInterpolationController(uint32_t interpolationQuality) :
-        buffer( nullptr ),
-        shader( nullptr ),
+        interpolatedData( nullptr ),
         quality( interpolationQuality ) {}
 
 CpuInterpolationController::~CpuInterpolationController() {
-    delete [] buffer;
+    delete [] interpolatedData;
 }
 
-void CpuInterpolationController::createShader() {
-    shader = new Shader("shader/basic.vert", "shader/basic.frag");
-}
-
-void CpuInterpolationController::prepareGpuBuffer(DataSet* data, uint32_t timestepIndex) {
-    auto interpolatedData = interpolateDataSet(data);
-
-    particleCount = interpolatedData->getNumberParticles();
+void CpuInterpolationController::prepareData(DataSet* data) {
+    sourceData = data; //ToDo Load data
+    /*particleCount = interpolatedData->getNumberParticles();
 
     buffer = new GLfloat[particleCount * 4];
     Timestep* step = interpolatedData->getTimestep(timestepIndex);
@@ -42,11 +35,17 @@ void CpuInterpolationController::prepareGpuBuffer(DataSet* data, uint32_t timest
         buffer[index + 2] = particle.position.z;
         buffer[index + 3] = particle.density;
         index += 4;
-    }
+    }*/
     //std::cout << "Index: " << index  << std::endl;
 }
 
-void CpuInterpolationController::loadGpuBuffer() {
+DataSet* CpuInterpolationController::interpolateData(DataSet *data) {
+    prepareData(data);
+    compute();
+    return interpolatedData;
+}
+
+/*void CpuInterpolationController::loadGpuBuffer() {
     uint32_t bufferElementSize = 4; // 3 pos floats, 1 density float
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -62,9 +61,9 @@ void CpuInterpolationController::loadGpuBuffer() {
     glBindVertexArray(0);
 
     std::cout << "VAO Loader: " << VAO << std::endl;
-}
+}*/
 
-void CpuInterpolationController::renderParticles(Camera* camera, WindowHandler* wHandler) {
+/*void CpuInterpolationController::renderParticles(Camera* camera, WindowHandler* wHandler) {
     shader->use();
     glm::mat4 model;
     model = glm::translate(model, glm::vec3(0.0f));
@@ -82,9 +81,11 @@ void CpuInterpolationController::renderParticles(Camera* camera, WindowHandler* 
     glBindVertexArray(VAO);
     glDrawArrays(GL_POINTS, 0, particleCount);
     glBindVertexArray(0);
-}
+}*/
 
-DataSet* CpuInterpolationController::interpolateDataSet(DataSet* data) {
+
+
+void CpuInterpolationController::compute() {
     long found = 0;
     uint32_t gridSize = quality;
     const float maxDistance = 0.02f;
@@ -102,8 +103,8 @@ DataSet* CpuInterpolationController::interpolateDataSet(DataSet* data) {
                 float distance = FLT_MAX;
                 uint32_t nearestNeighbor = -1;
 
-                for(uint32_t i = 0; i < data->getTimestep(0)->getSize(); i++) {
-                    float tmpDistance = glm::distance(data->getTimestep(0)->getParticle(i).position, position);
+                for(uint32_t i = 0; i < sourceData->getTimestep(0)->getSize(); i++) {
+                    float tmpDistance = glm::distance(sourceData->getTimestep(0)->getParticle(i).position, position);
                     if(tmpDistance < distance) {
                         distance = tmpDistance;
                         nearestNeighbor = i;
@@ -116,7 +117,7 @@ DataSet* CpuInterpolationController::interpolateDataSet(DataSet* data) {
                 grid[index].position = position;
                 //std::cout << "Found particle: " << data.getTimestep(0)->getParticle(nearestNeighbor) << " for: " << glm::to_string(position) << std::endl;
                 if(distance <= maxDistance && nearestNeighbor != -1u) {
-                    density = data->getTimestep(0)->getParticle(nearestNeighbor).density;
+                    density = sourceData->getTimestep(0)->getParticle(nearestNeighbor).density;
                     //grid[index]= new Particle(position, glm::vec3(0.0f), glm::vec3(0.0f),density, 0);
                     grid[index].density = density;
                     //data.getTimestep(0)->removeParticle(nearestNeighbor);
@@ -142,5 +143,6 @@ DataSet* CpuInterpolationController::interpolateDataSet(DataSet* data) {
     timesteps[0] = new Timestep(grid, arraySize);
     auto result = new DataSet(arraySize, 1, timesteps);
 
-    return result;
+    interpolatedData = result;
+
 }

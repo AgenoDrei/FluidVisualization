@@ -5,10 +5,10 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Timestep.h"
-#include "DataInterpolator.h"
 #include "InterpolationController.h"
 #include "CpuInterpolationController.h"
 #include "GpuInterpolationController.h"
+#include "ParticleRenderer.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -23,6 +23,7 @@ GLuint VBO, VAO;
 Shader* ourShader;
 DataSet* data = nullptr, *interpolatedData = nullptr;
 InterpolationController *ctrl;
+ParticleRenderer* renderer;
 
 GLuint texture;
 
@@ -42,9 +43,10 @@ void init() {
     std::cout << "Log> Render initialization running" << std::endl;
     camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
     window->setCamera(camera);
-    ctrl->createShader();
-    ctrl->prepareGpuBuffer(data, 0);
-    ctrl->loadGpuBuffer();
+    renderer = new ParticleRenderer();
+
+    interpolatedData = ctrl->interpolateData(data);
+    renderer->setData(interpolatedData->getTimestep(0), interpolatedData->getNumberParticles());
     //glEnable(GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
     //glCullFace(GL_BACK);
@@ -59,7 +61,7 @@ void mainLoop() {
     window->calculateFPS();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    ctrl->renderParticles(camera, window);
+    renderer->render(camera, window);
 
     glutSwapBuffers();
 }

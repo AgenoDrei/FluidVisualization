@@ -1,5 +1,5 @@
-SET(SRC_CPP main.cpp DataImporter.cpp DataSet.cpp Timestep.cpp Particle.cpp WindowHandler.cpp Shader.cpp Camera.cpp CpuInterpolationController.cpp GpuInterpolationController.cpp)
-SET(SRC_H main.h DataImporter.h DataSet.h Timestep.h Particle.h WindowHandler.h Shader.h Camera.h InterpolationController.h CpuInterpolationController.h GpuInterpolationController.h)
+SET(SRC_CPP main.cpp DataImporter.cpp DataSet.cpp Timestep.cpp Particle.cpp WindowHandler.cpp Shader.cpp Camera.cpp CpuInterpolationController.cpp GpuInterpolationController.cpp ParticleRenderer.cpp ParticleRenderer.h)
+SET(SRC_H main.h DataImporter.h DataSet.h Timestep.h Particle.h WindowHandler.h Shader.h Camera.h InterpolationController.h CpuInterpolationController.h GpuInterpolationController.h ParticleRenderer.cpp ParticleRenderer.h)
 
 SET(SRC ${SRC_CPP} ${SRC_H}  )
 
