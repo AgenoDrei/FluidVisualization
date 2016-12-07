@@ -5,6 +5,7 @@
 #include "InterpolationController.h"
 
 class Shader;
+class DataSet;
 
 class CpuInterpolationController : public InterpolationController {
 public:
@@ -17,6 +18,7 @@ public:
     void renderParticles(Camera* camera, WindowHandler* wHandler);
 
 private:
+    DataSet* interpolateDataSet(DataSet* data);
     GLfloat* buffer;
     GLuint VAO, VBO;
     Shader* shader;

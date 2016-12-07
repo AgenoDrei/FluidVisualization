@@ -5,7 +5,6 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Timestep.h"
-#include "ParticleGpuLoader.h"
 #include "DataInterpolator.h"
 #include "InterpolationController.h"
 #include "CpuInterpolationController.h"
@@ -23,14 +22,14 @@ Camera* camera;
 GLuint VBO, VAO;
 Shader* ourShader;
 DataSet* data = nullptr, *interpolatedData = nullptr;
-GpuInterpolationController *ctrl;
+InterpolationController *ctrl;
 
 GLuint texture;
 
 int main(int argc, char* argv[]) {
     std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
 	data = DataImporter::load(path + "/Downloads/drop.dat");
-    ctrl = new GpuInterpolationController(42);
+    ctrl = new CpuInterpolationController(20);
 	//data = DataImporter::load("/home/nils/Downloads/drop.dat");
 
     //Window Initialisation

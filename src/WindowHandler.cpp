@@ -24,7 +24,7 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE |
                         GLUT_RGBA);
-    glutInitContextVersion (4, 4);
+    glutInitContextVersion (3, 3);
     glutInitContextFlags (GLUT_CORE_PROFILE | GLUT_DEBUG);
     glutInitWindowSize(width, height);
     glutCreateWindow("Fluid Simulation");

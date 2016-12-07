@@ -32,9 +32,9 @@ void GpuInterpolationController::prepareGpuBuffer(DataSet* data, uint32_t timest
     buffer = new glm::vec3[particleCount];
     auto index = 0;
 
-    for(int i = 0; i < gridSize; i++) {
-        for (int j = 0; j < gridSize; j++) {
-            for (int k = 0; k < gridSize; k++) {
+    for(auto i = 0u; i < gridSize; i++) {
+        for(auto j = 0u; j < gridSize; j++) {
+            for(auto k = 0u; k < gridSize; k++) {
                 buffer[index] = glm::vec3(i / (float)gridSize, j / (float)gridSize, k / (float)gridSize);
                 index++;
             }
