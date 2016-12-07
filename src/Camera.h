@@ -15,6 +15,8 @@ enum Camera_Movement {
     DOWN
 };
 
+class WindowHandler;
+
 // Default camera values
 const GLfloat YAW        = -90.0f;
 const GLfloat PITCH      =  0.0f;
@@ -52,6 +54,8 @@ public:
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = true);
     // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(GLfloat yoffset);
+
+    glm::mat4 GetProjectonMatrix(WindowHandler* wHandler, float nearPlane, float farPlane) const;
 private:
     // Calculates the front vector from the Camera's (updated) Eular Angles
     void updateCameraVectors();

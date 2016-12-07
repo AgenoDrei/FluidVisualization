@@ -53,7 +53,7 @@ void ParticleRenderer::render(Camera *camera, WindowHandler *wHandler) {
     glm::mat4 view;
     model = camera->GetViewMatrix();
     glm::mat4 projection;
-    projection = glm::perspective(camera->Zoom, wHandler->getWidth()/wHandler->getHeight(), 0.1f, 10.0f);
+    projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
 
     // Pass the matrices to the shader
     auto modelLocation = glGetUniformLocation(particleShader->Program, "model");
