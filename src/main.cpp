@@ -9,6 +9,7 @@
 #include "DataInterpolator.h"
 #include "InterpolationController.h"
 #include "CpuInterpolationController.h"
+#include "GpuInterpolationController.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -21,13 +22,13 @@ Camera* camera;
 GLuint VBO, VAO;
 Shader* ourShader;
 DataSet* data = nullptr, *interpolatedData = nullptr;
-CpuInterpolationController *ctrl;
+GpuInterpolationController *ctrl;
 
 GLuint texture;
 
 int main(int argc, char* argv[]) {
 	data = DataImporter::load("/home/simon/Downloads/drop.dat");
-    ctrl = new CpuInterpolationController(20);
+    ctrl = new GpuInterpolationController(42);
 	//data = DataImporter::load("/home/nils/Downloads/drop.dat");
 
     //interpolatedData = DataInterpolator::interpolateDataset(*data);
@@ -101,7 +102,7 @@ void init() {
     //glCullFace(GL_BACK);
 
 
-    glPointSize(1);
+    glPointSize(2);
     std::cout << "Log> Initalization done" << std::endl;
 }
 
