@@ -24,7 +24,7 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE |
                         GLUT_RGBA);
-    glutInitContextVersion (3, 3);
+    glutInitContextVersion (4, 4);
     glutInitContextFlags (GLUT_CORE_PROFILE | GLUT_DEBUG);
     glutInitWindowSize(width, height);
     glutCreateWindow("Fluid Simulation");
@@ -41,6 +41,9 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
 	if(GLEW_VERSION_4_1) {
 		std::cout << "Log> Driver supports OpenGL 4.1" << std::endl;
 	}
+    if(GLEW_VERSION_4_4) {
+        std::cout << "Log> Driver supports OpenGL 4.4" << std::endl;
+    }
     glViewport(0, 0, width, height);
 
     // Setup some OpenGL options
@@ -54,8 +57,7 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
     glutKeyboardFunc(onKeyDown); //Keyboard
     glutKeyboardUpFunc(onKeyUp);
     glutIgnoreKeyRepeat(false);
-    //glutPassiveMotionFunc(onMouse); //Mouse
-    glutMotionFunc(onMouse);
+    glutMouseFunc(onMouse);
     glutDisplayFunc(mainLoop); //Rendering Loop
     glutIdleFunc(mainLoop);
     glutReshapeFunc(onResize); //Resize
@@ -83,26 +85,22 @@ void WindowHandler::processKeyboard(bool pressed, unsigned char key, int x, int 
     }
 }
 
-void WindowHandler::processMouse(int x, int y) {
+void WindowHandler::processMouse(int button, int state, int x, int y) {
     //std::cout << "Mouse Pos (" << x << " | " << y << ")" << std::endl;
-    if(firstMouse){
-        glutWarpPointer(width/2, height/2);
-        lastX = x = width/2;
-        lastY = y = height/2;
+    if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && firstMouse) {
         firstMouse = false;
+        lastX = x;
+        lastY = y;
+    } else if(button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+        firstMouse = true;
+        auto xoffset = x - lastX;
+        auto yoffset = lastY - y;
+        camera->ProcessMouseMovement(static_cast<GLfloat>(xoffset), static_cast<GLfloat>(yoffset), true);
     }
-    auto xoffset = x - lastX;
-    auto yoffset = lastY - y;  // Reversed since y-coordinates go from bottom to left
-
-    lastX = x;
-    lastY = y;
-
-    //glutWarpPointer(width/2, height/2);
-    camera->ProcessMouseMovement(static_cast<GLfloat>(xoffset), static_cast<GLfloat>(yoffset), true);
 }
 
 bool WindowHandler::getKey(char key) {
-    return keys[key];
+    return keys[static_cast<int>(key)] != 0;
 }
 
 float WindowHandler::getWidth() const {
@@ -146,9 +144,9 @@ void onKeyUp(unsigned char key, int x, int y) {
     }
 }
 
-void onMouse(int x, int y) {
+void onMouse(int button, int state, int x, int y) {
     if(WindowHandler::instance != nullptr) {
-        WindowHandler::instance->processMouse(x, y);
+        WindowHandler::instance->processMouse(button, state, x, y);
     }
 }
 

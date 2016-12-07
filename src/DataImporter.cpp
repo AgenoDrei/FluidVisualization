@@ -36,7 +36,7 @@ Timestep* DataImporter::loadTimestep(std::ifstream& file, int32_t numberParticle
         particles[i] = loadParticle(file);
     }
 
-    return new Timestep(particles);
+    return new Timestep(particles, numberParticles);
 }
 
 Particle DataImporter::loadParticle(std::ifstream& file) {

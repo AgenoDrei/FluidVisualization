@@ -1,16 +1,23 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 #include "Particle.h"
+
+
 
 class Timestep {
 private:
-    Particle* _particles;
+    std::vector<Particle> _particles;
 
 public:
     Timestep(uint32_t numberParticles);
-    Timestep(Particle* particles);
+    Timestep(Particle* particles, uint32_t numberParticles);
     ~Timestep();
 
     Particle getParticle(uint32_t index) const;
+    uint32_t getSize() const;
+    void removeParticle(uint32_t index);
+
+    glm::vec4* getPositionDensity();
 };

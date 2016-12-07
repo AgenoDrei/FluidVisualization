@@ -52,10 +52,10 @@ void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {
         this->Position += glm::vec3(this->Right.x, 0, this->Right.z) * velocity;
     }
     if (direction == UP) {
-        this->Position += glm::vec3(0, this->Up.z, 0) * velocity;
+        this->Position += glm::vec3(0, this->Up.y, 0) * velocity;
     }
     if (direction == DOWN) {
-        this->Position -= glm::vec3(0, this->Up.z, 0) * velocity;
+        this->Position -= glm::vec3(0, this->Up.y, 0) * velocity;
     }
 
 }

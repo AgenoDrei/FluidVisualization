@@ -14,3 +14,5 @@ build/CMakeCache.txt
 
 ###### clion ######
 .idea/
+
+build/
