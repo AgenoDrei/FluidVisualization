@@ -13,37 +13,34 @@
 #include "Camera.h"
 #include "WindowHandler.h"
 
-/*GpuInterpolationController::GpuInterpolationController(uint32_t q) :
+GpuInterpolationController::GpuInterpolationController(uint32_t q) :
         buffer( nullptr ),
         shader( nullptr ),
-        quality( q ){}
+        quality( q ){
+    shader = new Shader("shader/interpolate.vert", "shader/interpolate.frag");
+}
 
 GpuInterpolationController::~GpuInterpolationController() {
     delete [] buffer;
 }
 
-void GpuInterpolationController::createShader() {
-    shader = new Shader("shader/basic.vert", "shader/basic.frag");
-}
+void GpuInterpolationController::prepareData(DataSet *data) {
+    sourceData = data;
 
-void GpuInterpolationController::prepareGpuBuffer(DataSet* data, uint32_t timestepIndex) {
-    auto gridSize = quality; //ToDo Remove Magicnumber
+    auto gridSize = quality;
     particleCount = gridSize * gridSize * gridSize;
     buffer = new glm::vec3[particleCount];
     auto index = 0;
 
     for(auto i = 0u; i < gridSize; i++) {
-        for(auto j = 0u; j < gridSize; j++) {
-            for(auto k = 0u; k < gridSize; k++) {
-                buffer[index] = glm::vec3(i / (float)gridSize, j / (float)gridSize, k / (float)gridSize);
+        for (auto j = 0u; j < gridSize; j++) {
+            for (auto k = 0u; k < gridSize; k++) {
+                buffer[index] = glm::vec3(i / (float) gridSize, j / (float) gridSize, k / (float) gridSize);
                 index++;
             }
         }
     }
-    //std::cout << "Index: " << index  << std::endl;
-}
 
-void GpuInterpolationController::loadGpuBuffer() {
     uint32_t bufferElementSize = 3; // 3 pos floats
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -58,12 +55,26 @@ void GpuInterpolationController::loadGpuBuffer() {
 
     glBindVertexArray(0);
 
-    std::cout << "VAO Loader: " << VAO << std::endl;
+    //Texture Stuff
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Set texture wrapping to GL_REPEAT (usually basic wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, glm::sqrt(particleCount), glm::sqrt(particleCount), 0, GL_RGBA, GL_FLOAT, buffer);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
 }
 
-void GpuInterpolationController::renderParticles(Camera* camera, WindowHandler* wHandler) {
+
+void GpuInterpolationController::compute() {
+    glBindTexture(GL_TEXTURE_2D, texture);
     shader->use();
-    glm::mat4 model;
+    /*glm::mat4 model;
     model = glm::translate(model, glm::vec3(0.0f));
     glm::mat4 view;
     model = camera->GetViewMatrix();
@@ -74,11 +85,19 @@ void GpuInterpolationController::renderParticles(Camera* camera, WindowHandler* 
     auto modelLocation = glGetUniformLocation(shader->Program, "model");
     glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(glGetUniformLocation(shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));*/
+
+    glUniform1i(glGetUniformLocation(shader->Program, "size"), 250000);
+    glUniform1f(glGetUniformLocation(shader->Program, "maxDistance"), 0.02f);
 
     glBindVertexArray(VAO);
     glDrawArrays(GL_POINTS, 0, particleCount);
     glBindVertexArray(0);
 }
 
- */
+DataSet* GpuInterpolationController::interpolateData(DataSet *data) {
+    prepareData(data);
+    compute();
+
+    return interpolatedData;
+}

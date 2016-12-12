@@ -30,7 +30,7 @@ void RendererDebugQuad::setData(Timestep* step, uint32_t count) {
     uint32_t index = 0;
     for(auto j = 0u; j < count; j++) {
         Particle particle = step->getParticle(j);
-        buffer[index] = glm::vec4(particle.position, particle.density * 1000);
+        buffer[index] = glm::vec4(particle.position, particle.density * 500);
         index++;
     }
 

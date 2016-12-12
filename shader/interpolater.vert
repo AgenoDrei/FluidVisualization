@@ -8,9 +8,9 @@ uniform mat4 view;
 uniform mat4 projection;
 
 uniform int size;
+uniform float maxDistance;
 uniform int width;
 uniform sampler1D values;
-uniform float maxDistance;
 
 out float density;
 

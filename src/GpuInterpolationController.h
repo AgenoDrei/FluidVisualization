@@ -7,7 +7,7 @@ class Shader;
 
 class GpuInterpolationController : InterpolationController{
 public:
-    GpuInterpolationController(uint32_t interpolationQuality);
+    GpuInterpolationController(uint32_t q);
     ~GpuInterpolationController();
 
     DataSet* interpolateData(DataSet* data);
@@ -17,6 +17,10 @@ private:
     void compute();
     DataSet* interpolatedData;
     DataSet* sourceData;
-    uint32_t quality;
+    glm::vec3* buffer;
+    Shader* shader;
+    uint32_t quality, particleCount;
+    GLuint VBO, VAO, texture;
+
 };
 
