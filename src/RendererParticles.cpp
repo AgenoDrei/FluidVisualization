@@ -3,7 +3,7 @@
 //
 
 #include <glm/ext.hpp>
-#include "ParticleRenderer.h"
+#include "RendererParticles.h"
 #include "DataSet.h"
 #include "Timestep.h"
 #include "glm/vec4.hpp"
@@ -11,15 +11,15 @@
 #include "Camera.h"
 #include "Shader.h"
 
-ParticleRenderer::ParticleRenderer() {
-    particleShader = new Shader("shader/basic.vert", "shader/basic.frag");
+RendererParticles::RendererParticles() {
+    shader = new Shader("shader/basic.vert", "shader/basic.frag");
 }
 
-ParticleRenderer::~ParticleRenderer() {
+RendererParticles::~RendererParticles() {
     delete [] buffer;
 }
 
-void ParticleRenderer::setData(Timestep* step, uint32_t count) {
+void RendererParticles::setData(Timestep* step, uint32_t count) {
     particleCount = count;
 
     buffer = new glm::vec4[particleCount];
@@ -46,8 +46,8 @@ void ParticleRenderer::setData(Timestep* step, uint32_t count) {
 
 }
 
-void ParticleRenderer::render(Camera *camera, WindowHandler *wHandler) {
-    particleShader->use();
+void RendererParticles::render(Camera *camera, WindowHandler *wHandler) {
+    shader->use();
     glm::mat4 model;
     model = glm::translate(model, glm::vec3(0.0f));
     glm::mat4 view;
@@ -56,10 +56,10 @@ void ParticleRenderer::render(Camera *camera, WindowHandler *wHandler) {
     projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
 
     // Pass the matrices to the shader
-    auto modelLocation = glGetUniformLocation(particleShader->Program, "model");
+    auto modelLocation = glGetUniformLocation(shader->Program, "model");
     glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(glGetUniformLocation(particleShader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(particleShader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(glGetUniformLocation(shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(glGetUniformLocation(shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
     glBindVertexArray(VAO);
     glDrawArrays(GL_POINTS, 0, particleCount);

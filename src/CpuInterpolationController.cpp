@@ -23,20 +23,6 @@ CpuInterpolationController::~CpuInterpolationController() {
 
 void CpuInterpolationController::prepareData(DataSet* data) {
     sourceData = data; //ToDo Load data
-    /*particleCount = interpolatedData->getNumberParticles();
-
-    buffer = new GLfloat[particleCount * 4];
-    Timestep* step = interpolatedData->getTimestep(timestepIndex);
-    uint32_t index = 0;
-    for(auto j = 0u; j < particleCount; j++) {
-        Particle particle = step->getParticle(j);
-        buffer[index] = particle.position.x;
-        buffer[index + 1] = particle.position.y;
-        buffer[index + 2] = particle.position.z;
-        buffer[index + 3] = particle.density;
-        index += 4;
-    }*/
-    //std::cout << "Index: " << index  << std::endl;
 }
 
 DataSet* CpuInterpolationController::interpolateData(DataSet *data) {
@@ -45,46 +31,6 @@ DataSet* CpuInterpolationController::interpolateData(DataSet *data) {
     return interpolatedData;
 }
 
-/*void CpuInterpolationController::loadGpuBuffer() {
-    uint32_t bufferElementSize = 4; // 3 pos floats, 1 density float
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * particleCount * bufferElementSize, buffer, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, bufferElementSize * sizeof(GLfloat), static_cast<GLvoid*>(nullptr));     // Position attribute
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, bufferElementSize * sizeof(GLfloat), reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
-
-    glBindVertexArray(0);
-
-    std::cout << "VAO Loader: " << VAO << std::endl;
-}*/
-
-/*void CpuInterpolationController::renderParticles(Camera* camera, WindowHandler* wHandler) {
-    shader->use();
-    glm::mat4 model;
-    model = glm::translate(model, glm::vec3(0.0f));
-    glm::mat4 view;
-    model = camera->GetViewMatrix();
-    glm::mat4 projection;
-    projection = glm::perspective(camera->Zoom, wHandler->getWidth()/wHandler->getHeight(), 0.1f, 10.0f);
-
-    // Pass the matrices to the shader
-    auto modelLocation = glGetUniformLocation(shader->Program, "model");
-    glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(glGetUniformLocation(shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_POINTS, 0, particleCount);
-    glBindVertexArray(0);
-}*/
-
-
-
 void CpuInterpolationController::compute() {
     long found = 0;
     uint32_t gridSize = quality;
@@ -92,12 +38,14 @@ void CpuInterpolationController::compute() {
     auto arraySize = gridSize * gridSize * gridSize;
     Particle* grid = new Particle[arraySize];
     uint32_t index = 0;
-    for(float z = 0.0f; z < 1.0f; z+= 1.0f / gridSize) { //z
-        std::cout << "Log> " << z*100 << " Percent done" << std::endl;
-        for(float y = 0.0f; y < 1.0f; y+= 1.0f / gridSize) { //y
-            for(float x = 0.0f; x < 1.0f; x+= 1.0f / gridSize) { //x
-                //std::cout << "\r";
-                //std::cout << "Log> At position (" << x << "|" << y << "|" << z << ")!" << std::flush;
+    for(auto i = 0u; i < gridSize; i++) {
+        std::cout << "Log> " << i/(float)gridSize * 100 << " Percent done" << std::endl;
+        for(auto j = 0u; j < gridSize; j++) {
+            for(auto k = 0u; k < gridSize; k++) {
+                float z =  i/(float)gridSize;
+                float y =  j/(float)gridSize;
+                float x =  k/(float)gridSize;
+
                 glm::vec3 position = glm::vec3(x, y, z);
                 float density;
                 float distance = FLT_MAX;
@@ -135,10 +83,6 @@ void CpuInterpolationController::compute() {
     }
 
     std::cout << "Found lattices: " << found << std::endl;
-    /*Timestep** tmpArray = new Timestep*[1] {new Timestep(*grid, arraySize)};
-    DataSet* rtn = new DataSet(arraySize, 1, tmpArray);
-    return rtn;*/
-
     auto timesteps = new Timestep*[1];
     timesteps[0] = new Timestep(grid, arraySize);
     auto result = new DataSet(arraySize, 1, timesteps);
