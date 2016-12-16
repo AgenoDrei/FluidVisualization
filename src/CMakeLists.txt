@@ -1,7 +1,7 @@
-SET(SRC_CPP main.cpp DataImporter.cpp DataSet.cpp Timestep.cpp Particle.cpp WindowHandler.cpp Shader.cpp Camera.cpp ParticleGpuLoader.cpp CpuInterpolationController.cpp DataInterpolator.cpp GpuInterpolationController.cpp)
-SET(SRC_H main.h DataImporter.h DataSet.h Timestep.h Particle.h WindowHandler.h Shader.h Camera.h ParticleGpuLoader.h DataInterpolator.h InterpolationController.h CpuInterpolationController.h GpuInterpolationController.h)
+SET(SRC_CPP main.cpp DataImporter.cpp DataSet.cpp Timestep.cpp Particle.cpp WindowHandler.cpp Shader.cpp Camera.cpp CpuInterpolationController.cpp GpuInterpolationController.cpp RendererParticles.cpp RendererParticles.h)
+SET(SRC_H main.h DataImporter.h DataSet.h Timestep.h Particle.h WindowHandler.h Shader.h Camera.h InterpolationController.h CpuInterpolationController.h GpuInterpolationController.h RendererParticles.cpp RendererParticles.h)
 
-SET(SRC ${SRC_CPP} ${SRC_H}  )
+SET(SRC ${SRC_CPP} ${SRC_H} RendererDebugQuad.cpp RendererDebugQuad.h)
 
 add_executable(FluidVisualisation ${SRC})
 

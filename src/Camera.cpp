@@ -1,7 +1,7 @@
 #include "Camera.h"
+#include "WindowHandler.h"
 #include <iostream>
-#include <glm/gtc/matrix_transform.inl>
-#include <math.h>
+#include <glm/ext.hpp>
 
 // Constructor with vectors
 Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) :
@@ -104,4 +104,8 @@ void Camera::updateCameraVectors() {
     // Also re-calculate the Right and Up vector
     this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
     this->Up    = glm::normalize(glm::cross(this->Right, this->Front));
+}
+
+glm::mat4 Camera::GetProjectonMatrix(WindowHandler* wHandler, float nearPlane, float farPlane) const {
+    return glm::perspective(Zoom, wHandler->getWidth()/wHandler->getHeight(), 0.1f, 10.0f);
 }
