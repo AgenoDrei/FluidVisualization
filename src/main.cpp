@@ -2,32 +2,22 @@
 #include "DataImporter.h"
 #include "DataSet.h"
 #include "WindowHandler.h"
-#include "Camera.h"
-#include "Shader.h"
 #include "Timestep.h"
 #include "InterpolationController.h"
 #include "CpuInterpolationController.h"
 #include "GpuInterpolationController.h"
 #include "RendererParticles.h"
 #include "RendererDebugQuad.h"
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <GL/freeglut.h>
 #include <iostream>
-#include <stdlib.h>
-
 
 WindowHandler* window;
 Camera* camera;
-GLuint VBO, VAO;
-Shader* ourShader;
 DataSet* data = nullptr, *interpolatedData = nullptr;
 InterpolationController *ctrl;
 RendererParticles* renderer;
 RendererDebugQuad* quadRenderer;
-
-GLuint texture;
 
 int main(int argc, char* argv[]) {
     std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
@@ -63,7 +53,7 @@ void init() {
 
 void mainLoop() {
     doMovement(camera, window);
-    window->calculateFPS();
+    //window->calculateFPS();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     renderer->render(camera, window);
@@ -92,6 +82,5 @@ void doMovement(Camera* camera, WindowHandler* wHandler) {
     if(wHandler->getKey('m')) {
         camera->ProcessKeyboard(DOWN, static_cast<float>(wHandler->getDeltaTime()));
     }
-
 }
 

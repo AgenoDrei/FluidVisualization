@@ -7,12 +7,14 @@
 #include <cstring>
 
 WindowHandler* WindowHandler::instance = nullptr;
+double lastTime = 0.0;
 
 WindowHandler::WindowHandler(unsigned int windowWidth, unsigned int windowHeight) {
     WindowHandler::instance = this;
     std::memset(keys, 0, sizeof(keys));
     width = windowWidth;
     height = windowHeight;
+    lastTime = glutGet(GLUT_ELAPSED_TIME);
     std::cout << "Log> Created window handler" << std::endl;
 }
 
@@ -113,8 +115,17 @@ float WindowHandler::getHeight() const {
 //TODO Include correct FPS Calculation
 void WindowHandler::calculateFPS() {
     currentTime = glutGet(GLUT_ELAPSED_TIME);
-    deltaTime = currentTime - lastTime;
+    deltaTime = currentTime - this->lastTime;
+
+    std::cout << "FPS: " << deltaTime << std::endl;     // ms till next frame (not FPS!)
+
     lastTime = currentTime;
+}
+
+void WindowHandler::drawText(const char *text, int length, int x, int y) {
+
+
+
 }
 
 double WindowHandler::getDeltaTime() const {

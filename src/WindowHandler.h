@@ -32,6 +32,7 @@ public:
 	float getWidth() const;
 	float getHeight() const;
     void calculateFPS();
+    void drawText(const char *text, int length, int x, int y);
 
 private:
     unsigned int width, height;
