@@ -31,7 +31,7 @@ public:
     double getDeltaTime() const;
 	float getWidth() const;
 	float getHeight() const;
-    void calculateFPS();
+    int calculateFPS();
     void drawText(const char *text, int length, int x, int y);
 
 private:

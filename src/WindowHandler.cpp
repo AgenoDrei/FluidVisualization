@@ -112,14 +112,12 @@ float WindowHandler::getHeight() const {
     return static_cast<float>(height);
 }
 
-//TODO Include correct FPS Calculation
-void WindowHandler::calculateFPS() {
-    currentTime = glutGet(GLUT_ELAPSED_TIME);
+int WindowHandler::calculateFPS() {
+    currentTime = glutGet(GLUT_ELAPSED_TIME);       // this NEEDS to get called if camera should be movable...
     deltaTime = currentTime - this->lastTime;
-
-    std::cout << "FPS: " << deltaTime << std::endl;     // ms till next frame (not FPS!)
-
+    //std::cout << "FPS: " << (int)((1000.0 / deltaTime) + 0.5) << std::endl;
     lastTime = currentTime;
+    return (int)((1000.0 / deltaTime) + 0.5);
 }
 
 void WindowHandler::drawText(const char *text, int length, int x, int y) {

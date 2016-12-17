@@ -18,6 +18,7 @@ public:
     void drawText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
 
 private:
+    void setupShader();
     void prepareFreeType();
     void manageVertexObjects();
     std::string pathToFont;

@@ -25,25 +25,28 @@ TextRenderer::TextRenderer(std::string path){
 };
 TextRenderer::~TextRenderer(){};
 
+void TextRenderer::setupShader() {
+    glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
+    shader->use();
+    glUniformMatrix4fv(glGetUniformLocation(shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+}
+
 void TextRenderer::prepareFreeType() {
     FT_Library ft;
     if (FT_Init_FreeType(&ft))
         std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
     FT_Face face;
-    if (FT_New_Face(ft, "../fonts/arial.ttf", 0, &face))
+    if (FT_New_Face(ft, pathToFont.c_str(), 0, &face))
         std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
     FT_Set_Pixel_Sizes(face, 0, 42);
-
     if (FT_Load_Char(face, 'X', FT_LOAD_RENDER))
         std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
-
-
 
     // Disable Byte-Alignment restrictions: only one byte for color, not x4 anymore
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     for (GLubyte c = 0; c < 128; c++) {
-        // Load character glyph
+        // Load (first 128) character glyph
         if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
             std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
             continue;
@@ -53,15 +56,15 @@ void TextRenderer::prepareFreeType() {
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexImage2D(
-                GL_TEXTURE_2D,
-                0,
-                GL_RED,
-                face->glyph->bitmap.width,
-                face->glyph->bitmap.rows,
-                0,
-                GL_RED,
-                GL_UNSIGNED_BYTE,
-                face->glyph->bitmap.buffer
+            GL_TEXTURE_2D,
+            0,
+            GL_RED,
+            face->glyph->bitmap.width,
+            face->glyph->bitmap.rows,
+            0,
+            GL_RED,
+            GL_UNSIGNED_BYTE,
+            face->glyph->bitmap.buffer
         );
         // Set texture options
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -70,22 +73,21 @@ void TextRenderer::prepareFreeType() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         // Now store character for later use
         Character character = {
-                texture,
-                glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-                glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                face->glyph->advance.x
+            texture,
+            glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+            glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+            face->glyph->advance.x
         };
         Characters.insert(std::pair<GLchar, Character>(c, character));
     }
+    glBindTexture(GL_TEXTURE_2D, 0);
 
+    // once finished, destroy FreeType
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 }
 
 void TextRenderer::manageVertexObjects() {
-    glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
-
-    GLuint VAO, VBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glBindVertexArray(VAO);
@@ -98,6 +100,7 @@ void TextRenderer::manageVertexObjects() {
 }
 
 void TextRenderer::drawText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color) {
+    setupShader();
     prepareFreeType();
     manageVertexObjects();
 
@@ -118,12 +121,12 @@ void TextRenderer::drawText(std::string text, GLfloat x, GLfloat y, GLfloat scal
 
         // Update VBO for each character
         GLfloat vertices[6][4] = {
-                { xpos, ypos + h, 0.0, 0.0 },
-                { xpos, ypos, 0.0, 1.0 },
-                { xpos + w, ypos, 1.0, 1.0 },
-                { xpos, ypos + h, 0.0, 0.0 },
-                { xpos + w, ypos, 1.0, 1.0 },
-                { xpos + w, ypos + h, 1.0, 0.0 }
+            { xpos, ypos + h, 0.0, 0.0 },
+            { xpos, ypos, 0.0, 1.0 },
+            { xpos + w, ypos, 1.0, 1.0 },
+            { xpos, ypos + h, 0.0, 0.0 },
+            { xpos + w, ypos, 1.0, 1.0 },
+            { xpos + w, ypos + h, 1.0, 0.0 }
         };
         // Render glyph texture over quad
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
