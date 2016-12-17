@@ -15,7 +15,7 @@ class TextRenderer {
 public:
     TextRenderer(std::string path);
     ~TextRenderer();
-    void drawText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+    void drawText(std::string text, glm::vec2 pos, GLfloat scale, glm::vec3 color);
 
 private:
     void setupShader();

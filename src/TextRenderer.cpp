@@ -22,6 +22,9 @@ struct Character {
 TextRenderer::TextRenderer(std::string path){
     pathToFont = path;
     shader = new Shader("shader/text.vert", "shader/text.frag");
+    setupShader();
+    prepareFreeType();
+    manageVertexObjects();
 };
 TextRenderer::~TextRenderer(){};
 
@@ -99,11 +102,7 @@ void TextRenderer::manageVertexObjects() {
     glBindVertexArray(0);
 }
 
-void TextRenderer::drawText(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color) {
-    setupShader();
-    prepareFreeType();
-    manageVertexObjects();
-
+void TextRenderer::drawText(std::string text, glm::vec2 pos, GLfloat scale, glm::vec3 color) {
     // Activate corresponding render state
     shader->use();
     glUniform3f(glGetUniformLocation(shader->Program, "textColor"), color.x, color.y, color.z);
@@ -114,8 +113,8 @@ void TextRenderer::drawText(std::string text, GLfloat x, GLfloat y, GLfloat scal
     std::string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++) {
         Character ch = Characters[*c];
-        GLfloat xpos = x + ch.Bearing.x * scale;
-        GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+        GLfloat xpos = pos.x + ch.Bearing.x * scale;
+        GLfloat ypos = pos.y - (ch.Size.y - ch.Bearing.y) * scale;
         GLfloat w = ch.Size.x * scale;
         GLfloat h = ch.Size.y * scale;
 
@@ -140,7 +139,7 @@ void TextRenderer::drawText(std::string text, GLfloat x, GLfloat y, GLfloat scal
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        x += (ch.Advance >> 6) * scale;     // Bitshift by 6 to get value in pixels (2^6 = 64)
+        pos.x += (ch.Advance >> 6) * scale;     // Bitshift by 6 to get value in pixels (2^6 = 64)
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
