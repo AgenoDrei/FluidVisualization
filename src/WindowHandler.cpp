@@ -7,12 +7,14 @@
 #include <cstring>
 
 WindowHandler* WindowHandler::instance = nullptr;
+double lastTime = 0.0;
 
 WindowHandler::WindowHandler(unsigned int windowWidth, unsigned int windowHeight) {
     WindowHandler::instance = this;
     std::memset(keys, 0, sizeof(keys));
     width = windowWidth;
     height = windowHeight;
+    lastTime = glutGet(GLUT_ELAPSED_TIME);
     std::cout << "Log> Created window handler" << std::endl;
 }
 
@@ -110,11 +112,18 @@ float WindowHandler::getHeight() const {
     return static_cast<float>(height);
 }
 
-//TODO Include correct FPS Calculation
-void WindowHandler::calculateFPS() {
-    currentTime = glutGet(GLUT_ELAPSED_TIME);
-    deltaTime = currentTime - lastTime;
+int WindowHandler::calculateFPS() {
+    currentTime = glutGet(GLUT_ELAPSED_TIME);       // this NEEDS to get called if camera should be movable...
+    deltaTime = currentTime - this->lastTime;
+    //std::cout << "FPS: " << (int)((1000.0 / deltaTime) + 0.5) << std::endl;
     lastTime = currentTime;
+    return (int)((1000.0 / deltaTime) + 0.5);
+}
+
+void WindowHandler::drawText(const char *text, int length, int x, int y) {
+
+
+
 }
 
 double WindowHandler::getDeltaTime() const {

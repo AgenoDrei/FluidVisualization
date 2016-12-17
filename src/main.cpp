@@ -2,32 +2,26 @@
 #include "DataImporter.h"
 #include "DataSet.h"
 #include "WindowHandler.h"
-#include "Camera.h"
-#include "Shader.h"
 #include "Timestep.h"
 #include "InterpolationController.h"
 #include "CpuInterpolationController.h"
 #include "GpuInterpolationController.h"
 #include "RendererParticles.h"
 #include "RendererDebugQuad.h"
-#include <glm/glm.hpp>
+#include "TextRenderer.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <GL/freeglut.h>
 #include <iostream>
-#include <stdlib.h>
-
+#include <chrono>
 
 WindowHandler* window;
+TextRenderer* fpsRenderer;
+int fps;
 Camera* camera;
-GLuint VBO, VAO;
-Shader* ourShader;
 DataSet* data = nullptr, *interpolatedData = nullptr;
 InterpolationController *ctrl;
 RendererParticles* renderer;
 RendererDebugQuad* quadRenderer;
-
-GLuint texture;
 
 int main(int argc, char* argv[]) {
     std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
@@ -56,6 +50,7 @@ void init() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
     glPointSize(2);
     std::cout << "Log> Initalization done" << std::endl;
@@ -63,11 +58,15 @@ void init() {
 
 void mainLoop() {
     doMovement(camera, window);
-    window->calculateFPS();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     renderer->render(camera, window);
-    //quadRenderer->render(camera, window);
+    //quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
+
+    //using namespace std::chrono;        // slowing fps refresh down to ~ every .1 ms
+    //if (duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() % 1000 > 900)
+    fps = window->calculateFPS();
+    fpsRenderer->drawText(std::to_string(fps), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
 
     glutSwapBuffers();
 }
@@ -92,6 +91,5 @@ void doMovement(Camera* camera, WindowHandler* wHandler) {
     if(wHandler->getKey('m')) {
         camera->ProcessKeyboard(DOWN, static_cast<float>(wHandler->getDeltaTime()));
     }
-
 }
 
