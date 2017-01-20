@@ -1,5 +1,6 @@
 #include "main.h"
 #include "DataImporter.h"
+#include "DataExporter.h"
 #include "DataSet.h"
 #include "WindowHandler.h"
 #include "Timestep.h"
@@ -25,7 +26,8 @@ RendererDebugQuad* quadRenderer;
 
 int main(int argc, char* argv[]) {
     std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
-	data = DataImporter::load(path + "/Downloads/drop.dat");
+	//data = DataImporter::load(path + "/drop_export.dat");
+    data = DataImporter::load(path + "/Downloads/drop.dat");
 
     //Window Initialisation
     window = new WindowHandler(800, 600);
@@ -41,8 +43,9 @@ void init() {
     renderer = new RendererParticles();
     quadRenderer = new RendererDebugQuad();
 
-    interpolatedData = ctrl->interpolateData(data);
-    renderer->setData(interpolatedData->getTimestep(0), interpolatedData->getNumberParticles());
+    //interpolatedData = ctrl->interpolateData(data);
+
+    renderer->setData(data->getTimestep(0), data->getNumberParticles());
     //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
     //glEnable(GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
@@ -50,9 +53,9 @@ void init() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    fpsRenderer = new TextRenderer("../fonts/arial.ttf");
+    //fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
-    glPointSize(2);
+    glPointSize(1);
     std::cout << "Log> Initalization done" << std::endl;
 }
 
@@ -66,7 +69,7 @@ void mainLoop() {
     //using namespace std::chrono;        // slowing fps refresh down to ~ every .1 ms
     //if (duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() % 1000 > 900)
     fps = window->calculateFPS();
-    fpsRenderer->drawText(std::to_string(fps), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
+    //fpsRenderer->drawText(std::to_string(fps), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
 
     glutSwapBuffers();
 }
