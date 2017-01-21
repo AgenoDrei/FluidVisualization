@@ -1,15 +1,15 @@
 #include "main.h"
-#include "DataImporter.h"
-#include "DataExporter.h"
+#include "datasetOperation/DataImporter.h"
+#include "datasetOperation/DataExporter.h"
 #include "DataSet.h"
 #include "WindowHandler.h"
 #include "Timestep.h"
-#include "InterpolationController.h"
-#include "CpuInterpolationController.h"
-#include "GpuInterpolationController.h"
-#include "RendererParticles.h"
-#include "RendererDebugQuad.h"
-#include "TextRenderer.h"
+#include "datasetOperation/InterpolationController.h"
+#include "datasetOperation/CpuInterpolationController.h"
+#include "datasetOperation/GpuInterpolationController.h"
+#include "rendering/RendererParticles.h"
+#include "rendering/RendererDebugQuad.h"
+#include "rendering/TextRenderer.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -26,8 +26,7 @@ RendererDebugQuad* quadRenderer;
 
 int main(int argc, char* argv[]) {
     std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
-	//data = DataImporter::load(path + "/drop_export.dat");
-    data = DataImporter::load(path + "/Downloads/drop.dat");
+    data = DataImporter::load(path + "/Downloads/interpol30.dat");
 
     //Window Initialisation
     window = new WindowHandler(800, 600);
@@ -39,21 +38,23 @@ void init() {
     std::cout << "Log> Render initialization running" << std::endl;
     camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
     window->setCamera(camera);
-    ctrl = new CpuInterpolationController(10);
+    ctrl = new CpuInterpolationController(30);
     renderer = new RendererParticles();
     quadRenderer = new RendererDebugQuad();
 
-    //interpolatedData = ctrl->interpolateData(data);
+//    interpolatedData = ctrl->interpolateData(data);
+//    std::string homePath = std::getenv("HOME");
+//    DataExporter::write(homePath + "/Downloads/interpol30.dat", interpolatedData);
 
     renderer->setData(data->getTimestep(0), data->getNumberParticles());
-    //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
-    //glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
+//    quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
+//    glEnable(GL_DEPTH_TEST);
+//    glEnable(GL_CULL_FACE);
+//    glCullFace(GL_BACK);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    //fpsRenderer = new TextRenderer("../fonts/arial.ttf");
+    fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
     glPointSize(1);
     std::cout << "Log> Initalization done" << std::endl;
@@ -66,10 +67,8 @@ void mainLoop() {
     renderer->render(camera, window);
     //quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
 
-    //using namespace std::chrono;        // slowing fps refresh down to ~ every .1 ms
-    //if (duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() % 1000 > 900)
     fps = window->calculateFPS();
-    //fpsRenderer->drawText(std::to_string(fps), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
+    fpsRenderer->drawText(std::to_string(fps), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
 
     glutSwapBuffers();
 }

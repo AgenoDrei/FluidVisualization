@@ -10,13 +10,14 @@
 #include <glm/ext.hpp>
 #include "TextRenderer.h"
 #include "Shader.h"
-#include FT_FREETYPE_H
+//#include "freetype/freetype.h" FT_FREETYPE_H
+#include "freetype/freetype.h"
 
 struct Character {
     GLuint TextureID; // ID handle of the glyph texture
     glm::ivec2 Size; // Size of glyph
     glm::ivec2 Bearing; // Offset from baseline to left/top of glyph
-    GLuint Advance; // Offset to advance to next glyph
+    FT_Pos Advance; // Offset to advance to next glyph
 };
 
 TextRenderer::TextRenderer(std::string path){
