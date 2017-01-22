@@ -12,15 +12,13 @@ class Renderer3DTextureSlicing {
 public:
     Renderer3DTextureSlicing();
     ~Renderer3DTextureSlicing();
-    void render(Timestep* step, uint32_t count, Camera* camera, WindowHandler* wHandler);
+    void setData(Timestep* step, uint32_t count);
+    void render(Camera* camera, WindowHandler* wHandler);
 private:
     uint32_t particleCount, dimX, dimY, dimZ;
-    GLuint VAO, VBO;
-//    glm::vec4* buffer;
+    GLuint VAO, VBO, textureID;
     Shader* shader;
-    GLuint textureID;
+    glm::vec4* buffer;
     glm::vec3* vTextureSlices;
-    void loadIntoTexture(Timestep* step);
-    void bindVertex();
     void sliceVolume();
 };
