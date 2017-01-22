@@ -10,6 +10,7 @@
 #include "RendererParticles.h"
 #include "RendererDebugQuad.h"
 #include "TextRenderer.h"
+#include "OctreeInterpolationController.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -39,7 +40,8 @@ void init() {
     std::cout << "Log> Render initialization running" << std::endl;
     camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
     window->setCamera(camera);
-    ctrl = new CpuInterpolationController(10);
+    //ctrl = new CpuInterpolationController(10);
+    ctrl = new OctreeInterpolationController();
     renderer = new RendererParticles();
     quadRenderer = new RendererDebugQuad();
 
