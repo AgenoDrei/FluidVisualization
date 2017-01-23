@@ -15,6 +15,8 @@ Renderer3DTextureSlicing::~Renderer3DTextureSlicing() {
 
 void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count) {
     particleCount = count;
+    dimX = dimY = dimZ = (uint32_t)std::pow(particleCount, 1/3.);       // assumption: exactly cubic !
+    num_slices = dimZ;
     glm::vec3* pData = new glm::vec3[particleCount];
 
     for (auto i = 0u; i < particleCount; i++) {
@@ -48,56 +50,28 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count) {
 }
 
 void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
-    shader->use();
-
     glm::mat4 model, view, projection;
     model = glm::translate(model, glm::vec3(0.0f));
     model = camera->GetViewMatrix();
     projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
 
-    // Pass the matrices to the shader
+    sliceVolume(camera->Front);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glBindVertexArray(VAO);
+    shader->use();
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(vTextureSlices)/sizeof(vTextureSlices[0]));
 
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_POINTS, 0, particleCount);
-    glBindVertexArray(0);
-
-
-//    dimX = dimY = dimZ = (uint32_t)std::pow(particleCount, 1/3.);       // assumption: exactly cubic !
-//
-//    bindVertex();
-//
-//    sliceVolume();
-//
-//    glBindVertexArray(VAO);
-//    shader.Use();
-//    glUniformMatrix4fv(shader("MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
-//    glDrawArrays(GL_TRIANGLES, 0, sizeof(vTextureSlices)/
-//                                  sizeof(vTextureSlices[0]));
-//    shader.UnUse();
-//    glDisable(GL_BLEND);
+    glDisable(GL_BLEND);
 }
 
-void Renderer3DTextureSlicing::sliceVolume() {      // main slicing function
-    int FindAbsMax(glm::vec3 v) {
-        v = glm::abs(v);
-        int max_dim = 0;
-        float val = v.x;
-        if(v.y>val) {
-            val = v.y;
-            max_dim = 1;
-        }
-        if(v.z > val) {
-            val = v.z;
-            max_dim = 2;
-        }
-        return max_dim;
-    }
-
-    //for floating point inaccuracy
-    const float EPSILON = 0.0001f;
+void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main slicing function
+    const float EPSILON = 0.0001f;      //for floating point inaccuracy
 
     glm::vec3 unitCubeVertices[8] = {
         glm::vec3(-0.5,-0.5,-0.5),
@@ -142,8 +116,8 @@ void Renderer3DTextureSlicing::sliceVolume() {      // main slicing function
         if(dist<min_dist)
             min_dist = dist;
     }
-    //find tha abs maximum of the view direction vector
-    int max_dim = FindAbsMax(viewDir);
+//    //find tha abs maximum of the view direction vector
+//    int max_dim = FindAbsMax(viewDir);
 
     //expand it a little bit
     min_dist -= EPSILON;
@@ -277,4 +251,19 @@ void Renderer3DTextureSlicing::sliceVolume() {      // main slicing function
     //update buffer object with the new vertices
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferSubData(GL_ARRAY_BUFFER, 0,  sizeof(vTextureSlices), &(vTextureSlices[0].x));
+}
+
+int Renderer3DTextureSlicing::FindAbsMax(glm::vec3 v) {
+    v = glm::abs(v);
+    int max_dim = 0;
+    float val = v.x;
+    if(v.y>val) {
+        val = v.y;
+        max_dim = 1;
+    }
+    if(v.z > val) {
+        val = v.z;
+        max_dim = 2;
+    }
+    return max_dim;
 }

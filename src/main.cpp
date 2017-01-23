@@ -9,6 +9,7 @@
 #include "datasetOperation/GpuInterpolationController.h"
 #include "rendering/RendererParticles.h"
 #include "rendering/RendererDebugQuad.h"
+#include "rendering/Renderer3DTextureSlicing.h"
 #include "rendering/TextRenderer.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -23,6 +24,7 @@ DataSet* data = nullptr, *interpolatedData = nullptr;
 InterpolationController *ctrl;
 RendererParticles* renderer;
 RendererDebugQuad* quadRenderer;
+Renderer3DTextureSlicing* texSliceRenderer;
 
 int main(int argc, char* argv[]) {
     std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
@@ -41,21 +43,22 @@ void init() {
     ctrl = new CpuInterpolationController(30);
     renderer = new RendererParticles();
     quadRenderer = new RendererDebugQuad();
+    texSliceRenderer = new Renderer3DTextureSlicing();
+    fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
 //    interpolatedData = ctrl->interpolateData(data);
 //    std::string homePath = std::getenv("HOME");
 //    DataExporter::write(homePath + "/Downloads/interpol30.dat", interpolatedData);
 
-    renderer->setData(data->getTimestep(0), data->getNumberParticles());
+//    renderer->setData(data->getTimestep(0), data->getNumberParticles());
 //    quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
+    texSliceRenderer->setData(data->getTimestep(0), data->getNumberParticles());
 //    glEnable(GL_DEPTH_TEST);
 //    glEnable(GL_CULL_FACE);
 //    glCullFace(GL_BACK);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    fpsRenderer = new TextRenderer("../fonts/arial.ttf");
-
     glPointSize(1);
     std::cout << "Log> Initalization done" << std::endl;
 }
@@ -66,6 +69,7 @@ void mainLoop() {
 
     renderer->render(camera, window);
     //quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
+    texSliceRenderer->render(camera, window);
 
     fps = window->calculateFPS();
     fpsRenderer->drawText(std::to_string(fps), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));

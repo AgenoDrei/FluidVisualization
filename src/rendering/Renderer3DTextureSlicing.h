@@ -15,10 +15,10 @@ public:
     void setData(Timestep* step, uint32_t count);
     void render(Camera* camera, WindowHandler* wHandler);
 private:
-    uint32_t particleCount, dimX, dimY, dimZ;
+    uint32_t particleCount, dimX, dimY, dimZ, num_slices;
     GLuint VAO, VBO, textureID;
     Shader* shader;
-    glm::vec4* buffer;
     glm::vec3* vTextureSlices;
-    void sliceVolume();
+    void sliceVolume(glm::vec3 viewDir);
+    int FindAbsMax(glm::vec3 v);
 };
