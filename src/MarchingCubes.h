@@ -19,7 +19,6 @@ protected:
     int getCubeIndex(GridCell* cell, float isolevel);
 
     glm::vec3 VertexInterp(float isolevel, glm::vec3 p1, glm::vec3 p2, float vlaueP1, float vlaueP2);
-
     void polygonise();
 public:
     MarchingCubes(float stepSize);
