@@ -19,7 +19,7 @@ bool OctreeNode::isContained(Particle particle) {
     float minY = position.y;
     float maxY = position.y + length;
     float minZ = position.z;
-    float maxZ = position.z;
+    float maxZ = position.z + length;
     if(particle.position.x >= minX && particle.position.x <= maxX
        && particle.position.y >= minY && particle.position.y <= maxY
             && particle.position.z >= minZ && particle.position.z <= maxZ) {
@@ -31,6 +31,12 @@ bool OctreeNode::isContained(Particle particle) {
 void OctreeNode::setExitNode(Particle particle) {
     exitNode = true;
     data = particle;
+}
+
+bool OctreeNode::isExitNode() {
+    if(exitNode)
+        return true;
+    return false;
 }
 
 void OctreeNode::setChildNodes(OctreeNode **nodes) {

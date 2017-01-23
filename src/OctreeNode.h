@@ -18,6 +18,7 @@ private:
 public:
     OctreeNode(glm::vec3 anchor, float size);
     void setExitNode(Particle particle);
+    bool isExitNode();
     void setChildNodes(OctreeNode** nodes);
     OctreeNode* getNode(uint32_t index);
     void addInsert(Particle particle);

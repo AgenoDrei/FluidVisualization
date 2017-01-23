@@ -54,7 +54,7 @@ void OctreeInterpolationController::buildOctree(OctreeNode* node) {
     GLfloat half = node->length / 2.0f;
 
     //Create 8 divisions in Block
-    OctreeNode* nodes[8];
+    OctreeNode** nodes = new OctreeNode*[8] {0};
     nodes[0] = new OctreeNode(node->position, half); //First section 0,0,0
     nodes[1] = new OctreeNode(glm::vec3(node->position.x + half, node->position.y, node->position.z), half); //Second 1,0,0
     nodes[2] = new OctreeNode(glm::vec3(node->position.x, node->position.y + half, node->position.z), half); //Third 0,1,0
