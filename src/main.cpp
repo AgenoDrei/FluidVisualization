@@ -45,7 +45,7 @@ void init() {
     renderer = new RendererParticles();
     quadRenderer = new RendererDebugQuad();
 
-    //interpolatedData = ctrl->interpolateData(data);
+    interpolatedData = ctrl->interpolateData(data);
 
     renderer->setData(data->getTimestep(0), data->getNumberParticles());
     //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());

@@ -10,13 +10,14 @@
 #include "Particle.h"
 
 class DataSet;
+class TimeStep;
 class OctreeNode;
 
 class OctreeInterpolationController : public InterpolationController{
 private:
     void prepareData(DataSet* data);
     void compute();
-    void buildOctree(OctreeNode* node, std::vector<Particle>* insertList);
+    void buildOctree(OctreeNode* node);
     DataSet* interpolatedData;
     DataSet* sourceData;
     OctreeNode* root;

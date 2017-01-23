@@ -5,6 +5,7 @@
 #include "OctreeInterpolationController.h"
 #include "DataSet.h"
 #include "OctreeNode.h"
+#include "Timestep.h"
 
 
 OctreeInterpolationController::OctreeInterpolationController() :
@@ -25,6 +26,14 @@ void OctreeInterpolationController::prepareData(DataSet *data) {
     glm::vec3 rootPos = glm::vec3(0.0f);
     GLfloat rootSize = 1.0f;
     root = new OctreeNode(rootPos, rootSize);
+
+    //ToDo: Insert all data in insert List of root node
+    Timestep* step = data->getTimestep(0);
+    for(auto i = 0u; i < step->getSize(); i++) {
+        root->addInsert(step->getParticle(i));
+    }
+
+    buildOctree(root);
 }
 
 void OctreeInterpolationController::compute() {
@@ -32,17 +41,17 @@ void OctreeInterpolationController::compute() {
 }
 
 //Recursive function for octree
-void OctreeInterpolationController::buildOctree(OctreeNode* node, std::vector<Particle> *insertList) {
+void OctreeInterpolationController::buildOctree(OctreeNode* node) {
     //Check Termination criteria: Only one or zero Particle in list
-    if(insertList->size() == 1) {
-        node->setExitNode(insertList->front());
+    if(node->getInsertListSize() == 1) {
+        node->setExitNode(node->getInsertListElement(0));
         return;
-    } else if(insertList->size() < 1) {
+    } else if(node->getInsertListSize() < 1) {
         return;
     }
 
     //Calculate mid of block for division
-    GLfloat half = node->length;
+    GLfloat half = node->length / 2.0f;
 
     //Create 8 divisions in Block
     OctreeNode* nodes[8];
@@ -59,4 +68,17 @@ void OctreeInterpolationController::buildOctree(OctreeNode* node, std::vector<Pa
     node->setChildNodes(nodes);
 
     //TODO: Split list for Nodes
+    for(auto i = 0u; i < node->getInsertListSize(); i++) {
+        Particle currentParticle = node->getInsertListElement(i);
+        for(auto j = 0u; j < 8; j++) {
+            if(nodes[j]->isContained(currentParticle)) {
+                nodes[j]->addInsert(currentParticle);
+                break;
+            }
+        }
+    }
+
+    for(auto i = 0u; i < 8; i++) {
+        buildOctree(nodes[i]);
+    }
 }
