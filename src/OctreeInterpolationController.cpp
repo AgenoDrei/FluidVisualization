@@ -131,7 +131,7 @@ OctreeNode* OctreeInterpolationController::searchNode(glm::vec3 searchPosition) 
         }
     }
 
-    if(depth >= searchDepth && node->isEmptyNode()) {
+    /*if(depth >= searchDepth && node->isEmptyNode()) {
         while(!parent->isExitNode()) {
             for(auto i = 0u; i < 8; i++) {
                 OctreeNode* child = parent->getNode(i);
@@ -142,7 +142,7 @@ OctreeNode* OctreeInterpolationController::searchNode(glm::vec3 searchPosition) 
             }
         }
         return parent;
-    } else if(depth >=7 && !node->isEmptyNode()) {
+    } else*/ if(depth >=7 && !node->isEmptyNode()) {
         return node;
     } else {
         return nullptr;

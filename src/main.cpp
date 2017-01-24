@@ -41,7 +41,7 @@ void init() {
     camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
     window->setCamera(camera);
     //ctrl = new CpuInterpolationController(10);
-    ctrl = new OctreeInterpolationController(200, 12);
+    ctrl = new OctreeInterpolationController(300, 9);
     renderer = new RendererParticles();
     //quadRenderer = new RendererDebugQuad();
 
@@ -57,7 +57,7 @@ void init() {
 
     //fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
-    glPointSize(2);
+    glPointSize(1);
     std::cout << "Log> Initalization done" << std::endl;
 }
 
