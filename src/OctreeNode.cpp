@@ -5,7 +5,8 @@
 #include "OctreeNode.h"
 
 OctreeNode::OctreeNode(glm::vec3 anchor, float size) :
-        exitNode(false),
+        exitNode(true),
+        emptyNode(true),
         position(anchor),
         length(size){
     for(auto i = 0u; i < 8; i++) {
@@ -13,27 +14,40 @@ OctreeNode::OctreeNode(glm::vec3 anchor, float size) :
     }
 }
 
-bool OctreeNode::isContained(Particle particle) {
+bool OctreeNode::isContained(glm::vec3 particle) {
     float minX = position.x;
     float maxX = position.x + length;
     float minY = position.y;
     float maxY = position.y + length;
     float minZ = position.z;
-    float maxZ = position.z;
-    if(particle.position.x >= minX && particle.position.x <= maxX
-       && particle.position.y >= minY && particle.position.y <= maxY
-            && particle.position.z >= minZ && particle.position.z <= maxZ) {
+    float maxZ = position.z + length;
+    if(particle.x >= minX && particle.x <= maxX
+       && particle.y >= minY && particle.y <= maxY
+            && particle.z >= minZ && particle.z <= maxZ) {
         return true;
     }
     return false;
 }
 
 void OctreeNode::setExitNode(Particle particle) {
-    exitNode = true;
+    emptyNode = false;
     data = particle;
 }
 
+bool OctreeNode::isExitNode() {
+    if(exitNode)
+        return true;
+    return false;
+}
+
+bool OctreeNode::isEmptyNode() {
+    if(emptyNode)
+        return true;
+    return false;
+}
+
 void OctreeNode::setChildNodes(OctreeNode **nodes) {
+    exitNode = false;
     for(auto i = 0u; i < 8; i++) {
         childNodes[i] = nodes[i];
     }
@@ -44,6 +58,7 @@ OctreeNode* OctreeNode::getNode(uint32_t index) {
 }
 
 void OctreeNode::addInsert(Particle particle) {
+    emptyNode = false;
     insertList.push_back(particle);
 }
 
@@ -53,4 +68,8 @@ uint32_t OctreeNode::getInsertListSize() {
 
 Particle OctreeNode::getInsertListElement(uint32_t index) {
     return insertList.at(index);
+}
+
+Particle OctreeNode::getData() {
+    return data;
 }

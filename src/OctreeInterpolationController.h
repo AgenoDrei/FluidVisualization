@@ -18,11 +18,13 @@ private:
     void prepareData(DataSet* data);
     void compute();
     void buildOctree(OctreeNode* node);
+    OctreeNode* searchNode(glm::vec3 searchPosition);
     DataSet* interpolatedData;
     DataSet* sourceData;
     OctreeNode* root;
+    uint32_t resolution, searchDepth;
 public:
-    OctreeInterpolationController();
+    OctreeInterpolationController(uint32_t quality, uint32_t depth);
     ~OctreeInterpolationController();
     DataSet* interpolateData(DataSet* data);
 };
