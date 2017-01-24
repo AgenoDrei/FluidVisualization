@@ -40,12 +40,15 @@ bool OctreeNode::isExitNode() {
     return false;
 }
 
+<<<<<<< HEAD
 bool OctreeNode::isEmptyNode() {
     if(emptyNode)
         return true;
     return false;
 }
 
+=======
+>>>>>>> 035e8c2e62578537e8dc52b291dd168dfd8c6c14
 void OctreeNode::setChildNodes(OctreeNode **nodes) {
     exitNode = false;
     for(auto i = 0u; i < 8; i++) {
