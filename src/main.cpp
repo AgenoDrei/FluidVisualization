@@ -41,7 +41,7 @@ void init() {
     camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
     window->setCamera(camera);
     //ctrl = new CpuInterpolationController(10);
-    ctrl = new OctreeInterpolationController(300, 9);
+    ctrl = new OctreeInterpolationController(300, true, 7, 1.5);
     renderer = new RendererParticles();
     //quadRenderer = new RendererDebugQuad();
 

@@ -22,9 +22,11 @@ private:
     DataSet* interpolatedData;
     DataSet* sourceData;
     OctreeNode* root;
-    uint32_t resolution, searchDepth;
+    bool minDepthCorrection;
+    uint32_t resolution, minDepth;
+    GLfloat distanceCorrectionFactor;
 public:
-    OctreeInterpolationController(uint32_t quality, uint32_t depth);
+    OctreeInterpolationController(uint32_t resolution, bool minDepthCorrection, uint32_t minDepth, GLfloat distanceCorrectionFactor);
     ~OctreeInterpolationController();
     DataSet* interpolateData(DataSet* data);
 };
