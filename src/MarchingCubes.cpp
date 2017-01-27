@@ -2,7 +2,9 @@
 #include "Timestep.h"
 #include "Grid.h"
 #include "GridCell.h"
-#include "Particle.h"
+#include <iostream>
+
+//todo tables in seperate file
 
 int edgeTable[256]={
     0x0  , 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
@@ -298,51 +300,52 @@ int triangleTable[256][16] = {
     {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
 };
 
-MarchingCubes::MarchingCubes(float stepSize) :
-    _stepSize(stepSize) {
+MarchingCubes::MarchingCubes() {
 
 }
 
-void MarchingCubes::calculate(Timestep* timestep) {
+void MarchingCubes::calculate(Grid* grid) {
     triangleMesh.clear();
 
-    auto grid = Grid::CreateFromTimestep(timestep, _stepSize);
-
-    for(auto x = 0; x < grid->getDimension().x; x++) {
-        for(auto y = 0; y < grid->getDimension().y; y++) {
-            for(auto z = 0; z < grid->getDimension().z; z++) {
-                auto meshPart = polygonise(grid->getCell(x, y, z), 0.1f);
-                triangleMesh.insert(triangleMesh.end(), meshPart.begin(), meshPart.end());
+    auto gridDimension = grid->getDimension();
+    for(auto x = 0; x < gridDimension.x; x++) {
+        for(auto y = 0; y < gridDimension.y; y++) {
+            for(auto z = 0; z < gridDimension.z; z++) {
+                if(grid->isValidCell(x, y , z)) {
+                    auto meshPart = polygonise(grid->getCell(x, y, z), 0.000001f);
+                    triangleMesh.insert(triangleMesh.end(), meshPart.begin(), meshPart.end());
+                }
             }
         }
     }
-
+    std::cout<<"Marching cubes found "<<triangleMesh.size()<<" triangles"<<std::endl;
 }
 
 int MarchingCubes::getCubeIndex(GridCell* cell, float isolevel) {
     auto cubeIndex = 0;
-    if(cell->value[0]->pressure < isolevel) {
+
+    if(cell->value[0]->density < isolevel) {
         cubeIndex |= 1;
     }
-    if(cell->value[1]->pressure < isolevel) {
+    if(cell->value[1]->density < isolevel) {
         cubeIndex |= 2;
     }
-    if(cell->value[2]->pressure < isolevel) {
+    if(cell->value[2]->density < isolevel) {
         cubeIndex |= 4;
     }
-    if(cell->value[3]->pressure < isolevel) {
+    if(cell->value[3]->density < isolevel) {
         cubeIndex |= 8;
     }
-    if(cell->value[4]->pressure < isolevel) {
+    if(cell->value[4]->density < isolevel) {
         cubeIndex |= 16;
     }
-    if(cell->value[5]->pressure < isolevel) {
+    if(cell->value[5]->density < isolevel) {
         cubeIndex |= 32;
     }
-    if(cell->value[6]->pressure < isolevel) {
+    if(cell->value[6]->density < isolevel) {
         cubeIndex |= 64;
     }
-    if(cell->value[7]->pressure < isolevel) {
+    if(cell->value[7]->density < isolevel) {
         cubeIndex |= 128;
     }
 
@@ -352,6 +355,7 @@ int MarchingCubes::getCubeIndex(GridCell* cell, float isolevel) {
 std::vector<Triangle> MarchingCubes::polygonise(GridCell* cell, float isolevel) {
     auto cubeIndex = getCubeIndex(cell, isolevel);
 
+    //std::cout<<cubeIndex<<std::endl;
     if(edgeTable[cubeIndex] == 0) {
         return std::vector<Triangle>();
     }
@@ -413,7 +417,7 @@ glm::vec3 MarchingCubes::VertexInterp(float isolevel, glm::vec3 p1, glm::vec3 p2
     float mu;
     glm::vec3 p;
 
-    if(std::abs(isolevel - vlaueP1) < 0.00001) {
+    if(std::abs(isolevel - vlaueP1) < 0.00001) { // TODO: remove magic number
         return p1;
     }
     if(std::abs(isolevel - vlaueP2) < 0.00001) {
@@ -430,8 +434,6 @@ glm::vec3 MarchingCubes::VertexInterp(float isolevel, glm::vec3 p1, glm::vec3 p2
     return(p);
 }
 
-void MarchingCubes::draw() {
-//    auto grid = Grid::CreateFromTimestep(timestep, _stepSize);
-
-    auto test = 1;
+const std::vector<Triangle>& MarchingCubes::getTriangles() const {
+    return triangleMesh;
 }

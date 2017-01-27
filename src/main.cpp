@@ -10,6 +10,8 @@
 #include "RendererDebugQuad.h"
 #include "TextRenderer.h"
 #include "MarchingCubes.h"
+#include "Grid.h"
+#include "RendererMarchingCubes.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -23,20 +25,18 @@ DataSet* data = nullptr, *interpolatedData = nullptr;
 InterpolationController *ctrl;
 RendererParticles* renderer;
 RendererDebugQuad* quadRenderer;
+RendererMarchingCubes* marchingCubesRenderer;
 
 int main(int argc, char* argv[]) {
     std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
-	data = DataImporter::load(path + "/Downloads/drop.dat");
+	data = DataImporter::load(path + "/Downloads/drop_100.dat");
+    interpolatedData = data;
 
-    auto firstTimestep = data->getTimestep(0);
-
-/*    auto algorithm = MarchingCubes(0.03f);
-    algorithm.calculate(firstTimestep);*/
     //Window Initialisation
-    /*window = new WindowHandler(800, 600);
+    window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop);
 
-    algorithm.draw();*/
+    //algorithm.draw();
 
     return 0;
 }
@@ -48,8 +48,19 @@ void init() {
     ctrl = new CpuInterpolationController(10);
     renderer = new RendererParticles();
     quadRenderer = new RendererDebugQuad();
+    marchingCubesRenderer = new RendererMarchingCubes();
 
-    interpolatedData = ctrl->interpolateData(data);
+
+    auto firstTimestep = data->getTimestep(0);
+    auto grid = new Grid(glm::vec3(100, 100, 100), firstTimestep);
+
+    auto algorithm = MarchingCubes();
+    algorithm.calculate(grid);
+    auto triangles = algorithm.getTriangles();
+
+    marchingCubesRenderer->addTriangles(triangles);
+
+    //interpolatedData = ctrl->interpolateData(data);
     renderer->setData(interpolatedData->getTimestep(0), interpolatedData->getNumberParticles());
     //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
     //glEnable(GL_DEPTH_TEST);
@@ -60,7 +71,7 @@ void init() {
 
     fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
-    glPointSize(2);
+    glPointSize(1);
     std::cout << "Log> Initalization done" << std::endl;
 }
 
@@ -70,6 +81,8 @@ void mainLoop() {
 
     renderer->render(camera, window);
     //quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
+
+    marchingCubesRenderer->render(camera, window);
 
     //using namespace std::chrono;        // slowing fps refresh down to ~ every .1 ms
     //if (duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() % 1000 > 900)

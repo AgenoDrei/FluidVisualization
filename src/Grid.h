@@ -8,10 +8,13 @@ class Timestep;
 
 class Grid {
 private:
-    GridCell* _cells;
-    glm::vec3 _dimension;
+    glm::ivec3 _dimension;
+    Timestep* _timestep;
+
+protected:
+    int getIndex(int x, int y, int z);
 public:
-    Grid(uint32_t size, glm::vec3 dimension);
+    Grid(glm::ivec3 dimension, Timestep* timestep); // the timestep is already in a grid format
     ~Grid();
 
     static Grid* CreateFromTimestep(Timestep* timestep, float stepSize);
@@ -19,6 +22,8 @@ public:
     glm::vec3 getDimension();
 
     GridCell* getCell(int x, int y, int z);
+
+    bool isValidCell(int x, int y, int z);
 };
 
 

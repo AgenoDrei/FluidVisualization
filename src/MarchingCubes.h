@@ -6,12 +6,10 @@
 
 class Timestep;
 class GridCell;
+class Grid;
 class Timestep;
 
-
 class MarchingCubes {
-private:
-    float _stepSize;
 protected:
     std::vector<Triangle> triangleMesh;
 
@@ -19,12 +17,11 @@ protected:
     int getCubeIndex(GridCell* cell, float isolevel);
 
     glm::vec3 VertexInterp(float isolevel, glm::vec3 p1, glm::vec3 p2, float vlaueP1, float vlaueP2);
-    void polygonise();
 public:
-    MarchingCubes(float stepSize);
+    MarchingCubes();
 
-    void calculate(Timestep* timestep);
-    void draw();
+    void calculate(Grid* grid);
+    const std::vector<Triangle>& getTriangles() const;
 };
 
 

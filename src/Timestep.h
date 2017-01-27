@@ -17,6 +17,8 @@ public:
     ~Timestep();
 
     Particle getParticle(uint32_t index) const;
+    Particle* getParticleReference(uint32_t index);
+    Particle* getParticleReference(int32_t index);
     uint32_t getSize() const;
 
     glm::vec4* getPositionDensity();
@@ -26,4 +28,7 @@ public:
     float getAverageDensityAt(glm::vec3 position, float area);
 
     Particle* getParticleAt(glm::vec3 position);
+
+    bool isIndexValid(int index);
+    bool isIndexValid(uint32_t index);
 };

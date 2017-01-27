@@ -19,11 +19,36 @@ Timestep::~Timestep() {
 }
 
 Particle Timestep::getParticle(uint32_t index) const {
+    if(index > _numberParticles) {
+        throw "Argument out of range";
+    }
     return _particles[index];
+}
+
+Particle* Timestep::getParticleReference(uint32_t index) {
+    if(index > _numberParticles) {
+        throw "Argument out of range";
+    }
+    return &_particles[index];
+}
+
+Particle* Timestep::getParticleReference(int32_t index) {
+    if(index < 0 || static_cast<uint32_t>(index) > _numberParticles) {
+        throw "Argument out of range";
+    }
+    return &_particles[index];
 }
 
 uint32_t Timestep::getSize() const {
     return _numberParticles;
+}
+
+bool Timestep::isIndexValid(int index) {
+    return index >= 0 && static_cast<uint32_t>(index) <= _numberParticles;
+}
+
+bool Timestep::isIndexValid(uint32_t index) {
+    return index <= _numberParticles;
 }
 
 glm::vec4* Timestep::getPositionDensity() {
