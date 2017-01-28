@@ -6,10 +6,10 @@
 #include "Timestep.h"
 #include "InterpolationController.h"
 #include "CpuInterpolationController.h"
-#include "GpuInterpolationController.h"
 #include "RendererParticles.h"
 #include "RendererDebugQuad.h"
 #include "TextRenderer.h"
+#include "OctreeInterpolationController.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -26,8 +26,8 @@ RendererDebugQuad* quadRenderer;
 
 int main(int argc, char* argv[]) {
     std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
-	//data = DataImporter::load(path + "/drop_export.dat");
-    data = DataImporter::load(path + "/Downloads/drop.dat");
+	data = DataImporter::load(path + "/Downloads/drop.dat");
+    //data = DataImporter::load(path + "/Downloads/drop_interpolation_215.dat");
 
     //Window Initialisation
     window = new WindowHandler(800, 600);
@@ -39,13 +39,14 @@ void init() {
     std::cout << "Log> Render initialization running" << std::endl;
     camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
     window->setCamera(camera);
-    ctrl = new CpuInterpolationController(10);
+    //ctrl = new CpuInterpolationController(10);
+    ctrl = new OctreeInterpolationController(false, 1, 1.5);
     renderer = new RendererParticles();
-    quadRenderer = new RendererDebugQuad();
+    //quadRenderer = new RendererDebugQuad();
 
-    //interpolatedData = ctrl->interpolateData(data);
+    interpolatedData = ctrl->interpolateData(data, 400, 100, 400);
 
-    renderer->setData(data->getTimestep(0), data->getNumberParticles());
+    renderer->setData(interpolatedData->getTimestep(0), interpolatedData->getNumberParticles());
     //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
     //glEnable(GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
@@ -55,7 +56,7 @@ void init() {
 
     //fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
-    glPointSize(1);
+    glPointSize(1.5);
     std::cout << "Log> Initalization done" << std::endl;
 }
 

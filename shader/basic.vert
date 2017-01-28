@@ -12,9 +12,11 @@ void main()
 {
     gl_Position = projection * view * model * vec4(position, 1.0f);
     //ourColor = vec3(0.5f + density*1000);
+
     if(density == 0) { //ToDo fix
         ourColor = vec3(0.0f, 0.0f, 0.0f);
+        gl_Position = vec4(0.0f);
     } else {
-        ourColor = vec3(0.5f + density*1000);
+        ourColor = vec3(0.2f + density*1000);
     }
 }

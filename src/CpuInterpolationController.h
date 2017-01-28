@@ -9,17 +9,16 @@ class DataSet;
 
 class CpuInterpolationController : public InterpolationController {
 public:
-    CpuInterpolationController(uint32_t interpolationQuality);
+    CpuInterpolationController();
     ~CpuInterpolationController();
 
-    DataSet* interpolateData(DataSet* data);
+    DataSet* interpolateData(DataSet* data, GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ);
 
 private:
     void prepareData(DataSet* data);
-    void compute();
+    void compute(GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ);
     DataSet* interpolatedData;
     DataSet* sourceData;
-    uint32_t quality;
 };
 
 

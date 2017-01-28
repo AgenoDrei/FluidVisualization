@@ -13,9 +13,8 @@
 #include "Camera.h"
 #include "WindowHandler.h"
 
-CpuInterpolationController::CpuInterpolationController(uint32_t interpolationQuality) :
-        interpolatedData( nullptr ),
-        quality( interpolationQuality ) {}
+CpuInterpolationController::CpuInterpolationController() :
+        interpolatedData( nullptr ) {}
 
 CpuInterpolationController::~CpuInterpolationController() {
     delete [] interpolatedData;
@@ -25,15 +24,15 @@ void CpuInterpolationController::prepareData(DataSet* data) {
     sourceData = data; //ToDo Load data
 }
 
-DataSet* CpuInterpolationController::interpolateData(DataSet *data) {
+DataSet* CpuInterpolationController::interpolateData(DataSet *data, GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ) {
     prepareData(data);
-    compute();
+    compute(resolutionX, resolutionY, resolutionZ);
     return interpolatedData;
 }
 
-void CpuInterpolationController::compute() {
+void CpuInterpolationController::compute(GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ) {
     long found = 0;
-    uint32_t gridSize = quality;
+    uint32_t gridSize = resolutionX;
     const float maxDistance = 0.02f;
     auto arraySize = gridSize * gridSize * gridSize;
     Particle* grid = new Particle[arraySize];
