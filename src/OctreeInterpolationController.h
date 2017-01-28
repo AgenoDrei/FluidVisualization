@@ -16,19 +16,19 @@ class OctreeNode;
 class OctreeInterpolationController : public InterpolationController{
 private:
     void prepareData(DataSet* data);
-    void compute();
+    void compute(GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ);
     void buildOctree(OctreeNode* node);
     OctreeNode* searchNode(glm::vec3 searchPosition);
     DataSet* interpolatedData;
     DataSet* sourceData;
     OctreeNode* root;
     bool minDepthCorrection;
-    uint32_t resolution, minDepth;
+    uint32_t minDepth;
     GLfloat distanceCorrectionFactor;
 public:
-    OctreeInterpolationController(uint32_t resolution, bool minDepthCorrection, uint32_t minDepth, GLfloat distanceCorrectionFactor);
+    OctreeInterpolationController(bool minDepthCorrection, uint32_t minDepth, GLfloat distanceCorrectionFactor);
     ~OctreeInterpolationController();
-    DataSet* interpolateData(DataSet* data);
+    DataSet* interpolateData(DataSet* data, GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ);
 };
 
 

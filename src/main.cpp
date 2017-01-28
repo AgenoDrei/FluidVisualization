@@ -6,7 +6,6 @@
 #include "Timestep.h"
 #include "InterpolationController.h"
 #include "CpuInterpolationController.h"
-#include "GpuInterpolationController.h"
 #include "RendererParticles.h"
 #include "RendererDebugQuad.h"
 #include "TextRenderer.h"
@@ -41,11 +40,11 @@ void init() {
     camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
     window->setCamera(camera);
     //ctrl = new CpuInterpolationController(10);
-    ctrl = new OctreeInterpolationController(300, true, 7, 1.5);
+    ctrl = new OctreeInterpolationController(false, 1, 1.5);
     renderer = new RendererParticles();
     //quadRenderer = new RendererDebugQuad();
 
-    interpolatedData = ctrl->interpolateData(data);
+    interpolatedData = ctrl->interpolateData(data, 400, 100, 400);
 
     renderer->setData(interpolatedData->getTimestep(0), interpolatedData->getNumberParticles());
     //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
@@ -57,7 +56,7 @@ void init() {
 
     //fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
-    glPointSize(1);
+    glPointSize(1.5);
     std::cout << "Log> Initalization done" << std::endl;
 }
 

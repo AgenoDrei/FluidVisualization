@@ -10,11 +10,10 @@
 #include "Timestep.h"
 
 
-OctreeInterpolationController::OctreeInterpolationController(uint32_t resolution, bool minDepthCorrection, uint32_t minDepth, GLfloat distanceCorrectionFactor) :
+OctreeInterpolationController::OctreeInterpolationController(bool minDepthCorrection, uint32_t minDepth, GLfloat distanceCorrectionFactor) :
         interpolatedData(nullptr),
         sourceData(nullptr),
         minDepthCorrection(minDepthCorrection),
-        resolution(resolution),
         minDepth(minDepth),
         distanceCorrectionFactor(distanceCorrectionFactor){}
 
@@ -22,12 +21,12 @@ OctreeInterpolationController::~OctreeInterpolationController() {
     delete [] interpolatedData;
 }
 
-DataSet* OctreeInterpolationController::interpolateData(DataSet *data) {
+DataSet* OctreeInterpolationController::interpolateData(DataSet *data, GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ) {
     std::cout << "Log> Start building Octree..." << std::endl;
     prepareData(data);
     std::cout << "Log> Finished building Octree DONE" << std::endl;
     std::cout << "Log> Start interpolation..." << std::endl;
-    compute();
+    compute(resolutionX, resolutionY, resolutionZ);
     std::cout << "Log> Finished interpolation DONE" << std::endl;
     return interpolatedData;
 }
@@ -46,18 +45,18 @@ void OctreeInterpolationController::prepareData(DataSet *data) {
     buildOctree(root);
 }
 
-void OctreeInterpolationController::compute() {
-    //glm::vec3 test = glm::vec3(0.87f, 0.12f, 0.12f);
-    //searchNode(test);
+void OctreeInterpolationController::compute(GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ) {
+    //get max(resolutionX, resolutionY, resolutionZ)
+    uint32_t resolution = resolutionX > resolutionY ? ( resolutionX > resolutionZ ? resolutionX : resolutionZ ) : ( resolutionY > resolutionZ ? resolutionY : resolutionZ );
 
     uint32_t index = 0;
-    uint32_t arraySize = resolution * resolution * resolution;
+    uint32_t arraySize = resolutionX * resolutionY * resolutionZ;
     Particle* grid = new Particle[arraySize];
-    float maxDistance = 1.0f / resolution / distanceCorrectionFactor;
+    float maxDistance = 1.0f / resolutionX / distanceCorrectionFactor;
 
-    for(auto z = 0u; z < resolution; z++) {
-        for(auto y = 0u; y < resolution; y++) {
-            for(auto x = 0u; x < resolution; x++) {
+    for(auto z = 0u; z < resolutionZ; z++) {
+        for(auto y = 0u; y < resolutionY; y++) {
+            for(auto x = 0u; x < resolutionX; x++) {
                 grid[index].reset();
                 glm::vec3 position = glm::vec3(x / (float)resolution, y / (float)resolution, z / (float)resolution);
                 grid[index].position = position;

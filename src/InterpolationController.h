@@ -9,9 +9,9 @@ class DataSet;
 class InterpolationController {
 public:
     virtual void prepareData(DataSet*) = 0; //maybe do texture stuff for gpu
-    virtual DataSet* interpolateData(DataSet*) = 0;
+    virtual DataSet* interpolateData(DataSet*, GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ) = 0;
 private:
-    virtual void compute() = 0;
+    virtual void compute(GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ) = 0;
 };
 
 
