@@ -63,10 +63,11 @@ void init() {
     //interpolatedData = ctrl->interpolateData(data);
     renderer->setData(interpolatedData->getTimestep(0), interpolatedData->getNumberParticles());
     //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
-    //glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
+    /*glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     glEnable(GL_BLEND);
+    glPolygonMode(GL_FRONT, GL_LINE);*/
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     fpsRenderer = new TextRenderer("../fonts/arial.ttf");
@@ -79,7 +80,7 @@ void mainLoop() {
     doMovement(camera, window);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    renderer->render(camera, window);
+    //renderer->render(camera, window);
     //quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
 
     marchingCubesRenderer->render(camera, window);

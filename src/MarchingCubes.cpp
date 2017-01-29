@@ -362,40 +362,40 @@ std::vector<Triangle> MarchingCubes::polygonise(GridCell* cell, float isolevel) 
 
     glm::vec3 vertexList[12];
     if(edgeTable[cubeIndex] & 1) {
-        vertexList[0] = VertexInterp(isolevel, cell->value[0]->position, cell->value[1]->position, cell->value[0]->pressure, cell->value[1]->pressure);
+        vertexList[0] = VertexInterp(isolevel, cell->value[0]->position, cell->value[1]->position, cell->value[0]->density, cell->value[1]->density);
     }
     if(edgeTable[cubeIndex] & 2) {
-        vertexList[1] = VertexInterp(isolevel, cell->value[1]->position, cell->value[2]->position, cell->value[1]->pressure, cell->value[2]->pressure);
+        vertexList[1] = VertexInterp(isolevel, cell->value[1]->position, cell->value[2]->position, cell->value[1]->density, cell->value[2]->density);
     }
     if(edgeTable[cubeIndex] & 4) {
-        vertexList[2] = VertexInterp(isolevel, cell->value[2]->position, cell->value[3]->position, cell->value[2]->pressure, cell->value[3]->pressure);
+        vertexList[2] = VertexInterp(isolevel, cell->value[2]->position, cell->value[3]->position, cell->value[2]->density, cell->value[3]->density);
     }
     if(edgeTable[cubeIndex] & 8) {
-        vertexList[3] = VertexInterp(isolevel, cell->value[3]->position, cell->value[0]->position, cell->value[3]->pressure, cell->value[0]->pressure);
+        vertexList[3] = VertexInterp(isolevel, cell->value[3]->position, cell->value[0]->position, cell->value[3]->density, cell->value[0]->density);
     }
     if(edgeTable[cubeIndex] & 16) {
-        vertexList[4] = VertexInterp(isolevel, cell->value[4]->position, cell->value[5]->position, cell->value[4]->pressure, cell->value[5]->pressure);
+        vertexList[4] = VertexInterp(isolevel, cell->value[4]->position, cell->value[5]->position, cell->value[4]->density, cell->value[5]->density);
     }
     if(edgeTable[cubeIndex] & 32) {
-        vertexList[5] = VertexInterp(isolevel, cell->value[5]->position, cell->value[6]->position, cell->value[5]->pressure, cell->value[6]->pressure);
+        vertexList[5] = VertexInterp(isolevel, cell->value[5]->position, cell->value[6]->position, cell->value[5]->density, cell->value[6]->density);
     }
     if(edgeTable[cubeIndex] & 64) {
-        vertexList[6] = VertexInterp(isolevel, cell->value[6]->position, cell->value[7]->position, cell->value[6]->pressure, cell->value[7]->pressure);
+        vertexList[6] = VertexInterp(isolevel, cell->value[6]->position, cell->value[7]->position, cell->value[6]->density, cell->value[7]->density);
     }
     if(edgeTable[cubeIndex] & 128) {
-        vertexList[7] = VertexInterp(isolevel, cell->value[7]->position, cell->value[4]->position, cell->value[7]->pressure, cell->value[4]->pressure);
+        vertexList[7] = VertexInterp(isolevel, cell->value[7]->position, cell->value[4]->position, cell->value[7]->density, cell->value[4]->density);
     }
     if(edgeTable[cubeIndex] & 256) {
-        vertexList[8] = VertexInterp(isolevel, cell->value[0]->position, cell->value[4]->position, cell->value[0]->pressure, cell->value[4]->pressure);
+        vertexList[8] = VertexInterp(isolevel, cell->value[0]->position, cell->value[4]->position, cell->value[0]->density, cell->value[4]->density);
     }
     if(edgeTable[cubeIndex] & 512) {
-        vertexList[9] = VertexInterp(isolevel, cell->value[1]->position, cell->value[5]->position, cell->value[1]->pressure, cell->value[5]->pressure);
+        vertexList[9] = VertexInterp(isolevel, cell->value[1]->position, cell->value[5]->position, cell->value[1]->density, cell->value[5]->density);
     }
     if(edgeTable[cubeIndex] & 1024) {
-        vertexList[10] = VertexInterp(isolevel, cell->value[2]->position, cell->value[6]->position, cell->value[2]->pressure, cell->value[6]->pressure);
+        vertexList[10] = VertexInterp(isolevel, cell->value[2]->position, cell->value[6]->position, cell->value[2]->density, cell->value[6]->density);
     }
     if(edgeTable[cubeIndex] & 2048) {
-        vertexList[11] = VertexInterp(isolevel, cell->value[3]->position, cell->value[7]->position, cell->value[3]->pressure, cell->value[7]->pressure);
+        vertexList[11] = VertexInterp(isolevel, cell->value[3]->position, cell->value[7]->position, cell->value[3]->density, cell->value[7]->density);
     }
 
     std::vector<Triangle> result;

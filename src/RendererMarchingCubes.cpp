@@ -37,6 +37,13 @@ void RendererMarchingCubes::render(Camera *camera, WindowHandler *wHandler) {
     glm::mat4 projection;
     projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
 
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+    glEnable(GL_BLEND);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     auto modelLocation = glGetUniformLocation(_shader->Program, "model");
     glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
