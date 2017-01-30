@@ -10,15 +10,15 @@ class Shader;
 
 class Renderer3DTextureSlicing {
 public:
-    Renderer3DTextureSlicing();
+    Renderer3DTextureSlicing(uint32_t dimX, uint32_t dimY, uint32_t dimZ);
     ~Renderer3DTextureSlicing();
-    void setData(Timestep* step, uint32_t count);
+    void setData(Timestep* step, uint32_t count, glm::vec3 initViewDir);
     void render(Camera* camera, WindowHandler* wHandler);
 private:
-    uint32_t particleCount, dimX, dimY, dimZ, num_slices;
-    GLuint VAO, VBO, textureID;
+    uint32_t particleCount, dimX, dimY, dimZ;
+    GLuint VAO, VBO, texture;
     Shader* shader;
     glm::vec3* vTextureSlices;
     void sliceVolume(glm::vec3 viewDir);
-    int FindAbsMax(glm::vec3 v);
+//    int FindAbsMax(glm::vec3 v);
 };

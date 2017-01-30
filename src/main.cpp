@@ -22,13 +22,12 @@ int fps;
 Camera* camera;
 DataSet* data = nullptr, *interpolatedData = nullptr;
 InterpolationController *ctrl;
-RendererParticles* renderer;
-RendererDebugQuad* quadRenderer;
-Renderer3DTextureSlicing* texSliceRenderer;
+//RendererParticles* renderer;
+Renderer3DTextureSlicing* renderer;
 
 int main(int argc, char* argv[]) {
     std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
-    data = DataImporter::load(path + "/Downloads/interpol30.dat");
+    data = DataImporter::load(path + "/Downloads/interpolOct_400_100_400.dat");
 
     //Window Initialisation
     window = new WindowHandler(800, 600);
@@ -40,26 +39,24 @@ void init() {
     std::cout << "Log> Render initialization running" << std::endl;
     camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
     window->setCamera(camera);
-    ctrl = new CpuInterpolationController(30);
-    renderer = new RendererParticles();
-    quadRenderer = new RendererDebugQuad();
-    texSliceRenderer = new Renderer3DTextureSlicing();
     fpsRenderer = new TextRenderer("../fonts/arial.ttf");
+//    ctrl = new CpuInterpolationController(30);
+//    renderer = new RendererParticles();
+    renderer = new Renderer3DTextureSlicing(400, 100, 400);
 
+////    Exporting interpolation:
 //    interpolatedData = ctrl->interpolateData(data);
 //    std::string homePath = std::getenv("HOME");
 //    DataExporter::write(homePath + "/Downloads/interpol30.dat", interpolatedData);
 
-    renderer->setData(data->getTimestep(0), data->getNumberParticles());
-//    quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
-//    texSliceRenderer->setData(data->getTimestep(0), data->getNumberParticles());
+    renderer->setData(data->getTimestep(0), data->getNumberParticles(), camera->Front);
 //    glEnable(GL_DEPTH_TEST);
 //    glEnable(GL_CULL_FACE);
 //    glCullFace(GL_BACK);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glPointSize(1);
+//    glEnable(GL_BLEND);
+//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    glPointSize(1);
     std::cout << "Log> Initalization done" << std::endl;
 }
 
@@ -68,8 +65,6 @@ void mainLoop() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     renderer->render(camera, window);
-//    quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
-//    texSliceRenderer->render(camera, window);
 
     fps = window->calculateFPS();
     fpsRenderer->drawText(std::to_string(fps), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));

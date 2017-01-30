@@ -1,10 +1,8 @@
 #version 330 core
 
-layout(location = 0)
+layout(location = 0) out vec4 vFragColor;	//fragment shader output
 
-in vec3 vUV;				//3D texture coordinates form vertex shader interpolated by rasterizer
-out vec4 vFragColor;	//fragment shader output
-
+smooth in vec3 vUV;     //3D texture coordinates form vertex shader interpolated by rasterizer
 //uniform
 uniform sampler3D volume;		//volume dataset
 
@@ -16,5 +14,5 @@ void main()
 	//components as the sample value in the texture which gives us a shader of grey.
 
 //	vFragColor = texture(volume, vUV).rrrr;
-    vFragColor = vec4(ourColor, 1.0f);
+    vFragColor = vec4(vUV, 1.0f);
 }

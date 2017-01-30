@@ -5,35 +5,38 @@
 #include "WindowHandler.h"
 #include "Shader.h"
 
-Renderer3DTextureSlicing::Renderer3DTextureSlicing() {
+Renderer3DTextureSlicing::Renderer3DTextureSlicing(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
     shader = new Shader("shader/textureSlicer.vert", "shader/textureSlicer.frag");
+    Renderer3DTextureSlicing::dimX = dimX;
+    Renderer3DTextureSlicing::dimY = dimY;
+    Renderer3DTextureSlicing::dimZ = dimZ;
 }
 
 Renderer3DTextureSlicing::~Renderer3DTextureSlicing() {
 //    delete [] buffer;
 }
 
-void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count) {
+void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3 initViewDir) {
     particleCount = count;
-    dimX = dimY = dimZ = (uint32_t)std::pow(particleCount, 1/3.);       // assumption: exactly cubic !
-    num_slices = dimZ;
-    glm::vec3* pData = new glm::vec3[particleCount];
+//    GLfloat * pData = new GLfloat[particleCount];
+    GLubyte* pData = new GLubyte[particleCount];
 
     for (auto i = 0u; i < particleCount; i++) {
-        pData[i] = step->getParticle(i).position;
+//        pData[i] = step->getParticle(i).density;
+        pData[i] = step->getParticle(i).density > 1 ? 255u : 0u;
     }
 
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_3D, textureID);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP);
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_3D, texture);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);      // GL_CLAMP_TO_BORDER instead of GL_CLAMP resolved GL_INVALID_ENUM error
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, dimX, dimY, dimZ, 0, GL_RED, GL_FLOAT_VEC3, pData);
-    glGenerateMipmap(GL_TEXTURE_3D);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, dimX, dimY, dimZ, 0, GL_RED, GL_UNSIGNED_BYTE, pData);      // GlLog> Source: 33350 Message: GL_INVALID_ENUM in glTexImage3D(incompatible format = GL_RED, type = GL_FLOAT_VEC3) ???
+    glGenerateMipmap(GL_TEXTURE_3D);        // GlLog> Source: 33350 Message: GL_INVALID_OPERATION in glGenerateMipmap(zero size base image)
 
     const int MAX_SLICES = 2 * dimZ;    // not sure though
     glm::vec3 vTextureSlices[MAX_SLICES*12];
@@ -44,9 +47,12 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count) {
     glBindVertexArray(VAO);
     glBindBuffer (GL_ARRAY_BUFFER, VBO);
     glBufferData (GL_ARRAY_BUFFER, sizeof(vTextureSlices), 0, GL_DYNAMIC_DRAW);     //pass the sliced vertices vector to buffer object memory
+
     glEnableVertexAttribArray(0);       //enable vertex attribute array for position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,0,0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glBindVertexArray(0);
+
+    Renderer3DTextureSlicing::sliceVolume(initViewDir);
 }
 
 void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
@@ -59,6 +65,7 @@ void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glPointSize(1);
 
     glBindVertexArray(VAO);
     shader->use();
@@ -117,7 +124,6 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
             min_dist = dist;
     }
 //    //find tha abs maximum of the view direction vector
-//    int max_dim = FindAbsMax(viewDir);
 
     //expand it a little bit
     min_dist -= EPSILON;
@@ -135,7 +141,7 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
     //subtract the max and min distances and divide by the
     //total number of slices to get the plane increment
     float plane_dist = min_dist;
-    float plane_dist_inc = (max_dist-min_dist)/float(num_slices);
+    float plane_dist_inc = (max_dist-min_dist)/float(dimZ);
 
     //for all edges
     for(int i=0;i<12;i++) {
@@ -166,7 +172,7 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
     float dL[12];
 
     //loop through all slices
-    for(int i=num_slices-1;i>=0;i--) {
+    for(int i=dimZ-1;i>=0;i--) {
 
         //determine the lambda value for all edges
         for(int e = 0; e < 12; e++)
@@ -253,6 +259,7 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
     glBufferSubData(GL_ARRAY_BUFFER, 0,  sizeof(vTextureSlices), &(vTextureSlices[0].x));
 }
 
+/*
 int Renderer3DTextureSlicing::FindAbsMax(glm::vec3 v) {
     v = glm::abs(v);
     int max_dim = 0;
@@ -267,3 +274,4 @@ int Renderer3DTextureSlicing::FindAbsMax(glm::vec3 v) {
     }
     return max_dim;
 }
+ */
