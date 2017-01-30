@@ -1,5 +1,5 @@
-SET(SRC_CPP main.cpp DataImporter.cpp DataSet.cpp Timestep.cpp Particle.cpp WindowHandler.cpp Shader.cpp Camera.cpp CpuInterpolationController.cpp GpuInterpolationController.cpp RendererParticles.cpp RendererDebugQuad.cpp MarchingCubes.cpp Grid.cpp GridCell.cpp Triangle.cpp RendererMarchingCubes.cpp)
-SET(SRC_H main.h DataImporter.h DataSet.h Timestep.h Particle.h WindowHandler.h Shader.h Camera.h InterpolationController.h CpuInterpolationController.h GpuInterpolationController.h RendererParticles.cpp RendererParticles.h RendererDebugQuad.h MarchingCubes.h Grid.h GridCell.h Triangle.h RendererMarchingCubes.h)
+SET(SRC_CPP main.cpp DataImporter.cpp DataSet.cpp Timestep.cpp Particle.cpp WindowHandler.cpp Shader.cpp Camera.cpp CpuInterpolationController.cpp GpuInterpolationController.cpp RendererParticles.cpp RendererDebugQuad.cpp MarchingCubes.cpp Grid.cpp GridCell.cpp Triangle.cpp RendererMarchingCubes.cpp MarchinCubesData.cpp VertexArrayBuffer.cpp MarchingCubesShader.cpp)
+SET(SRC_H main.h DataImporter.h DataSet.h Timestep.h Particle.h WindowHandler.h Shader.h Camera.h InterpolationController.h CpuInterpolationController.h GpuInterpolationController.h RendererParticles.cpp RendererParticles.h RendererDebugQuad.h MarchingCubes.h Grid.h GridCell.h Triangle.h RendererMarchingCubes.h MarchinCubesData.h VertexArrayBuffer.h MarchingCubesShader.h)
 
 SET(SRC ${SRC_CPP} ${SRC_H} TextRenderer.cpp TextRenderer.h)
 

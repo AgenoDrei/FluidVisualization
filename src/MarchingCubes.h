@@ -9,6 +9,8 @@ class GridCell;
 class Grid;
 class Timestep;
 
+#define INTERPOLATION_DELTA 0.00001f
+
 class MarchingCubes {
 protected:
     std::vector<Triangle> triangleMesh;

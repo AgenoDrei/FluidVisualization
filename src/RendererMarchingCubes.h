@@ -4,23 +4,17 @@
 #include <vector>
 #include <list>
 #include "Triangle.h"
-#include "Shader.h"
 
 class WindowHandler;
 class Camera;
-
-class VertexArrayBuffer { // todo recreate with read only getters
-public:
-    VertexArrayBuffer();
-    GLuint VAO, VBO;
-    GLuint numberOfVertices;
-};
+class VertexArrayBuffer;
+class MarchingCubesShader;
 
 class RendererMarchingCubes {
 private:
-    Shader* _shader;
+    MarchingCubesShader* _shader;
 
-    std::list<VertexArrayBuffer> _vertexBuffers;
+    std::list<VertexArrayBuffer*> _vertexBuffers;
 public:
     RendererMarchingCubes();
 
