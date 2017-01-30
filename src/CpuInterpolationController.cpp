@@ -48,10 +48,10 @@ void CpuInterpolationController::compute(GLfloat resolutionX, GLfloat resolution
                 glm::vec3 position = glm::vec3(x, y, z);
                 float density;
                 float distance = FLT_MAX;
-                uint32_t nearestNeighbor = -1;
+                uint32_t nearestNeighbor = 0;
 
-                for(uint32_t i = 0; i < sourceData->getTimestep(0)->getSize(); i++) {
-                    float tmpDistance = glm::distance(sourceData->getTimestep(0)->getParticle(i).position, position);
+                for(uint32_t l = 0; l < sourceData->getTimestep(0)->getSize(); l++) {
+                    float tmpDistance = glm::distance(sourceData->getTimestep(0)->getParticle(l).position, position);
                     if(tmpDistance < distance) {
                         distance = tmpDistance;
                         nearestNeighbor = i;
