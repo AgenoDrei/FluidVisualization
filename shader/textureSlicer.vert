@@ -1,12 +1,13 @@
 #version 330 core
 layout(location = 0) in vec3 vVertex; //object space vertex position
 
+out vec3 vUV; //3D texture coordinates for texture lookup in the fragment shader
+
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 //uniform mat4 MVP;   //combined modelview projection matrix
 
-smooth out vec3 vUV; //3D texture coordinates for texture lookup in the fragment shader
 
 void main()
 {
@@ -20,3 +21,5 @@ void main()
 	//(1,1,1)
 	vUV = vVertex + vec3(0.5);
 }
+
+

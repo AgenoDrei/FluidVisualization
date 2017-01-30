@@ -50,9 +50,9 @@ void init() {
 //    std::string homePath = std::getenv("HOME");
 //    DataExporter::write(homePath + "/Downloads/interpol30.dat", interpolatedData);
 
-//    renderer->setData(data->getTimestep(0), data->getNumberParticles());
+    renderer->setData(data->getTimestep(0), data->getNumberParticles());
 //    quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
-    texSliceRenderer->setData(data->getTimestep(0), data->getNumberParticles());
+//    texSliceRenderer->setData(data->getTimestep(0), data->getNumberParticles());
 //    glEnable(GL_DEPTH_TEST);
 //    glEnable(GL_CULL_FACE);
 //    glCullFace(GL_BACK);
@@ -68,8 +68,8 @@ void mainLoop() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     renderer->render(camera, window);
-    //quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
-    texSliceRenderer->render(camera, window);
+//    quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
+//    texSliceRenderer->render(camera, window);
 
     fps = window->calculateFPS();
     fpsRenderer->drawText(std::to_string(fps), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
