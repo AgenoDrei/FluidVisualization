@@ -39,7 +39,7 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
     glGenerateMipmap(GL_TEXTURE_3D);        // GlLog> Source: 33350 Message: GL_INVALID_OPERATION in glGenerateMipmap(zero size base image)
 
     const int MAX_SLICES = 2 * dimZ;    // not sure though
-    glm::vec3 vTextureSlices[MAX_SLICES*12];
+    vTextureSlices = new glm::vec3[MAX_SLICES*12];
 
     //setup the vertex array and buffer objects
     glGenVertexArrays(1, &VAO);
