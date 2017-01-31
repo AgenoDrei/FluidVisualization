@@ -29,21 +29,28 @@ bool Grid::isValidCell(int x, int y, int z) {
     return x >= 0 && x + 1 < _dimension.x && y >= 0 && y + 1 < _dimension.y && z >= 0 && z + 1 < _dimension.z;
 }
 
+bool Grid::isValidIndex(int x, int y, int z) {
+    return x >= 0 && x < _dimension.x && y >= 0 && y < _dimension.y && z >= 0 && z < _dimension.z;
+}
+
 #include <iostream>
 GridCell* Grid::getCell(int x, int y, int z) {
-    if(!isValidCell(x, y, z)) {
-        throw "Invalid argument";
-    }
-
     auto particles = new Particle*[8];
-    particles[0] = _timestep->getParticleReference(getIndex(x, y, z));
-    particles[1] = _timestep->getParticleReference(getIndex(x + 1, y, z));
-    particles[2] = _timestep->getParticleReference(getIndex(x + 1, y + 1, z));
-    particles[3] = _timestep->getParticleReference(getIndex(x, y + 1, z));
-    particles[4] = _timestep->getParticleReference(getIndex(x, y, z + 1));
-    particles[5] = _timestep->getParticleReference(getIndex(x + 1, y, z + 1));
-    particles[6] = _timestep->getParticleReference(getIndex(x + 1, y + 1, z + 1));
-    particles[7] = _timestep->getParticleReference(getIndex(x, y + 1, z + 1));
+
+    int indices[8][3] = {
+            {0, 0, 0},
+            {1, 0, 0},
+            {1, 1, 0},
+            {0, 1, 0},
+            {0, 0, 1},
+            {1, 0, 1},
+            {1, 1, 1},
+            {0, 1, 1},
+    };
+
+    for(auto i = 0u; i <= 7u; i++) {
+        particles[i] = _timestep->getParticleReference(getIndex(x + indices[i][0], y + indices[i][1], z + indices[i][2]));
+    }
 
     return new GridCell(glm::ivec3(x, y, z), particles);
 }

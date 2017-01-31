@@ -29,6 +29,8 @@ public:
 
     Particle* getParticleAt(glm::vec3 position);
 
+    glm::ivec3 getParticleNumberPerDirection();
+
     bool isIndexValid(int index);
     bool isIndexValid(uint32_t index);
 };

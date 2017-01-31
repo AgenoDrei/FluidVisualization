@@ -53,6 +53,5 @@ Particle DataImporter::loadParticle(std::ifstream& file) {
     file.read(reinterpret_cast<char*>(&pressure), sizeof(float));
 
     auto particle = Particle(position, normal, velocity, density, pressure);
-    //std::cout<<"Particle: "<<particle<<std::endl;
     return particle;
 }

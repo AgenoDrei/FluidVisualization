@@ -39,6 +39,29 @@ Particle* Timestep::getParticleReference(int32_t index) {
     return &_particles[index];
 }
 
+glm::ivec3 Timestep::getParticleNumberPerDirection() {
+    auto x = 0;
+    auto y = 0;
+    auto z = 0;
+    glm::vec3 cur(-1, -1, -1);
+    for(auto i = 0u; i < _numberParticles; i++) {
+        if(_particles[i].position.x > cur.x) {
+            x++;
+            cur.x = _particles[i].position.x;
+        }
+        if(_particles[i].position.y > cur.y) {
+            y++;
+            cur.y = _particles[i].position.y;
+        }
+        if(_particles[i].position.z > cur.z) {
+            z++;
+            cur.z = _particles[i].position.z;
+        }
+    }
+
+    return glm::ivec3(x, y, z);
+}
+
 uint32_t Timestep::getSize() const {
     return _numberParticles;
 }

@@ -29,8 +29,9 @@ RendererDebugQuad* quadRenderer;
 RendererMarchingCubes* marchingCubesRenderer;
 
 int main(int argc, char* argv[]) {
-    std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
-	data = DataImporter::load(path + "/Downloads/drop_100.dat");
+    //std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
+	//data = DataImporter::load("/home/nils/Downloads/drop_interpolation_300.dat");
+	data = DataImporter::load("/home/nils/Downloads/drop_100.dat");
     interpolatedData = data;
     //Window Initialisation
     window = new WindowHandler(800, 600);
@@ -57,7 +58,7 @@ void init() {
 
 
     auto firstTimestep = data->getTimestep(0);
-    auto grid = new Grid(glm::vec3(100, 100, 100), firstTimestep);
+    auto grid = new Grid(firstTimestep->getParticleNumberPerDirection(), firstTimestep);
 
     auto algorithm = MarchingCubes();
     algorithm.calculate(grid);
@@ -66,7 +67,7 @@ void init() {
     marchingCubesRenderer->addTriangles(triangles);
 
     //interpolatedData = ctrl->interpolateData(data);
-    renderer->setData(interpolatedData->getTimestep(0), interpolatedData->getNumberParticles());
+    //renderer->setData(interpolatedData->getTimestep(0), interpolatedData->getNumberParticles());
     //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
     /*glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);

@@ -10,7 +10,6 @@ class Grid {
 private:
     glm::ivec3 _dimension;
     Timestep* _timestep;
-
 protected:
     int getIndex(int x, int y, int z);
 public:
@@ -24,6 +23,7 @@ public:
     GridCell* getCell(int x, int y, int z);
 
     bool isValidCell(int x, int y, int z);
+    bool isValidIndex(int x, int y, int z);
 };
 
 
