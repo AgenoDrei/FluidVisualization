@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Renderer3DTextureSlicing.h"
 
 #include "DataSet.h"
@@ -7,6 +8,7 @@
 
 Renderer3DTextureSlicing::Renderer3DTextureSlicing(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
     shader = new Shader("shader/textureSlicer.vert", "shader/textureSlicer.frag");
+    bViewRotated = false;
     Renderer3DTextureSlicing::dimX = dimX;
     Renderer3DTextureSlicing::dimY = dimY;
     Renderer3DTextureSlicing::dimZ = dimZ;
@@ -18,12 +20,10 @@ Renderer3DTextureSlicing::~Renderer3DTextureSlicing() {
 
 void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3 initViewDir) {
     particleCount = count;
-//    GLfloat * pData = new GLfloat[particleCount];
     GLubyte* pData = new GLubyte[particleCount];
 
     for (auto i = 0u; i < particleCount; i++) {
-//        pData[i] = step->getParticle(i).density;
-        pData[i] = step->getParticle(i).density > 1 ? 255u : 0u;
+        pData[i] = (GLubyte)(step->getParticle(i).density * 255);
     }
 
     glGenTextures(1, &texture);
@@ -32,11 +32,14 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, dimX, dimY, dimZ, 0, GL_RED, GL_UNSIGNED_BYTE, pData);      // GlLog> Source: 33350 Message: GL_INVALID_ENUM in glTexImage3D(incompatible format = GL_RED, type = GL_FLOAT_VEC3) ???
-    glGenerateMipmap(GL_TEXTURE_3D);        // GlLog> Source: 33350 Message: GL_INVALID_OPERATION in glGenerateMipmap(zero size base image)
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, dimX, dimY, dimZ, 0, GL_RED, GL_UNSIGNED_BYTE, pData);
+//    glGenerateMipmap(GL_TEXTURE_3D);
+
+    delete [] pData;
 
     const int MAX_SLICES = 2 * dimZ;    // not sure though
     vTextureSlices = new glm::vec3[MAX_SLICES*12];
@@ -45,14 +48,14 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glBindVertexArray(VAO);
-    glBindBuffer (GL_ARRAY_BUFFER, VBO);
-    glBufferData (GL_ARRAY_BUFFER, sizeof(vTextureSlices), 0, GL_DYNAMIC_DRAW);     //pass the sliced vertices vector to buffer object memory
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vTextureSlices), 0, GL_DYNAMIC_DRAW);     //pass the sliced vertices vector to buffer object memory
 
     glEnableVertexAttribArray(0);       //enable vertex attribute array for position
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glBindVertexArray(0);
 
-    Renderer3DTextureSlicing::sliceVolume(initViewDir);
+    Renderer3DTextureSlicing::sliceVolume(initViewDir);     // initial slicing
 }
 
 void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
@@ -61,11 +64,11 @@ void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
     model = camera->GetViewMatrix();
     projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
 
-    sliceVolume(camera->Front);
+    if (bViewRotated)
+        sliceVolume(camera->Front);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glPointSize(1);
 
     glBindVertexArray(VAO);
     shader->use();
@@ -78,6 +81,7 @@ void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
 }
 
 void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main slicing function
+//    std::cout << glm::to_string(viewDir) << std::endl;
     const float EPSILON = 0.0001f;      //for floating point inaccuracy
 
     glm::vec3 unitCubeVertices[8] = {
@@ -106,28 +110,18 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
     float max_dist = glm::dot(viewDir, unitCubeVertices[0]);
     float min_dist = max_dist;
     int max_index = 0;
-    int count = 0;
-
     for(int i=1;i<8;i++) {
-        //get the distance between the current unit cube vertex and
-        //the view vector by dot product
+        //get the distance between the current unit cube vertex and the view vector by dot product; if distance is > max_dist, store the value and index; if distance is < min_dist, store the value
         float dist = glm::dot(viewDir, unitCubeVertices[i]);
-
-        //if distance is > max_dist, store the value and index
         if(dist > max_dist) {
             max_dist = dist;
             max_index = i;
         }
-
-        //if distance is < min_dist, store the value
         if(dist<min_dist)
             min_dist = dist;
     }
-//    //find tha abs maximum of the view direction vector
-
-    //expand it a little bit
-    min_dist -= EPSILON;
-    max_dist += EPSILON;
+    min_dist -= EPSILON;    //expand it a little bit
+    max_dist += EPSILON;    //expand it a little bit
 
     //local variables to store the start, direction vectors,
     //lambda intersection values
@@ -143,13 +137,9 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
     float plane_dist = min_dist;
     float plane_dist_inc = (max_dist-min_dist)/float(dimZ);
 
-    //for all edges
-    for(int i=0;i<12;i++) {
-        //get the start position vertex by table lookup
+    for(int i=0;i<12;i++) {     //for all edges
         vecStart[i] = unitCubeVertices[ucEdgesPos[unitCubeEdges[max_index][i]][0]];
-
-        //get the direction by table lookup
-        vecDir[i] = unitCubeVertices[ucEdgesPos[unitCubeEdges[max_index][i]][1]]-vecStart[i];
+        vecDir[i] = unitCubeVertices[ucEdgesPos[unitCubeEdges[max_index][i]][1]] - vecStart[i];
 
         //do a dot of vecDir with the view direction vector
         denom = glm::dot(vecDir[i], viewDir);
@@ -249,6 +239,7 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
         //we calculated the proper polygon indices by using indices of a triangular fan
         int indices[]={0,1,2, 0,2,3, 0,3,4, 0,4,5};
 
+        int count = 0;
         //Using the indices, pass the intersection vertices to the vTextureSlices vector
         for(int i=0;i<12;i++)
             vTextureSlices[count++]=intersection[indices[i]];

@@ -15,6 +15,7 @@ public:
     void setData(Timestep* step, uint32_t count, glm::vec3 initViewDir);
     void render(Camera* camera, WindowHandler* wHandler);
 private:
+    bool bViewRotated;
     uint32_t particleCount, dimX, dimY, dimZ;
     GLuint VAO, VBO, texture;
     Shader* shader;

@@ -14,7 +14,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
-#include <chrono>
 
 WindowHandler* window;
 TextRenderer* fpsRenderer;
@@ -27,7 +26,7 @@ Renderer3DTextureSlicing* renderer;
 
 int main(int argc, char* argv[]) {
     std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
-    data = DataImporter::load(path + "/Downloads/interpolOct_400_100_400.dat");
+    data = DataImporter::load(path + "/Downloads/drop_100.dat");
 
     //Window Initialisation
     window = new WindowHandler(800, 600);
@@ -42,13 +41,14 @@ void init() {
     fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 //    ctrl = new CpuInterpolationController(30);
 //    renderer = new RendererParticles();
-    renderer = new Renderer3DTextureSlicing(400, 100, 400);
+    renderer = new Renderer3DTextureSlicing(100, 100, 100);
 
 ////    Exporting interpolation:
 //    interpolatedData = ctrl->interpolateData(data);
 //    std::string homePath = std::getenv("HOME");
 //    DataExporter::write(homePath + "/Downloads/interpol30.dat", interpolatedData);
 
+//    renderer->setData(data->getTimestep(0), data->getNumberParticles());
     renderer->setData(data->getTimestep(0), data->getNumberParticles(), camera->Front);
 //    glEnable(GL_DEPTH_TEST);
 //    glEnable(GL_CULL_FACE);
