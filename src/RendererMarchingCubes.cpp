@@ -32,10 +32,10 @@ void RendererMarchingCubes::render(Camera *camera, WindowHandler *wHandler) {
     _shader->setModelViewProjection(model, camera, wHandler);
 
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_FRONT);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
     glEnable(GL_BLEND);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     for(auto vertexBuffer : _vertexBuffers) {
         glBindVertexArray(vertexBuffer->getVAO());
