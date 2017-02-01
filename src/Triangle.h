@@ -1,8 +1,8 @@
 #pragma once
 
-#include <glm/vec3.hpp>
+#include "VertexPositionNormal.h"
 
 class Triangle {
 public:
-    glm::vec3 Position[3];
+    VertexPositionNormal Vertices[3];
 };

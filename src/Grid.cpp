@@ -16,7 +16,7 @@ Grid* Grid::CreateFromTimestep(Timestep* timestep, float stepSize) {
     return nullptr;
 }
 
-glm::vec3 Grid::getDimension() {
+glm::ivec3 Grid::getDimension() {
     return _dimension;
 }
 

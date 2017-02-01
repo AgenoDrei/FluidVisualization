@@ -16,8 +16,10 @@ void RendererMarchingCubes::addTriangles(const std::vector<Triangle>& triangles)
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->getVBO());
     glBufferData(GL_ARRAY_BUFFER, sizeof(Triangle) * triangles.size(), &triangles[0], GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), static_cast<GLvoid*>(nullptr));     // Position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPositionNormal), static_cast<GLvoid*>(nullptr));     // Position attribute
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPositionNormal), reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat))); // Normal attribute
+    glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
 
@@ -30,8 +32,8 @@ void RendererMarchingCubes::render(Camera *camera, WindowHandler *wHandler) {
     _shader->setModelViewProjection(model, camera, wHandler);
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_FRONT);
     glEnable(GL_BLEND);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
