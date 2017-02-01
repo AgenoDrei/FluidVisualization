@@ -18,7 +18,7 @@ public:
 
     static Grid* CreateFromTimestep(Timestep* timestep, float stepSize);
 
-    glm::vec3 getDimension();
+    glm::ivec3 getDimension();
 
     GridCell* getCell(int x, int y, int z);
 
