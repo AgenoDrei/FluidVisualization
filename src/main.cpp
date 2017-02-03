@@ -13,6 +13,7 @@
 #include "MarchingCubes.h"
 #include "Grid.h"
 #include "RendererMarchingCubes.h"
+#include "VertexWelder.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -62,9 +63,10 @@ void init() {
 
     auto algorithm = MarchingCubes();
     algorithm.calculate(grid);
-    auto triangles = algorithm.getTriangles();
+    auto vertices = algorithm.getVertices();
 
-    marchingCubesRenderer->addTriangles(triangles);
+    auto weldedResult = VertexWelder<VertexPositionNormal>::weld(vertices);
+    marchingCubesRenderer->addVertexIndexBuffer(weldedResult->VertexBuffer, weldedResult->IndexBuffer);
 
     //interpolatedData = ctrl->interpolateData(data);
     //renderer->setData(interpolatedData->getTimestep(0), interpolatedData->getNumberParticles());

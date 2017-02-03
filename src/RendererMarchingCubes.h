@@ -9,16 +9,18 @@ class WindowHandler;
 class Camera;
 class VertexArrayBuffer;
 class MarchingCubesShader;
+class MarchingCubesRenderObject;
 
 class RendererMarchingCubes {
 private:
     MarchingCubesShader* _shader;
 
-    std::list<VertexArrayBuffer*> _vertexBuffers;
+    std::list<MarchingCubesRenderObject*> _objects;
 public:
     RendererMarchingCubes();
 
     void addTriangles(const std::vector<Triangle>& triangles);
+    void addVertexIndexBuffer(const std::vector<VertexPositionNormal>& vertices, const std::vector<int>& indices);
 
     void render(Camera *camera, WindowHandler *wHandler);
 };

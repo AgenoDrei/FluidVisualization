@@ -24,6 +24,8 @@ public:
 
     void calculate(Grid* grid);
     const std::vector<Triangle>& getTriangles() const;
+
+    std::vector<VertexPositionNormal> getVertices();
 };
 
 
