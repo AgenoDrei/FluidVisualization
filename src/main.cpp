@@ -22,11 +22,11 @@ Camera* camera;
 DataSet* data = nullptr, *interpolatedData = nullptr;
 InterpolationController *ctrl;
 //RendererParticles* renderer;
-Renderer3DTextureSlicing* renderer;
+RendererDebugQuad* renderer;
 
 int main(int argc, char* argv[]) {
     std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
-    data = DataImporter::load(path + "/Downloads/drop_100.dat");
+    data = DataImporter::load(path + "/Downloads/interpol30.dat");
 
     //Window Initialisation
     window = new WindowHandler(800, 600);
@@ -41,7 +41,8 @@ void init() {
     fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 //    ctrl = new CpuInterpolationController(30);
 //    renderer = new RendererParticles();
-    renderer = new Renderer3DTextureSlicing(100, 100, 100);
+//    renderer = new Renderer3DTextureSlicing(100, 100, 100);
+    renderer = new RendererDebugQuad();
 
 ////    Exporting interpolation:
 //    interpolatedData = ctrl->interpolateData(data);
@@ -49,7 +50,7 @@ void init() {
 //    DataExporter::write(homePath + "/Downloads/interpol30.dat", interpolatedData);
 
 //    renderer->setData(data->getTimestep(0), data->getNumberParticles());
-    renderer->setData(data->getTimestep(0), data->getNumberParticles(), camera->Front);
+    renderer->setData(data->getTimestep(0), data->getNumberParticles());
 //    glEnable(GL_DEPTH_TEST);
 //    glEnable(GL_CULL_FACE);
 //    glCullFace(GL_BACK);
@@ -62,13 +63,17 @@ void init() {
 
 void mainLoop() {
     doMovement(camera, window);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     renderer->render(camera, window);
 
     fps = window->calculateFPS();
     fpsRenderer->drawText(std::to_string(fps), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
 
+    glDisable(GL_BLEND);
     glutSwapBuffers();
 }
 

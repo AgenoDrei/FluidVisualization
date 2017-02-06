@@ -22,21 +22,30 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
     particleCount = count;
     GLubyte* pData = new GLubyte[particleCount];
 
+    GLubyte* pData0 = new GLubyte [particleCount / dimZ];
+
     for (auto i = 0u; i < particleCount; i++) {
         pData[i] = (GLubyte)(step->getParticle(i).density * 255);
+        if (i < dimX*dimY)
+            pData0[i] = (GLubyte)(step->getParticle(i).density * 255);
     }
 
+//    glGenTextures(1, &texture);
+//    glBindTexture(GL_TEXTURE_3D, texture);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);      // GL_CLAMP_TO_BORDER instead of GL_CLAMP resolved GL_INVALID_ENUM error
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+////    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+////    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
+////    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
+//    glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, dimX, dimY, dimZ, 0, GL_RED, GL_UNSIGNED_BYTE, pData);
+////    glGenerateMipmap(GL_TEXTURE_3D);
+
     glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_3D, texture);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);      // GL_CLAMP_TO_BORDER instead of GL_CLAMP resolved GL_INVALID_ENUM error
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
-//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, dimX, dimY, dimZ, 0, GL_RED, GL_UNSIGNED_BYTE, pData);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, dimX, dimY, 0, GL_RED, GL_UNSIGNED_BYTE, pData);
 //    glGenerateMipmap(GL_TEXTURE_3D);
 
     delete [] pData;
@@ -55,7 +64,7 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glBindVertexArray(0);
 
-    Renderer3DTextureSlicing::sliceVolume(initViewDir);     // initial slicing
+//    Renderer3DTextureSlicing::sliceVolume(initViewDir);     // initial slicing
 }
 
 void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
@@ -64,11 +73,8 @@ void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
     model = camera->GetViewMatrix();
     projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
 
-    if (bViewRotated)
-        sliceVolume(camera->Front);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    if (bViewRotated)
+//        sliceVolume(camera->Front);
 
     glBindVertexArray(VAO);
     shader->use();
@@ -76,12 +82,11 @@ void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     glDrawArrays(GL_TRIANGLES, 0, sizeof(vTextureSlices)/sizeof(vTextureSlices[0]));
-
-    glDisable(GL_BLEND);
+    shader->unUse();
 }
 
 void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main slicing function
-//    std::cout << glm::to_string(viewDir) << std::endl;
+    std::cout << glm::to_string(viewDir) << std::endl;
     const float EPSILON = 0.0001f;      //for floating point inaccuracy
 
     glm::vec3 unitCubeVertices[8] = {

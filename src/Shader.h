@@ -9,4 +9,5 @@ public:
     Shader(const GLchar* vertexPath, const GLchar* fragmentPath);
     // Uses the current shader
     void use() const;
+    void unUse() const;
 };
