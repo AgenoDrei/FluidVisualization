@@ -22,11 +22,11 @@ Camera* camera;
 DataSet* data = nullptr, *interpolatedData = nullptr;
 InterpolationController *ctrl;
 //RendererParticles* renderer;
-RendererDebugQuad* renderer;
+Renderer3DTextureSlicing* renderer;
 
 int main(int argc, char* argv[]) {
-    std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
-    data = DataImporter::load(path + "/Downloads/interpol30.dat");
+    std::string path = std::getenv("HOME");
+    data = DataImporter::load(path + "/Downloads/drop_100.dat");
 
     //Window Initialisation
     window = new WindowHandler(800, 600);
@@ -41,8 +41,8 @@ void init() {
     fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 //    ctrl = new CpuInterpolationController(30);
 //    renderer = new RendererParticles();
-//    renderer = new Renderer3DTextureSlicing(100, 100, 100);
-    renderer = new RendererDebugQuad();
+//    renderer = new Renderer3DTextureSlicing(256, 256, 256);
+//    renderer = new RendererDebugQuad();
 
 ////    Exporting interpolation:
 //    interpolatedData = ctrl->interpolateData(data);
@@ -50,7 +50,7 @@ void init() {
 //    DataExporter::write(homePath + "/Downloads/interpol30.dat", interpolatedData);
 
 //    renderer->setData(data->getTimestep(0), data->getNumberParticles());
-    renderer->setData(data->getTimestep(0), data->getNumberParticles());
+//    renderer->setData(data->getTimestep(0), data->getNumberParticles(), camera->Front);
 //    glEnable(GL_DEPTH_TEST);
 //    glEnable(GL_CULL_FACE);
 //    glCullFace(GL_BACK);
@@ -59,6 +59,9 @@ void init() {
 //    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 //    glPointSize(1);
     std::cout << "Log> Initalization done" << std::endl;
+
+    renderer = new Renderer3DTextureSlicing(256, 256, 256);
+    renderer->setData(data->getTimestep(0), data->getNumberParticles(), camera->Front);
 }
 
 void mainLoop() {

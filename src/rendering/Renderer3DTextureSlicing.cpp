@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "Renderer3DTextureSlicing.h"
 
 #include "DataSet.h"
@@ -19,52 +20,102 @@ Renderer3DTextureSlicing::~Renderer3DTextureSlicing() {
 }
 
 void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3 initViewDir) {
-    particleCount = count;
-    GLubyte* pData = new GLubyte[particleCount];
+    std::string path = std::getenv("HOME");
+    std::string volume_file = path + "/Downloads/Engine256.raw";
 
-    GLubyte* pData0 = new GLubyte [particleCount / dimZ];
+    std::ifstream infile(volume_file.c_str(), std::ios_base::binary);
 
-    for (auto i = 0u; i < particleCount; i++) {
-        pData[i] = (GLubyte)(step->getParticle(i).density * 255);
-        if (i < dimX*dimY)
-            pData0[i] = (GLubyte)(step->getParticle(i).density * 255);
+    if(infile.good()) {
+        //read the volume data file
+        GLubyte* pData = new GLubyte[dimX*dimY*dimZ];
+        infile.read(reinterpret_cast<char*>(pData), dimX*dimY*dimZ*sizeof(GLubyte));
+        infile.close();
+
+        //generate OpenGL texture
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_3D, texture);
+
+        // set the texture parameters
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+        //set the mipmap levels (base and max)
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
+
+        //allocate data with internal format and foramt as (GL_RED)
+        glTexImage3D(GL_TEXTURE_3D,0,GL_RED,dimX,dimY,dimZ,0,GL_RED,GL_UNSIGNED_BYTE,pData);
+//        GL_CHECK_ERRORS
+
+        //generate mipmaps
+        glGenerateMipmap(GL_TEXTURE_3D);
+
+        //delete the volume data allocated on heap
+        delete [] pData;
+        std::cout<<"Volume data loaded successfully."<<std::endl;
+    } else {
+        std::cout<<"Cannot load volume data."<<std::endl;
+        exit(EXIT_FAILURE);
     }
 
+    //background colour
+    glm::vec4 bg=glm::vec4(0.5,0.5,1,1);
+    //set background colour
+    glClearColor(bg.r, bg.g, bg.b, bg.a);
+
+
+    //maximum number of slices
+    const int MAX_SLICES = 512;
+    //sliced vertices
+    vTextureSlices = new glm::vec3[MAX_SLICES*12];
+}
+
+
+//    particleCount = count;
+//    GLubyte* pData = new GLubyte[particleCount];
+//
+//    for (auto i = 0u; i < particleCount; i++) {
+//        pData[i] = (GLubyte)(step->getParticle(i).density * 255);
+//    }
+//
+//
 //    glGenTextures(1, &texture);
 //    glBindTexture(GL_TEXTURE_3D, texture);
 //    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);      // GL_CLAMP_TO_BORDER instead of GL_CLAMP resolved GL_INVALID_ENUM error
 //    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 //    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
 //    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-////    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-////    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
-////    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+////    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
+//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
 //    glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, dimX, dimY, dimZ, 0, GL_RED, GL_UNSIGNED_BYTE, pData);
-////    glGenerateMipmap(GL_TEXTURE_3D);
-
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, dimX, dimY, 0, GL_RED, GL_UNSIGNED_BYTE, pData);
 //    glGenerateMipmap(GL_TEXTURE_3D);
-
-    delete [] pData;
-
-    const int MAX_SLICES = 2 * dimZ;    // not sure though
-    vTextureSlices = new glm::vec3[MAX_SLICES*12];
-
-    //setup the vertex array and buffer objects
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vTextureSlices), 0, GL_DYNAMIC_DRAW);     //pass the sliced vertices vector to buffer object memory
-
-    glEnableVertexAttribArray(0);       //enable vertex attribute array for position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glBindVertexArray(0);
-
-//    Renderer3DTextureSlicing::sliceVolume(initViewDir);     // initial slicing
+//
+////    glGenTextures(1, &texture);
+////    glBindTexture(GL_TEXTURE_2D, texture);
+////    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, dimX, dimY, 0, GL_RED, GL_UNSIGNED_BYTE, pData);
+//
+//    delete [] pData;
+//
+//    const int MAX_SLICES = 2 * dimZ;    // not sure though
+//    vTextureSlices = new glm::vec3[MAX_SLICES*12];
+//
+//    //setup the vertex array and buffer objects
+//    glGenVertexArrays(1, &VAO);
+//    glGenBuffers(1, &VBO);
+//    glBindVertexArray(VAO);
+//    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(vTextureSlices), 0, GL_DYNAMIC_DRAW);     //pass the sliced vertices vector to buffer object memory
+//
+//    glEnableVertexAttribArray(0);       //enable vertex attribute array for position
+//    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+//    glBindVertexArray(0);
+//
+////    Renderer3DTextureSlicing::sliceVolume(initViewDir);     // initial slicing
 }
 
 void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
