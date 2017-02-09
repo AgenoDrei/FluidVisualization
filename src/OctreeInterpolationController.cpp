@@ -10,11 +10,10 @@
 #include "Timestep.h"
 
 
-OctreeInterpolationController::OctreeInterpolationController(bool minDepthCorrection, uint32_t minDepth, GLfloat distanceCorrectionFactor) :
+OctreeInterpolationController::OctreeInterpolationController(GLfloat minSize, GLfloat distanceCorrectionFactor) :
         interpolatedData(nullptr),
         sourceData(nullptr),
-        minDepthCorrection(minDepthCorrection),
-        minDepth(minDepth),
+        minSize(minSize),
         distanceCorrectionFactor(distanceCorrectionFactor){}
 
 OctreeInterpolationController::~OctreeInterpolationController() {
@@ -47,10 +46,10 @@ void OctreeInterpolationController::prepareData(DataSet *data) {
 
 void OctreeInterpolationController::compute(GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ) {
     //get max(resolutionX, resolutionY, resolutionZ)
-    uint32_t resolution = resolutionX > resolutionY ? ( resolutionX > resolutionZ ? resolutionX : resolutionZ ) : ( resolutionY > resolutionZ ? resolutionY : resolutionZ );
+    uint32_t resolution = (uint32_t) (resolutionX > resolutionY ? ( resolutionX > resolutionZ ? resolutionX : resolutionZ ) : ( resolutionY > resolutionZ ? resolutionY : resolutionZ ));
 
     uint32_t index = 0;
-    uint32_t arraySize = resolutionX * resolutionY * resolutionZ;
+    uint32_t arraySize = (uint32_t) (resolutionX * resolutionY * resolutionZ);
     Particle* grid = new Particle[arraySize];
     float maxDistance = 1.0f / resolutionX / distanceCorrectionFactor;
 
@@ -62,10 +61,21 @@ void OctreeInterpolationController::compute(GLfloat resolutionX, GLfloat resolut
                 grid[index].position = position;
                 auto node = searchNode(position);
                 if(node != nullptr) {
-                    glm::vec3 relevantPosition = node->getData().position;
-                    float distance = glm::distance(position, relevantPosition);
-                    if(distance <= maxDistance) {
-                        grid[index].density = node->getData().density;
+                    //glm::vec3 relevantPosition = node->getData().position;
+                    std::vector<Particle>* candidates = node->getData();
+                    GLfloat smallestDistance = FLT_MAX;
+                    uint32_t smallestDistanceIndex = INFINITY;
+                    for(auto i = 0u; i < candidates->size(); i++) {
+                        Particle candidate = candidates->at(i);
+                        float distance = glm::distance(position, candidate.position);
+                        if(distance < smallestDistance) {
+                            smallestDistance = distance;
+                            smallestDistanceIndex = i;
+                        }
+                    }
+
+                    if(smallestDistance <= maxDistance) {
+                        grid[index].density = candidates->at(smallestDistanceIndex).density;
                     } else {
                         grid[index].density = 0;
                     }
@@ -88,8 +98,12 @@ void OctreeInterpolationController::compute(GLfloat resolutionX, GLfloat resolut
 void OctreeInterpolationController::buildOctree(OctreeNode* node) {
     //Check Termination criteria: Only one or zero Particle in list
     if(node->getInsertListSize() == 1) {
-        node->setExitNode(node->getInsertListElement(0));
+        node->addData(node->getInsertListElement(0));
         return;
+    } else if(node->length < minSize) {
+        for(auto i = 0u; i < node->getInsertListSize(); i++ ) {
+            node->addData(node->getInsertListElement(i));
+        }
     } else if(node->getInsertListSize() < 1) {
         return;
     }
@@ -128,14 +142,12 @@ void OctreeInterpolationController::buildOctree(OctreeNode* node) {
 
 OctreeNode* OctreeInterpolationController::searchNode(glm::vec3 searchPosition) {
     OctreeNode* node = root;
-    OctreeNode* parent = nullptr;
     uint32_t depth = 1;
 
     while(!node->isExitNode()) {
         for(auto i = 0u; i < 8; i++) {
             OctreeNode* child = node->getNode(i);
             if(child->isContained(searchPosition)) {
-                parent = node;
                 node = child;
                 depth++;
                 break;
@@ -143,27 +155,8 @@ OctreeNode* OctreeInterpolationController::searchNode(glm::vec3 searchPosition) 
         }
     }
 
-    if(minDepthCorrection) {
-        if(depth >= minDepth && node->isEmptyNode()) {
-            while(!parent->isExitNode()) {
-                for(auto i = 0u; i < 8; i++) {
-                    OctreeNode* child = parent->getNode(i);
-                    if(!child->isEmptyNode()) {
-                        parent = child;
-                        break;
-                    }
-                }
-            }
-            return parent;
-        } else if(!node->isEmptyNode()) {
-            return node;
-        } else {
-            return nullptr;
-        }
-    } else {
-        if(!node->isEmptyNode())
-            return node;
-        else
-            return nullptr;
-    }
+    if(!node->isEmptyNode())
+        return node;
+    else
+        return nullptr;
 }

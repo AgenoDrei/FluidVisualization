@@ -29,9 +29,9 @@ bool OctreeNode::isContained(glm::vec3 particle) {
     return false;
 }
 
-void OctreeNode::setExitNode(Particle particle) {
+void OctreeNode::addData(Particle particle) {
     emptyNode = false;
-    data = particle;
+    data.push_back(particle);
 }
 
 bool OctreeNode::isExitNode() {
@@ -70,6 +70,6 @@ Particle OctreeNode::getInsertListElement(uint32_t index) {
     return insertList.at(index);
 }
 
-Particle OctreeNode::getData() {
-    return data;
+std::vector<Particle>* OctreeNode::getData() {
+    return &data;
 }
