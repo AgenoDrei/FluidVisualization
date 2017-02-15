@@ -15,18 +15,15 @@ Renderer3DTextureSlicing::Renderer3DTextureSlicing(uint32_t dimX, uint32_t dimY,
     Renderer3DTextureSlicing::dimZ = dimZ;
 }
 
-Renderer3DTextureSlicing::~Renderer3DTextureSlicing() {
-//    delete [] buffer;
-}
+Renderer3DTextureSlicing::~Renderer3DTextureSlicing() {}
 
 void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3 initViewDir) {
     particleCount = count;
     GLubyte* pData = new GLubyte[particleCount];
 
     for (auto i = 0u; i < particleCount; i++) {
-        pData[i] = (GLubyte)(step->getParticle(i).density * 255);   // each pData-value 0..255
+        pData[i] = (GLubyte)(step->getParticle(i).density > 0 ? 255 : 0);   // each pData-value 0..255
     }
-
 
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_3D, texture);
@@ -55,13 +52,13 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
     glGenBuffers(1, &VBO);
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vTextureSlices), 0, GL_DYNAMIC_DRAW);     //pass the sliced vertices vector to buffer object memory
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vTextureSlices), 0, GL_DYNAMIC_DRAW);
 
     glEnableVertexAttribArray(0);       //enable vertex attribute array for position
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glBindVertexArray(0);
 
-//    Renderer3DTextureSlicing::sliceVolume(initViewDir);     // initial slicing
+    Renderer3DTextureSlicing::sliceVolume(initViewDir);     // initial slicing
 }
 
 void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {

@@ -53,10 +53,6 @@ void init() {
 //    glEnable(GL_CULL_FACE);
 //    glCullFace(GL_BACK);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glPointSize(1);
-
     std::cout << "Log> Initalization done" << std::endl;
 }
 
@@ -66,6 +62,7 @@ void mainLoop() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glPointSize(1);
 
     renderer->render(camera, window);
     fpsRenderer->drawText(std::to_string(window->calculateFPS()), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
