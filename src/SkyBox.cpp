@@ -28,6 +28,7 @@ SkyBox::SkyBox() {
             size,  size, -size,
             -size,  size, -size,
 
+            // left
             -size, -size,  size,
             -size, -size, -size,
             -size,  size, -size,
@@ -35,6 +36,7 @@ SkyBox::SkyBox() {
             -size,  size,  size,
             -size, -size,  size,
 
+            //right
             size, -size, -size,
             size, -size,  size,
             size,  size,  size,
@@ -42,6 +44,7 @@ SkyBox::SkyBox() {
             size,  size, -size,
             size, -size, -size,
 
+            //back
             -size, -size,  size,
             -size,  size,  size,
             size,  size,  size,
@@ -49,12 +52,13 @@ SkyBox::SkyBox() {
             size, -size,  size,
             -size, -size,  size,
 
+            // top
             -size,  size, -size,
             size,  size, -size,
             size,  size,  size,
+            -size,  size, -size,
             size,  size,  size,
             -size,  size,  size,
-            -size,  size, -size,
 
             -size, -size, -size,
             -size, -size,  size,
@@ -100,6 +104,10 @@ void SkyBox::loadSkyBox(std::vector<const GLchar*> faces) {
 
 void SkyBox::render(Camera *camera, WindowHandler *wHandler) {
     glm::mat4 model = glm::mat4();
+    render(camera, wHandler, model);
+}
+
+void SkyBox::render(Camera *camera, WindowHandler *wHandler, glm::mat4x4 model) {
     _shader->use();
     _shader->setModelViewProjection(model, camera, wHandler);
 

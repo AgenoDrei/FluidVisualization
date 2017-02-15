@@ -5,9 +5,40 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/ext.hpp>
 #include "MarchingCubesRenderObject.h"
+#include "SkyBox.h"
+#include "WindowHandler.h"
+#include "TextureRenderer.h"
 
-RendererMarchingCubes::RendererMarchingCubes() {
+RendererMarchingCubes::RendererMarchingCubes(SkyBox* skyBox) :
+    _skyBox(skyBox) {
     _shader = new MarchingCubesShader();
+
+
+    glGenFramebuffers(1, &_reflectionFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, _reflectionFramebuffer);
+
+    glGenTextures(1, &_reflectionTexture);
+    glBindTexture(GL_TEXTURE_2D, _reflectionTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2048, 2048, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    glGenRenderbuffers(1, &_reflectionDepthBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, _reflectionDepthBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 2048, 2048);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _reflectionDepthBuffer);
+
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _reflectionTexture, 0);
+    GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
+    glDrawBuffers(1, drawBuffers);
+
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        throw "fail";
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    _debugRenderer = new TextureRenderer(_reflectionTexture);
 }
 
 void RendererMarchingCubes::addTriangles(const std::vector<Triangle>& triangles) {
@@ -49,10 +80,37 @@ void RendererMarchingCubes::addVertexIndexBuffer(const std::vector<VertexPositio
     _objects.push_back(new MarchingCubesRenderObject(indices.size(), indexBuffer, vertexBuffer));
 }
 
+void RendererMarchingCubes::renderReflectionMap(Camera *camera, WindowHandler *wHandler) {
+    glBindFramebuffer(GL_FRAMEBUFFER, _reflectionFramebuffer);
+    glViewport(0, 0, 2048, 2048);
+
+    _skyBox->render(camera, wHandler);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, wHandler->getWidth(), wHandler->getHeight());
+
+}
+
 void RendererMarchingCubes::render(Camera *camera, WindowHandler *wHandler) {
+    auto reflectionCamera = camera->getCopy();
+    reflectionCamera->Position.y =  -camera->Position.y + 0.5f;
+    reflectionCamera->Front.y = -camera->Front.y;
+    //reflectionCamera->Right = glm::normalize(glm::cross(reflectionCamera->Front, reflectionCamera->WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+    //reflectionCamera->Up = glm::normalize(glm::cross(reflectionCamera->Right, reflectionCamera->Front));
+
+    //TODO: set clipping
+    renderReflectionMap(reflectionCamera, wHandler);
+
+    /*_debugRenderer->render(camera, wHandler);
+    return;*/
+
     glm::mat4 model = glm::mat4();
     _shader->use();
     _shader->setModelViewProjection(model, camera, wHandler);
+
+    auto reflectionViewMatrix = reflectionCamera->GetViewMatrix();
+    _shader->setReflectionView(reflectionViewMatrix);
+    glBindTexture(GL_TEXTURE_2D, _reflectionTexture);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);

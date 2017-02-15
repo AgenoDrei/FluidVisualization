@@ -5,6 +5,7 @@
 #include <GL/gl.h>
 
 #include <vector>
+#include <glm/mat4x4.hpp>
 
 class SkyBoxShader;
 class VertexArrayBuffer;
@@ -24,6 +25,7 @@ public:
     SkyBox();
 
     void render(Camera *camera, WindowHandler *wHandler);
+    void render(Camera *camera, WindowHandler *wHandler, glm::mat4x4 model);
 };
 
 

@@ -62,7 +62,7 @@ void init() {
     //interpolatedData = ctrl->interpolateData(data, 400, 100, 400);
 
     quadRenderer = new RendererDebugQuad();
-    marchingCubesRenderer = new RendererMarchingCubes();
+    marchingCubesRenderer = new RendererMarchingCubes(skyBox);
 
 
     auto firstTimestep = data->getTimestep(0);

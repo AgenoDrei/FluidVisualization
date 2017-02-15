@@ -56,6 +56,10 @@ public:
     void ProcessMouseScroll(GLfloat yoffset);
 
     glm::mat4 GetProjectonMatrix(WindowHandler* wHandler, float nearPlane, float farPlane) const;
+
+    glm::vec3 getTarget();
+
+    Camera* getCopy();
 private:
     // Calculates the front vector from the Camera's (updated) Eular Angles
     void updateCameraVectors();

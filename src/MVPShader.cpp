@@ -30,7 +30,7 @@ void MVPShader::setModelViewProjection(glm::mat4& model, glm::mat4& view, glm::m
 
 void MVPShader::setModelViewProjection(glm::mat4& model, Camera* camera, WindowHandler* wHandler) {
     auto view = camera->GetViewMatrix();
-    auto projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
+    auto projection = camera->GetProjectonMatrix(wHandler, 0.5f, 10.0f);
     setModelViewProjection(model, view, projection);
 }
 
