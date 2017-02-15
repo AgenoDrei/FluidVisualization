@@ -18,6 +18,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <chrono>
+#include "Ground.h"
 
 WindowHandler* window;
 TextRenderer* fpsRenderer;
@@ -28,6 +29,7 @@ InterpolationController *ctrl;
 RendererParticles* renderer;
 RendererDebugQuad* quadRenderer;
 RendererMarchingCubes* marchingCubesRenderer;
+Ground* ground;
 
 int main(int argc, char* argv[]) {
     //std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
@@ -37,6 +39,8 @@ int main(int argc, char* argv[]) {
     //Window Initialisation
     window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop);
+
+    ground = new Ground();
 
     //algorithm.draw();
 
@@ -91,7 +95,8 @@ void mainLoop() {
     //renderer->render(camera, window);
     //quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
 
-    marchingCubesRenderer->render(camera, window);
+    ground->render(camera, window);
+    //marchingCubesRenderer->render(camera, window);
 
     //using namespace std::chrono;        // slowing fps refresh down to ~ every .1 ms
     //if (duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() % 1000 > 900)
