@@ -1,7 +1,6 @@
-#SET(SRC_CPP main.cpp datasetOperation/DataImporter.cpp DataSet.cpp Timestep.cpp Particle.cpp WindowHandler.cpp Shader.cpp Camera.cpp datasetOperation/CpuInterpolationController.cpp datasetOperation/GpuInterpolationController.cpp rendering/RendererParticles.cpp rendering/RendererParticles.h rendering/RendererDebugQuad.cpp rendering/TextRenderer.cpp datasetOperation/DataExporter.cpp)
-#SET(SRC_H main.h datasetOperation/DataImporter.h DataSet.h Timestep.h Particle.h WindowHandler.h Shader.h Camera.h datasetOperation/InterpolationController.h datasetOperation/CpuInterpolationController.h datasetOperation/GpuInterpolationController.h rendering/RendererParticles.cpp rendering/RendererParticles.h rendering/RendererDebugQuad.h rendering/TextRenderer.h datasetOperation/DataExporter.h)
-#SET(SRC ${SRC_CPP} ${SRC_H} rendering/Renderer3DTextureSlicing.cpp rendering/Renderer3DTextureSlicing.h )
-SET(SRC main.cpp debug_stuff/GLSLShader.cpp debug_stuff/Grid.cpp debug_stuff/RenderableObject.cpp debug_stuff/GLSLShader.h debug_stuff/Grid.h debug_stuff/RenderableObject.h)
+SET(SRC_CPP main.cpp DataImporter.cpp DataSet.cpp Timestep.cpp Particle.cpp WindowHandler.cpp Shader.cpp Camera.cpp CpuInterpolationController.cpp GpuInterpolationController.cpp RendererParticles.cpp RendererParticles.h RendererDebugQuad.cpp TextRenderer.cpp DataExporter.cpp)
+SET(SRC_H main.h DataImporter.h DataSet.h Timestep.h Particle.h WindowHandler.h Shader.h Camera.h InterpolationController.h CpuInterpolationController.h GpuInterpolationController.h RendererParticles.cpp RendererParticles.h RendererDebugQuad.h TextRenderer.h DataExporter.h)
+SET(SRC ${SRC_CPP} ${SRC_H} Renderer3DTextureSlicing.cpp Renderer3DTextureSlicing.h)
 
 add_executable(FluidVisualisation ${SRC})
 
@@ -31,6 +30,5 @@ target_link_libraries(FluidVisualisation ${GLEW_LIBRARIES})
 find_package(OpenGL REQUIRED)
 target_link_libraries(FluidVisualisation ${OPENGL_gl_LIBRARY})
 
-#file(COPY ../shader DESTINATION ..)
-file(COPY debug_stuff/shaders DESTINATION ..)
+file(COPY ../shader DESTINATION ..)
 

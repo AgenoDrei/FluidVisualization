@@ -24,7 +24,7 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
     GLubyte* pData = new GLubyte[particleCount];
 
     for (auto i = 0u; i < particleCount; i++) {
-        pData[i] = (GLubyte)(step->getParticle(i).density * 255);
+        pData[i] = (GLubyte)(step->getParticle(i).density * 255);   // each pData-value 0..255
     }
 
 
