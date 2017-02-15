@@ -19,6 +19,7 @@
 #include <iostream>
 #include <chrono>
 #include "Ground.h"
+#include "SkyBox.h"
 
 WindowHandler* window;
 TextRenderer* fpsRenderer;
@@ -30,6 +31,7 @@ RendererParticles* renderer;
 RendererDebugQuad* quadRenderer;
 RendererMarchingCubes* marchingCubesRenderer;
 Ground* ground;
+SkyBox* skyBox;
 
 int main(int argc, char* argv[]) {
     //std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
@@ -54,6 +56,7 @@ void init() {
     ctrl = new OctreeInterpolationController(false, 1, 1.5);
     renderer = new RendererParticles();
     ground = new Ground();
+    skyBox = new SkyBox();
     //quadRenderer = new RendererDebugQuad();
 
     //interpolatedData = ctrl->interpolateData(data, 400, 100, 400);
@@ -95,7 +98,8 @@ void mainLoop() {
     //renderer->render(camera, window);
     //quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
 
-    ground->render(camera, window);
+    //ground->render(camera, window);
+    skyBox->render(camera, window);
     marchingCubesRenderer->render(camera, window);
 
     //using namespace std::chrono;        // slowing fps refresh down to ~ every .1 ms
