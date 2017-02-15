@@ -40,7 +40,6 @@ int main(int argc, char* argv[]) {
     window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop);
 
-    ground = new Ground();
 
     //algorithm.draw();
 
@@ -54,6 +53,7 @@ void init() {
     //ctrl = new CpuInterpolationController(10);
     ctrl = new OctreeInterpolationController(false, 1, 1.5);
     renderer = new RendererParticles();
+    ground = new Ground();
     //quadRenderer = new RendererDebugQuad();
 
     //interpolatedData = ctrl->interpolateData(data, 400, 100, 400);
@@ -96,7 +96,7 @@ void mainLoop() {
     //quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
 
     ground->render(camera, window);
-    //marchingCubesRenderer->render(camera, window);
+    marchingCubesRenderer->render(camera, window);
 
     //using namespace std::chrono;        // slowing fps refresh down to ~ every .1 ms
     //if (duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() % 1000 > 900)

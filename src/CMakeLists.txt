@@ -31,5 +31,11 @@ target_link_libraries(FluidVisualisation ${GLEW_LIBRARIES})
 find_package(OpenGL REQUIRED)
 target_link_libraries(FluidVisualisation ${OPENGL_gl_LIBRARY})
 
+#SOIL
+find_package(SOIL REQUIRED)
+include_directories(${SOIL_INCLUDE_DIRS})
+target_link_libraries(FluidVisualisation ${SOIL_LIBRARY})
+
 file(COPY ../shader DESTINATION ..)
+file(COPY ../textures DESTINATION ..)
 

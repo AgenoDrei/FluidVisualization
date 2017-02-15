@@ -14,6 +14,7 @@ protected:
     GroundShader* _shader;
     VertexArrayBuffer* _vertexBuffer;
     GLuint _indexBuffer;
+    GLuint _texture;
 public:
     Ground();
 
