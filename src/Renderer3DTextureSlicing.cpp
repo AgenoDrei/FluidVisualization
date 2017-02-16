@@ -10,6 +10,7 @@
 Renderer3DTextureSlicing::Renderer3DTextureSlicing(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
     shader = new Shader("shader/textureSlicer.vert", "shader/textureSlicer.frag");
     bViewRotated = false;
+    Renderer3DTextureSlicing::MAX_SLICES = 4*dimZ;
     Renderer3DTextureSlicing::dimX = dimX;
     Renderer3DTextureSlicing::dimY = dimY;
     Renderer3DTextureSlicing::dimZ = dimZ;
@@ -17,14 +18,13 @@ Renderer3DTextureSlicing::Renderer3DTextureSlicing(uint32_t dimX, uint32_t dimY,
 
 Renderer3DTextureSlicing::~Renderer3DTextureSlicing() {}
 
-void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3 initViewDir) {
-    particleCount = count;
-    GLubyte* pData = new GLubyte[particleCount];
-    //auto pData = new float[particleCount];
-
+void Renderer3DTextureSlicing::setData(Timestep* step, glm::vec3 initViewDir) {
+    auto particleCount = step->getSize();
+//    GLubyte* pData = new GLubyte[particleCount];
+    auto pData = new float[particleCount];
     for (auto i = 0u; i < particleCount; i++) {
-        pData[i] = (GLubyte)(step->getParticle(i).density > 0 ? 255 : 0);   // each pData-value 0..255
-        //pData[i] = step->getParticle(i).density;   // each pData-value 0..255
+//        pData[i] = (GLubyte)(step->getParticle(i).density > 0 ? 255 : 0);   // each pData-value 0..255
+        pData[i] = step->getParticle(i).density * 1000;   // *1000 s.t. values big enough to get integer red value
 //        std::cout << step->getParticle(i).density;
     }
 
@@ -35,10 +35,10 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, dimX, dimY, dimZ, 0, GL_RED, GL_UNSIGNED_BYTE, pData);
+//    glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, dimX, dimY, dimZ, 0, GL_RED, GL_UNSIGNED_BYTE, pData);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, dimX, dimY, dimZ, 0, GL_RED, GL_FLOAT, pData);
     glGenerateMipmap(GL_TEXTURE_3D);
 
     /*auto test = new GLubyte[particleCount];
@@ -56,7 +56,6 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
 
     delete [] pData;
 
-    const int MAX_SLICES = 2 * dimZ;    // not sure though
     vTextureSlices = new glm::vec3[MAX_SLICES*12];
 
     //setup the vertex array and buffer objects
@@ -65,7 +64,7 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     //glBufferData(GL_ARRAY_BUFFER, sizeof(vTextureSlices), 0, GL_DYNAMIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, 200*12*sizeof(glm::vec3), 0, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, MAX_SLICES*12*sizeof(glm::vec3), 0, GL_DYNAMIC_DRAW);
 
     glEnableVertexAttribArray(0);       //enable vertex attribute array for position
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -76,20 +75,21 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
 
 void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
     glm::mat4 model, view, projection;
-    model = glm::translate(model, glm::vec3(0.0f));
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
     view = camera->GetViewMatrix();
     projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
 
 //    if (bViewRotated)
 //        sliceVolume(camera->Front);
 
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glBindVertexArray(VAO);
     shader->use();
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     //glDrawArrays(GL_TRIANGLES, 0, sizeof(vTextureSlices)/sizeof(vTextureSlices[0]));
-    glDrawArrays(GL_TRIANGLES, 0, 200*12*12);
+    glDrawArrays(GL_TRIANGLES, 0, MAX_SLICES*12*sizeof(glm::vec3));
     shader->unUse();
 }
 
@@ -98,24 +98,24 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
     const float EPSILON = 0.0001f;      //for floating point inaccuracy
 
     glm::vec3 unitCubeVertices[8] = {
-        glm::vec3(-0.5,-0.5,-0.5),
-        glm::vec3( 0.5,-0.5,-0.5),
-        glm::vec3(0.5, 0.5,-0.5),
-        glm::vec3(-0.5, 0.5,-0.5),
-        glm::vec3(-0.5,-0.5, 0.5),
-        glm::vec3(0.5,-0.5, 0.5),
-        glm::vec3( 0.5, 0.5, 0.5),
-        glm::vec3(-0.5, 0.5, 0.5)
+        glm::vec3(0,0,0),
+        glm::vec3( 0.9,0,0),
+        glm::vec3(0.9, 0.9,0),
+        glm::vec3(0, 0.9,0),
+        glm::vec3(0,0, 0.9),
+        glm::vec3(0.9,0, 0.9),
+        glm::vec3( 0.9, 0.9, 0.9),
+        glm::vec3(0, 0.9, 0.9)
     };
     int unitCubeEdges[8][12] = {
-            { 0,1,5,6,   4,8,11,9,  3,7,2,10 }, // v0 is front
-            { 0,4,3,11,  1,2,6,7,   5,9,8,10 }, // v1 is front
-            { 1,5,0,8,   2,3,7,4,   6,10,9,11}, // v2 is front
-            { 7,11,10,8, 2,6,1,9,   3,0,4,5  }, // v3 is front
-            { 8,5,9,1,   11,10,7,6, 4,3,0,2  }, // v4 is front
-            { 9,6,10,2,  8,11,4,7,  5,0,1,3  }, // v5 is front
-            { 9,8,5,4,   6,1,2,0,   10,7,11,3}, // v6 is front
-            { 10,9,6,5,  7,2,3,1,   11,4,8,0 }  // v7 is front
+        { 0,1,5,6,   4,8,11,9,  3,7,2,10 }, // v0 is front
+        { 0,4,3,11,  1,2,6,7,   5,9,8,10 }, // v1 is front
+        { 1,5,0,8,   2,3,7,4,   6,10,9,11}, // v2 is front
+        { 7,11,10,8, 2,6,1,9,   3,0,4,5  }, // v3 is front
+        { 8,5,9,1,   11,10,7,6, 4,3,0,2  }, // v4 is front
+        { 9,6,10,2,  8,11,4,7,  5,0,1,3  }, // v5 is front
+        { 9,8,5,4,   6,1,2,0,   10,7,11,3}, // v6 is front
+        { 10,9,6,5,  7,2,3,1,   11,4,8,0 }  // v7 is front
     };
     const int ucEdgesPos[12][2]= {{0,1},{1,2},{2,3},{3,0},{0,4},{1,5},{2,6},{3,7},{4,5},{5,6},{6,7},{7,4}};
 
@@ -173,15 +173,13 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
     //a minimum of 3 and a maximum of 6 vertex polygon
     glm::vec3 intersection[6];
     float dL[12];
-
+    int count = 0;
     //loop through all slices
-    for(int i=dimZ-1;i>=0;i--) {
+    for(int i=4 * dimZ-1;i>=0;i--) {
 
         //determine the lambda value for all edges
         for(int e = 0; e < 12; e++)
-        {
             dL[e] = lambda[e] + i*lambda_inc[e];
-        }
 
         //if the values are between 0-1, we have an intersection at the current edge
         //repeat the same for all 12 edges
@@ -252,32 +250,14 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
         //we calculated the proper polygon indices by using indices of a triangular fan
         int indices[]={0,1,2, 0,2,3, 0,3,4, 0,4,5};
 
-        int count = 0;
+
         //Using the indices, pass the intersection vertices to the vTextureSlices vector
-        for(int i=0;i<12;i++)
-            vTextureSlices[count++]=intersection[indices[i]];
+        for(int j=0;j<12;j++)
+            vTextureSlices[count++]=intersection[indices[j]];
     }
 
     //update buffer object with the new vertices
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    std::cout<<"Size: "<<sizeof(vTextureSlices)<<std::endl;
     //glBufferSubData(GL_ARRAY_BUFFER, 0,  sizeof(vTextureSlices), &(vTextureSlices[0].x));
     glBufferSubData(GL_ARRAY_BUFFER, 0,  2*100*12*sizeof(glm::vec3), &(vTextureSlices[0].x));
 }
-
-/*
-int Renderer3DTextureSlicing::FindAbsMax(glm::vec3 v) {
-    v = glm::abs(v);
-    int max_dim = 0;
-    float val = v.x;
-    if(v.y>val) {
-        val = v.y;
-        max_dim = 1;
-    }
-    if(v.z > val) {
-        val = v.z;
-        max_dim = 2;
-    }
-    return max_dim;
-}
- */
