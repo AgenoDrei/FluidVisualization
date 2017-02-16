@@ -23,6 +23,7 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
 
     for (auto i = 0u; i < particleCount; i++) {
         pData[i] = (GLubyte)(step->getParticle(i).density > 0 ? 255 : 0);   // each pData-value 0..255
+//        std::cout << step->getParticle(i).density;
     }
 
     glGenTextures(1, &texture);
@@ -38,6 +39,15 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
     glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, dimX, dimY, dimZ, 0, GL_RED, GL_UNSIGNED_BYTE, pData);
     glGenerateMipmap(GL_TEXTURE_3D);
 
+    auto test = new GLubyte[particleCount];
+    glGetTexImage(GL_TEXTURE_3D, 0, GL_RED, GL_UNSIGNED_BYTE, test);
+    for(auto i = 0; i < particleCount; ++i) {
+        if(test[i] != pData[i]) {
+            throw "fu";
+        }
+        //std::cout<<std::hex<<test[i]<<std::endl;
+    }
+
 //    glGenTextures(1, &texture);
 //    glBindTexture(GL_TEXTURE_2D, texture);
 //    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, dimX, dimY, 0, GL_RED, GL_UNSIGNED_BYTE, pData);
@@ -52,7 +62,8 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
     glGenBuffers(1, &VBO);
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vTextureSlices), 0, GL_DYNAMIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(vTextureSlices), 0, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 200, 0, GL_DYNAMIC_DRAW);
 
     glEnableVertexAttribArray(0);       //enable vertex attribute array for position
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -64,7 +75,7 @@ void Renderer3DTextureSlicing::setData(Timestep* step, uint32_t count, glm::vec3
 void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
     glm::mat4 model, view, projection;
     model = glm::translate(model, glm::vec3(0.0f));
-    model = camera->GetViewMatrix();
+    view = camera->GetViewMatrix();
     projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
 
 //    if (bViewRotated)
@@ -75,7 +86,8 @@ void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-    glDrawArrays(GL_TRIANGLES, 0, sizeof(vTextureSlices)/sizeof(vTextureSlices[0]));
+    //glDrawArrays(GL_TRIANGLES, 0, sizeof(vTextureSlices)/sizeof(vTextureSlices[0]));
+    glDrawArrays(GL_TRIANGLES, 0, 200);
     shader->unUse();
 }
 
@@ -246,7 +258,9 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
 
     //update buffer object with the new vertices
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferSubData(GL_ARRAY_BUFFER, 0,  sizeof(vTextureSlices), &(vTextureSlices[0].x));
+    std::cout<<"Size: "<<sizeof(vTextureSlices)<<std::endl;
+    //glBufferSubData(GL_ARRAY_BUFFER, 0,  sizeof(vTextureSlices), &(vTextureSlices[0].x));
+    glBufferSubData(GL_ARRAY_BUFFER, 0,  2*100, &(vTextureSlices[0].x));
 }
 
 /*

@@ -13,7 +13,7 @@ void main()
 {
 	//get the clipspace position
 //	gl_Position = MVP*vec4(vVertex.xyz,1);
-    gl_Position = model * view * projection * vec4(vVertex.xyz, 1);
+    gl_Position = projection * view * model * vec4(vVertex.xyz, 1);
 
 	//get the 3D texture coordinates by adding (0.5,0.5,0.5) to the object space
 	//vertex position. Since the unit cube is at origin (min: (-0.5,-0.5,-0.5) and max: (0.5,0.5,0.5))

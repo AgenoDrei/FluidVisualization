@@ -13,6 +13,7 @@ void main()
 	//we can get the sample value from the texture using the red channel. Here, we set all 4
 	//components as the sample value in the texture which gives us a shader of grey.
 
-//	vFragColor = texture(volume, vUV).rrrr;
+	//vFragColor = texture(volume, vUV).rrrr;
     vFragColor = vec4(vUV, 1.0f);
+    //vFragColor = vec4(0.5, 0.5,0.5, 1.0f);
 }
