@@ -14,6 +14,7 @@
 #include "Grid.h"
 #include "RendererMarchingCubes.h"
 #include "VertexWelder.h"
+#include "RendererRayCasting.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -27,13 +28,13 @@ DataSet* data = nullptr, *interpolatedData = nullptr;
 InterpolationController *ctrl;
 RendererParticles* renderer;
 RendererDebugQuad* quadRenderer;
+RendererRayCasting* rayRenderer;
 RendererMarchingCubes* marchingCubesRenderer;
 
 int main(int argc, char* argv[]) {
     //std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
 	//data = DataImporter::load("/home/nils/Downloads/drop_interpolation_300.dat");
-	data = DataImporter::load("/home/nils/Downloads/drop_100.dat");
-    interpolatedData = data;
+	data = DataImporter::load("/home/simon/Downloads/drop_200.dat");
     //Window Initialisation
     window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop);
@@ -45,16 +46,16 @@ int main(int argc, char* argv[]) {
 
 void init() {
     std::cout << "Log> Render initialization running" << std::endl;
-    camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
+    camera = new Camera(glm::vec3(0.5f, 0.25f, 1.5f));
     window->setCamera(camera);
-    //ctrl = new CpuInterpolationController(10);
-    ctrl = new OctreeInterpolationController(0.0025, 1.5);
-    renderer = new RendererParticles();
+    //ctrl = new OctreeInterpolationController(0.0025, 1.5);
+    //renderer = new RendererParticles();
     //quadRenderer = new RendererDebugQuad();
+    rayRenderer = new RendererRayCasting();
 
-    //interpolatedData = ctrl->interpolateData(data, 400, 100, 400);
+    //interpolatedData = ctrl->interpolateData(data, 200, 100, 200);
 
-    quadRenderer = new RendererDebugQuad();
+    /*quadRenderer = new RendererDebugQuad();
     marchingCubesRenderer = new RendererMarchingCubes();
 
 
@@ -66,10 +67,11 @@ void init() {
     auto vertices = algorithm.getVertices();
 
     auto weldedResult = VertexWelder<VertexPositionNormal>::weld(vertices);
-    marchingCubesRenderer->addVertexIndexBuffer(weldedResult->VertexBuffer, weldedResult->IndexBuffer);
+    marchingCubesRenderer->addVertexIndexBuffer(weldedResult->VertexBuffer, weldedResult->IndexBuffer);*/
 
     //interpolatedData = ctrl->interpolateData(data);
-    //renderer->setData(interpolatedData->getTimestep(0), interpolatedData->getNumberParticles());
+    //renderer->setData(data->getTimestep(0), data->getNumberParticles());
+    rayRenderer->setData(data->getTimestep(0), data->getNumberParticles());
     //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
     /*glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -90,8 +92,9 @@ void mainLoop() {
 
     //renderer->render(camera, window);
     //quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
+    rayRenderer->render(camera, window);
 
-    marchingCubesRenderer->render(camera, window);
+    //marchingCubesRenderer->render(camera, window);
 
     //using namespace std::chrono;        // slowing fps refresh down to ~ every .1 ms
     //if (duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() % 1000 > 900)
