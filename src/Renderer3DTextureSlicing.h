@@ -10,17 +10,19 @@ class Shader;
 
 class Renderer3DTextureSlicing {
 public:
-    Renderer3DTextureSlicing(uint32_t dimX, uint32_t dimY, uint32_t dimZ);
+    Renderer3DTextureSlicing(float quality, uint32_t dimX, uint32_t dimY, uint32_t dimZ, Camera* camera);
     ~Renderer3DTextureSlicing();
-    void setData(Timestep* step, glm::vec3 initViewDir);
-    void render(Camera* camera, WindowHandler* wHandler);
+    void setData(Timestep* step);
+    void render(WindowHandler* wHandler);
+//    static void toggleBViewRotated();
+//    static bool bViewRotated;
 private:
-    bool bViewRotated;
+    Camera* camera;
+    glm::vec3 viewDirSlicing;
     uint32_t dimX, dimY, dimZ;
     GLuint VAO, VBO, texture;
     Shader* shader;
     glm::vec3 *vTextureSlices, *intersection;
-    void sliceVolume(glm::vec3 viewDir);
+    void sliceVolume();
     int num_slices, sizeof_vTextureSlices;
-//    int FindAbsMax(glm::vec3 v);
 };

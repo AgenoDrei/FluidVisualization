@@ -46,8 +46,9 @@ void init() {
     window->setCamera(camera);
     fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
-    renderer = new Renderer3DTextureSlicing(100, 100, 100);
-    renderer->setData(data->getTimestep(0), camera->Front);
+    renderer = new Renderer3DTextureSlicing(4, 100, 100, 100, camera);
+    renderer->setData(data->getTimestep(0));
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
@@ -63,7 +64,7 @@ void mainLoop() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glPointSize(1);
 
-    renderer->render(camera, window);
+    renderer->render(window);
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     fpsRenderer->drawText(std::to_string(window->calculateFPS()), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
 

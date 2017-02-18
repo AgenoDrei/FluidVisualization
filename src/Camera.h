@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include "Renderer3DTextureSlicing.h"
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
@@ -54,6 +55,9 @@ public:
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = true);
     // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(GLfloat yoffset);
+
+//    void setCbOnUpdate(void (Renderer3DTextureSlicing::*cb)());
+    void (*cbOnUpdateCameraVectors)();
 
     glm::mat4 GetProjectonMatrix(WindowHandler* wHandler, float nearPlane, float farPlane) const;
 private:

@@ -7,19 +7,22 @@
 #include "WindowHandler.h"
 #include "Shader.h"
 
-Renderer3DTextureSlicing::Renderer3DTextureSlicing(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+Renderer3DTextureSlicing::Renderer3DTextureSlicing(float quality, uint32_t dimX, uint32_t dimY, uint32_t dimZ, Camera* camera) {
     shader = new Shader("shader/textureSlicer.vert", "shader/textureSlicer.frag");
-    bViewRotated = false;
-    Renderer3DTextureSlicing::num_slices = 1*dimZ;
+//    bViewRotated = false;
+    Renderer3DTextureSlicing::num_slices = quality*dimZ;
     Renderer3DTextureSlicing::sizeof_vTextureSlices = num_slices*12*sizeof(glm::vec3);
     Renderer3DTextureSlicing::dimX = dimX;
     Renderer3DTextureSlicing::dimY = dimY;
     Renderer3DTextureSlicing::dimZ = dimZ;
+    Renderer3DTextureSlicing::camera = camera;
+    viewDirSlicing = camera->Front;
+//    camera->cbOnUpdateCameraVectors = &toggleBViewRotated;
 }
 
 Renderer3DTextureSlicing::~Renderer3DTextureSlicing() {}
 
-void Renderer3DTextureSlicing::setData(Timestep* step, glm::vec3 initViewDir) {
+void Renderer3DTextureSlicing::setData(Timestep* step) {
     auto particleCount = step->getSize();
     auto pData = new float[particleCount];
     for (auto i = 0u; i < particleCount; i++) {
@@ -55,17 +58,20 @@ void Renderer3DTextureSlicing::setData(Timestep* step, glm::vec3 initViewDir) {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glBindVertexArray(0);
 
-    Renderer3DTextureSlicing::sliceVolume(initViewDir);     // initial slicing
+    sliceVolume();     // initial slicing, the only one on bViewRotated=false
 }
 
-void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
+void Renderer3DTextureSlicing::render(WindowHandler* wHandler) {
     glm::mat4 model, view, projection;
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
     view = camera->GetViewMatrix();
     projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
 
-//    if (bViewRotated)
-//        sliceVolume(camera->Front);
+    if (camera->Front != viewDirSlicing) {
+        viewDirSlicing = camera->Front;
+        sliceVolume();
+//        std::cout << "would slice now" << std::endl;
+    }
 
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glBindVertexArray(VAO);
@@ -79,8 +85,8 @@ void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
     shader->unUse();
 }
 
-void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main slicing function
-    std::cout << "ViewDir@slicing = " << glm::to_string(viewDir) << std::endl;
+void Renderer3DTextureSlicing::sliceVolume() {      // main slicing function
+    std::cout << "Slicing for viewDirSlicing: " << glm::to_string(viewDirSlicing) << std::endl;
     const float EPSILON = 0.0001f;      //for floating point inaccuracy
 
     // xyz-coordinates for each UC-vertice
@@ -113,11 +119,11 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
     };
 
     //get the max and min distance of each UC-vertex in the viewing direction
-    float max_dist = glm::dot(viewDir, ucVertices[0]);
+    float max_dist = glm::dot(viewDirSlicing, ucVertices[0]);
     float min_dist = max_dist;
     int max_index = 0;
     for(int i=1;i<8;i++) {
-        float dist = glm::dot(viewDir, ucVertices[i]);
+        float dist = glm::dot(viewDirSlicing, ucVertices[i]);
         if(dist > max_dist) {
             max_dist = dist;
             max_index = i;
@@ -137,10 +143,10 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
         vecStart[i] = ucVertices[ucEdgesPos[possibleTraverses[max_index][i]][0]];     // get positionVector
         vecDir[i] = ucVertices[ucEdgesPos[possibleTraverses[max_index][i]][1]] - vecStart[i];   // get directionVector based from positionVector and accoridng traverse direction
 
-        denom = glm::dot(vecDir[i], viewDir);       // combine traverseDirectionVetor with viewDirectionVector
-        if (1.0 + denom != 1.0) {       // denom = 0 <=> vecDir _|_ viewDir
+        denom = glm::dot(vecDir[i], viewDirSlicing);       // combine traverseDirectionVetor with viewDirectionVector
+        if (1.0 + denom != 1.0) {       // denom = 0 <=> vecDir _|_ viewDirSlicing
             lambda_inc[i] =  plane_dist_inc/denom;
-            lambda[i]     = (plane_dist - glm::dot(vecStart[i],viewDir))/denom;
+            lambda[i]     = (plane_dist - glm::dot(vecStart[i],viewDirSlicing))/denom;
         } else {
             lambda[i]     = -1.0;
             lambda_inc[i] =  0.0;
@@ -218,3 +224,11 @@ void Renderer3DTextureSlicing::sliceVolume(glm::vec3 viewDir) {      // main sli
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof_vTextureSlices, &(vTextureSlices[0].x));
 }
+
+//void Renderer3DTextureSlicing::toggleBViewRotated() {
+//    if (bViewRotated)
+//        bViewRotated = false;
+//    else
+//        bViewRotated = true;
+//    std::cout << "toggle" << std::endl;
+//}
