@@ -25,7 +25,6 @@
 
 WindowHandler* window;
 TextRenderer* fpsRenderer;
-int fps;
 Camera* camera;
 DataSet* data = nullptr;
 Renderer3DTextureSlicing* renderer;
@@ -65,7 +64,7 @@ void mainLoop() {
     glPointSize(1);
 
     renderer->render(camera, window);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     fpsRenderer->drawText(std::to_string(window->calculateFPS()), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
 
     glDisable(GL_BLEND);

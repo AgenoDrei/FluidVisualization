@@ -19,8 +19,8 @@ private:
     uint32_t dimX, dimY, dimZ;
     GLuint VAO, VBO, texture;
     Shader* shader;
-    glm::vec3* vTextureSlices;
+    glm::vec3 *vTextureSlices, *intersection;
     void sliceVolume(glm::vec3 viewDir);
-    int MAX_SLICES;
+    int num_slices, sizeof_vTextureSlices;
 //    int FindAbsMax(glm::vec3 v);
 };

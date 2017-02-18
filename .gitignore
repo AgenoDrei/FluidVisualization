@@ -8,6 +8,7 @@ install_manifest.txt
 CTestTestfile.cmake
 build/src/
 build/CMakeCache.txt
+cmake-build-debug/
 
 ###### vim ######
 *.swp
