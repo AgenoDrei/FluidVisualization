@@ -14,8 +14,6 @@ public:
     ~Renderer3DTextureSlicing();
     void setData(Timestep* step);
     void render(WindowHandler* wHandler);
-//    static void toggleBViewRotated();
-//    static bool bViewRotated;
 private:
     Camera* camera;
     glm::vec3 viewDirSlicing;

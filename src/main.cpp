@@ -46,7 +46,7 @@ void init() {
     window->setCamera(camera);
     fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
-    renderer = new Renderer3DTextureSlicing(4, 100, 100, 100, camera);
+    renderer = new Renderer3DTextureSlicing(1, 100, 100, 100, camera);
     renderer->setData(data->getTimestep(0));
 
     glEnable(GL_DEPTH_TEST);

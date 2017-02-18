@@ -9,7 +9,6 @@
 
 Renderer3DTextureSlicing::Renderer3DTextureSlicing(float quality, uint32_t dimX, uint32_t dimY, uint32_t dimZ, Camera* camera) {
     shader = new Shader("shader/textureSlicer.vert", "shader/textureSlicer.frag");
-//    bViewRotated = false;
     Renderer3DTextureSlicing::num_slices = quality*dimZ;
     Renderer3DTextureSlicing::sizeof_vTextureSlices = num_slices*12*sizeof(glm::vec3);
     Renderer3DTextureSlicing::dimX = dimX;
@@ -17,7 +16,6 @@ Renderer3DTextureSlicing::Renderer3DTextureSlicing(float quality, uint32_t dimX,
     Renderer3DTextureSlicing::dimZ = dimZ;
     Renderer3DTextureSlicing::camera = camera;
     viewDirSlicing = camera->Front;
-//    camera->cbOnUpdateCameraVectors = &toggleBViewRotated;
 }
 
 Renderer3DTextureSlicing::~Renderer3DTextureSlicing() {}
@@ -92,13 +90,13 @@ void Renderer3DTextureSlicing::sliceVolume() {      // main slicing function
     // xyz-coordinates for each UC-vertice
     glm::vec3 ucVertices[8] = {
         glm::vec3(0,0,0),
-        glm::vec3( 0.9,0,0),
-        glm::vec3(0.9, 0.9,0),
-        glm::vec3(0, 0.9,0),
-        glm::vec3(0,0, 0.9),
-        glm::vec3(0.9,0, 0.9),
-        glm::vec3( 0.9, 0.9, 0.9),
-        glm::vec3(0, 0.9, 0.9)
+        glm::vec3( 1,0,0),
+        glm::vec3(1, 1,0),
+        glm::vec3(0, 1,0),
+        glm::vec3(0,0, 1),
+        glm::vec3(1,0, 1),
+        glm::vec3( 1, 1, 1),
+        glm::vec3(0, 1, 1)
     };
     // between which vertices the UC-edges reside
     const int ucEdgesPos[12][2]= {
@@ -224,11 +222,3 @@ void Renderer3DTextureSlicing::sliceVolume() {      // main slicing function
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof_vTextureSlices, &(vTextureSlices[0].x));
 }
-
-//void Renderer3DTextureSlicing::toggleBViewRotated() {
-//    if (bViewRotated)
-//        bViewRotated = false;
-//    else
-//        bViewRotated = true;
-//    std::cout << "toggle" << std::endl;
-//}

@@ -56,9 +56,6 @@ public:
     // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(GLfloat yoffset);
 
-//    void setCbOnUpdate(void (Renderer3DTextureSlicing::*cb)());
-    void (*cbOnUpdateCameraVectors)();
-
     glm::mat4 GetProjectonMatrix(WindowHandler* wHandler, float nearPlane, float farPlane) const;
 private:
     // Calculates the front vector from the Camera's (updated) Eular Angles

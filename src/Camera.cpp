@@ -104,15 +104,8 @@ void Camera::updateCameraVectors() {
     // Also re-calculate the Right and Up vector
     this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
     this->Up    = glm::normalize(glm::cross(this->Right, this->Front));
-
-    if (cbOnUpdateCameraVectors)
-        (*cbOnUpdateCameraVectors)();
 }
 
 glm::mat4 Camera::GetProjectonMatrix(WindowHandler* wHandler, float nearPlane, float farPlane) const {
     return glm::perspective(Zoom, wHandler->getWidth()/wHandler->getHeight(), 0.1f, 10.0f);
 }
-
-//void Camera::setCbOnUpdate(void (*cb)()) {
-//    cbOnUpdateCameraVectors = cb;
-//}
