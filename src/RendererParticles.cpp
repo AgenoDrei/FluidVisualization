@@ -55,6 +55,7 @@ void RendererParticles::render(Camera *camera, WindowHandler *wHandler) {
     glm::mat4 projection;
     projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
 
+
     // Pass the matrices to the shader
     auto modelLocation = glGetUniformLocation(shader->Program, "model");
     glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
@@ -64,4 +65,6 @@ void RendererParticles::render(Camera *camera, WindowHandler *wHandler) {
     glBindVertexArray(VAO);
     glDrawArrays(GL_POINTS, 0, particleCount);
     glBindVertexArray(0);
+
+//    glDisable(GL_BLEND);
 }
