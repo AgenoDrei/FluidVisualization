@@ -18,6 +18,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <chrono>
+#include "Ground.h"
+#include "SkyBox.h"
 
 WindowHandler* window;
 TextRenderer* fpsRenderer;
@@ -28,6 +30,8 @@ InterpolationController *ctrl;
 RendererParticles* renderer;
 RendererDebugQuad* quadRenderer;
 RendererMarchingCubes* marchingCubesRenderer;
+Ground* ground;
+SkyBox* skyBox;
 
 int main(int argc, char* argv[]) {
     //std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
@@ -37,6 +41,7 @@ int main(int argc, char* argv[]) {
     //Window Initialisation
     window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop);
+
 
     //algorithm.draw();
 
@@ -50,12 +55,14 @@ void init() {
     //ctrl = new CpuInterpolationController(10);
     ctrl = new OctreeInterpolationController(false, 1, 1.5);
     renderer = new RendererParticles();
+    ground = new Ground();
+    skyBox = new SkyBox();
     //quadRenderer = new RendererDebugQuad();
 
     //interpolatedData = ctrl->interpolateData(data, 400, 100, 400);
 
     quadRenderer = new RendererDebugQuad();
-    marchingCubesRenderer = new RendererMarchingCubes();
+    marchingCubesRenderer = new RendererMarchingCubes(skyBox);
 
 
     auto firstTimestep = data->getTimestep(0);
@@ -78,7 +85,7 @@ void init() {
     glPolygonMode(GL_FRONT, GL_LINE);*/
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    //fpsRenderer = new TextRenderer("../fonts/arial.ttf");
+    fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
     glPointSize(1);
     std::cout << "Log> Initalization done" << std::endl;
@@ -91,6 +98,8 @@ void mainLoop() {
     //renderer->render(camera, window);
     //quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
 
+    //ground->render(camera, window);
+    skyBox->render(camera, window);
     marchingCubesRenderer->render(camera, window);
 
     //using namespace std::chrono;        // slowing fps refresh down to ~ every .1 ms
