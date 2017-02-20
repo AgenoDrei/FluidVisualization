@@ -8,6 +8,7 @@
 #include "CpuInterpolationController.h"
 #include "RendererParticles.h"
 #include "RendererDebugQuad.h"
+#include "Renderer3DTextureSlicing.h"
 #include "TextRenderer.h"
 #include "OctreeInterpolationController.h"
 #include "MarchingCubes.h"
@@ -20,10 +21,16 @@
 #include <chrono>
 #include "Ground.h"
 #include "SkyBox.h"
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+#include <iostream>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 WindowHandler* window;
 TextRenderer* fpsRenderer;
-int fps;
 Camera* camera;
 DataSet* data = nullptr, *interpolatedData = nullptr;
 InterpolationController *ctrl;
@@ -32,12 +39,15 @@ RendererDebugQuad* quadRenderer;
 RendererMarchingCubes* marchingCubesRenderer;
 Ground* ground;
 SkyBox* skyBox;
+Renderer3DTextureSlicing* textureSlicingRenderer;
 
 int main(int argc, char* argv[]) {
     //std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
 	//data = DataImporter::load("/home/nils/Downloads/drop_interpolation_300.dat");
-	data = DataImporter::load("/home/nils/Downloads/drop_100.dat");
+    std::string path = std::getenv("HOME");
+	data = DataImporter::load(path + "/Downloads/drop_100.dat");
     interpolatedData = data;
+
     //Window Initialisation
     window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop);
@@ -50,20 +60,31 @@ int main(int argc, char* argv[]) {
 
 void init() {
     std::cout << "Log> Render initialization running" << std::endl;
+
     camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
     window->setCamera(camera);
+
     //ctrl = new CpuInterpolationController(10);
-    ctrl = new OctreeInterpolationController(false, 1, 1.5);
+    ctrl = new OctreeInterpolationController(1, 1.5);
     renderer = new RendererParticles();
     ground = new Ground();
     skyBox = new SkyBox();
     //quadRenderer = new RendererDebugQuad();
 
+    //ctrl = new CpuInterpolationController(10);
+    //ctrl = new OctreeInterpolationController(0.0025, 1.5);
     //interpolatedData = ctrl->interpolateData(data, 400, 100, 400);
 
+    renderer = new RendererParticles();
     quadRenderer = new RendererDebugQuad();
+
     marchingCubesRenderer = new RendererMarchingCubes(skyBox);
 
+    textureSlicingRenderer = new Renderer3DTextureSlicing(1, 100, 100, 100, camera);
+
+    //renderer->setData(interpolatedData->getTimestep(0), interpolatedData->getNumberParticles());
+    //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
+    textureSlicingRenderer->setData(data->getTimestep(0));
 
     auto firstTimestep = data->getTimestep(0);
     auto grid = new Grid(firstTimestep->getParticleNumberPerDirection(), firstTimestep);
@@ -75,42 +96,55 @@ void init() {
     auto weldedResult = VertexWelder<VertexPositionNormal>::weld(vertices);
     marchingCubesRenderer->addVertexIndexBuffer(weldedResult->VertexBuffer, weldedResult->IndexBuffer);
 
-    //interpolatedData = ctrl->interpolateData(data);
-    //renderer->setData(interpolatedData->getTimestep(0), interpolatedData->getNumberParticles());
-    //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
+    fpsRenderer = new TextRenderer("../fonts/arial.ttf");
+
     /*glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);*/
+
     glCullFace(GL_BACK);
     glEnable(GL_BLEND);
-    glPolygonMode(GL_FRONT, GL_LINE);*/
+    glPolygonMode(GL_FRONT, GL_LINE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
-    glPointSize(1);
+    glCullFace(GL_FRONT);       //    glCullFace(GL_BACK);
+//    glEnable(GL_BLEND);
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);       //    glPolygonMode(GL_FRONT, GL_LINE);
+//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
     std::cout << "Log> Initalization done" << std::endl;
 }
 
 void mainLoop() {
     doMovement(camera, window);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glPointSize(1);
 
     //renderer->render(camera, window);
     //quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
 
+
     //ground->render(camera, window);
     skyBox->render(camera, window);
+
     marchingCubesRenderer->render(camera, window);
+    //textureSlicingRenderer->render(window);
 
-    //using namespace std::chrono;        // slowing fps refresh down to ~ every .1 ms
-    //if (duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() % 1000 > 900)
-    fps = window->calculateFPS();
-    //fpsRenderer->drawText(std::to_string(fps), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
+//    //using namespace std::chrono;        // slowing fps refresh down to ~ every .1 ms
+//    //if (duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() % 1000 > 900)
+//    fps = window->calculateFPS();
+//    //fpsRenderer->drawText(std::to_string(fps), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
+    fpsRenderer->drawText(std::to_string(window->calculateFPS()), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
 
+    glDisable(GL_BLEND);
     glutSwapBuffers();
 }
 
-// Moves/alters the camera positions based on user input
 void doMovement(Camera* camera, WindowHandler* wHandler) {
 	if(wHandler->getKey('w')) {
 		camera->ProcessKeyboard(FORWARD, static_cast<float>(wHandler->getDeltaTime()));

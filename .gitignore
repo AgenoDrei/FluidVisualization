@@ -4,10 +4,12 @@ CMakeFiles
 CMakeScripts
 Makefile
 cmake_install.cmake
+cmake-build-debug/
 install_manifest.txt
 CTestTestfile.cmake
 build/src/
 build/CMakeCache.txt
+cmake-build-debug/
 
 ###### vim ######
 *.swp
