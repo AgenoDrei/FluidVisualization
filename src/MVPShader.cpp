@@ -1,5 +1,5 @@
 #include "MVPShader.h"
-#include "Camera.h"
+#include "BaseCamera.h"
 #include <glm/gtc/type_ptr.hpp>
 
 MVPShader::MVPShader(const GLchar* vertexShader, const GLchar* fragmentShader)
@@ -28,7 +28,7 @@ void MVPShader::setModelViewProjection(glm::mat4& model, glm::mat4& view, glm::m
     setProjection(projection);
 }
 
-void MVPShader::setModelViewProjection(glm::mat4& model, Camera* camera, WindowHandler* wHandler) {
+void MVPShader::setModelViewProjection(glm::mat4& model, BaseCamera* camera, WindowHandler* wHandler) {
     auto view = camera->GetViewMatrix();
     auto projection = camera->GetProjectonMatrix(wHandler, 0.5f, 10.0f);
     setModelViewProjection(model, view, projection);

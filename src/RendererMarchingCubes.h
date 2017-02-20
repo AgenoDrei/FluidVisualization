@@ -9,6 +9,7 @@
 #include "Triangle.h"
 
 class WindowHandler;
+class BaseCamera;
 class Camera;
 class VertexArrayBuffer;
 class MarchingCubesShader;
@@ -26,7 +27,7 @@ private:
 
     std::list<MarchingCubesRenderObject*> _objects;
 
-    void renderReflectionMap(Camera *camera, WindowHandler *wHandler);
+    void renderReflectionMap(BaseCamera *camera, WindowHandler *wHandler);
 
     TextureRenderer* _debugRenderer;
 public:

@@ -102,18 +102,18 @@ void SkyBox::loadSkyBox(std::vector<const GLchar*> faces) {
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
-void SkyBox::render(Camera *camera, WindowHandler *wHandler) {
+void SkyBox::render(BaseCamera *camera, WindowHandler *wHandler) {
     glm::mat4 model = glm::mat4();
     render(camera, wHandler, model);
 }
 
-void SkyBox::render(Camera *camera, WindowHandler *wHandler, glm::mat4x4 model) {
+void SkyBox::render(BaseCamera *camera, WindowHandler *wHandler, glm::mat4x4 model) {
     _shader->use();
     _shader->setModelViewProjection(model, camera, wHandler);
 
     glDepthMask(GL_FALSE);
-    //glDisable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    glDisable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
 
     glBindVertexArray(_vertexBuffer->getVAO());
     glBindTexture(GL_TEXTURE_CUBE_MAP, _texture);

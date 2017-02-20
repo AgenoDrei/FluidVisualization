@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include "Shader.h"
 
-class Camera;
+class BaseCamera;
 class WindowHandler;
 
 class MVPShader : public Shader {
@@ -20,5 +20,5 @@ public:
     void setView(glm::mat4& view);
     void setProjection(glm::mat4& projection);
     void setModelViewProjection(glm::mat4& model, glm::mat4& view, glm::mat4& projection);
-    void setModelViewProjection(glm::mat4& model, Camera* camera, WindowHandler* wHandler);
+    void setModelViewProjection(glm::mat4& model, BaseCamera* camera, WindowHandler* wHandler);
 };

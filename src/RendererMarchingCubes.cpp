@@ -8,6 +8,7 @@
 #include "SkyBox.h"
 #include "WindowHandler.h"
 #include "TextureRenderer.h"
+#include "ReflectionCamera.h"
 
 RendererMarchingCubes::RendererMarchingCubes(SkyBox* skyBox) :
     _skyBox(skyBox) {
@@ -80,7 +81,7 @@ void RendererMarchingCubes::addVertexIndexBuffer(const std::vector<VertexPositio
     _objects.push_back(new MarchingCubesRenderObject(indices.size(), indexBuffer, vertexBuffer));
 }
 
-void RendererMarchingCubes::renderReflectionMap(Camera *camera, WindowHandler *wHandler) {
+void RendererMarchingCubes::renderReflectionMap(BaseCamera *camera, WindowHandler *wHandler) {
     glBindFramebuffer(GL_FRAMEBUFFER, _reflectionFramebuffer);
     glViewport(0, 0, 2048, 2048);
 
@@ -92,11 +93,7 @@ void RendererMarchingCubes::renderReflectionMap(Camera *camera, WindowHandler *w
 }
 
 void RendererMarchingCubes::render(Camera *camera, WindowHandler *wHandler) {
-    auto reflectionCamera = camera->getCopy();
-    reflectionCamera->Position.y =  -camera->Position.y + 0.5f;
-    reflectionCamera->Front.y = -camera->Front.y;
-    //reflectionCamera->Right = glm::normalize(glm::cross(reflectionCamera->Front, reflectionCamera->WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-    //reflectionCamera->Up = glm::normalize(glm::cross(reflectionCamera->Right, reflectionCamera->Front));
+    auto reflectionCamera = new ReflectionCamera(camera, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
 
     //TODO: set clipping
     renderReflectionMap(reflectionCamera, wHandler);
@@ -109,6 +106,8 @@ void RendererMarchingCubes::render(Camera *camera, WindowHandler *wHandler) {
     _shader->setModelViewProjection(model, camera, wHandler);
 
     auto reflectionViewMatrix = reflectionCamera->GetViewMatrix();
+    auto reflectionProjectionMatrix = reflectionCamera->GetProjectonMatrix(wHandler, 0.5, 10.0f);
+    auto reflectionMatrix = reflectionProjectionMatrix * reflectionViewMatrix;
     _shader->setReflectionView(reflectionViewMatrix);
     glBindTexture(GL_TEXTURE_2D, _reflectionTexture);
 

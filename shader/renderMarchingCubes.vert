@@ -12,6 +12,8 @@ uniform mat4 projection;
 
 uniform mat4 reflectionView;
 
+//varying vec3 interpolatedVertexObject;
+
 void main() {
     gl_Position = projection * view * model * vec4(position, 1.0f);
 
@@ -19,5 +21,6 @@ void main() {
     ourColor = normal;
 
     reflectionMapCoordinates = projection * reflectionView * model * vec4(position, 1.0f);
+    //interpolatedVertexObject = position - vec3(0, 0.2, 0);
 }
 

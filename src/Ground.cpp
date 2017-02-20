@@ -4,6 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/ext.hpp>
 #include <SOIL/SOIL.h>
+#include "Camera.h"
 
 Ground::Ground() {
     _shader = new GroundShader();

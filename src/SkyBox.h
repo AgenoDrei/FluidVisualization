@@ -10,7 +10,7 @@
 class SkyBoxShader;
 class VertexArrayBuffer;
 class WindowHandler;
-class Camera;
+class BaseCamera;
 
 class SkyBox {
 private:
@@ -24,8 +24,8 @@ protected:
 public:
     SkyBox();
 
-    void render(Camera *camera, WindowHandler *wHandler);
-    void render(Camera *camera, WindowHandler *wHandler, glm::mat4x4 model);
+    void render(BaseCamera *camera, WindowHandler *wHandler);
+    void render(BaseCamera *camera, WindowHandler *wHandler, glm::mat4x4 model);
 };
 
 

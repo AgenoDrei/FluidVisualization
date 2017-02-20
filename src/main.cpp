@@ -85,7 +85,7 @@ void init() {
     glPolygonMode(GL_FRONT, GL_LINE);*/
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    //fpsRenderer = new TextRenderer("../fonts/arial.ttf");
+    fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
     glPointSize(1);
     std::cout << "Log> Initalization done" << std::endl;
