@@ -18,6 +18,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include "TextureSlicer.h"
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -32,10 +33,12 @@ TextRenderer* fpsRenderer;
 Camera* camera;
 DataSet* data = nullptr, *interpolatedData = nullptr;
 InterpolationController *ctrl;
-RendererParticles* renderer;
+//RendererParticles* renderer;
 RendererDebugQuad* quadRenderer;
 RendererMarchingCubes* marchingCubesRenderer;
-Renderer3DTextureSlicing* textureSlicingRenderer;
+
+TextureSlicer* algorithm;
+Renderer3DTextureSlicing* renderer;
 
 int main(int argc, char* argv[]) {
     //std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
@@ -59,19 +62,6 @@ void init() {
     camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
     window->setCamera(camera);
 
-    //ctrl = new CpuInterpolationController(10);
-    //ctrl = new OctreeInterpolationController(0.0025, 1.5);
-    //interpolatedData = ctrl->interpolateData(data, 400, 100, 400);
-
-    renderer = new RendererParticles();
-    quadRenderer = new RendererDebugQuad();
-    marchingCubesRenderer = new RendererMarchingCubes();
-    textureSlicingRenderer = new Renderer3DTextureSlicing(1, 100, 100, 100, camera);
-
-    //renderer->setData(interpolatedData->getTimestep(0), interpolatedData->getNumberParticles());
-    //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
-    textureSlicingRenderer->setData(data->getTimestep(0));
-
 //    auto firstTimestep = data->getTimestep(0);
 //    auto grid = new Grid(firstTimestep->getParticleNumberPerDirection(), firstTimestep);
 //
@@ -80,7 +70,21 @@ void init() {
 //    auto vertices = algorithm.getVertices();
 //
 //    auto weldedResult = VertexWelder<VertexPositionNormal>::weld(vertices);
+//    marchingCubesRenderer = new RendererMarchingCubes();
 //    marchingCubesRenderer->addVertexIndexBuffer(weldedResult->VertexBuffer, weldedResult->IndexBuffer);
+
+    algorithm = new TextureSlicer();
+//    algorithm->setNumSlices(84);        // TODO: make it s.t. numSLices adjusted in Renderer as well ... !!
+    algorithm->sliceVolumedata(camera->Front);
+    glm::vec3* slicedVolume = algorithm->getSlicedVolume();
+
+    renderer = new Renderer3DTextureSlicing(100, 100, 100);
+    renderer->updateSizeofTextureSlicesVolume(84);
+    renderer->setupParamsAndBinds();
+    renderer->setTextureData(data->getTimestep(0));
+    renderer->setBufferData(slicedVolume);
+    renderer->viewDirOnSlicing = camera->Front;
+
 
     fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
@@ -92,6 +96,9 @@ void init() {
 //    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     std::cout << "Log> Initalization done" << std::endl;
+
+    //ctrl = new OctreeInterpolationController(0.0025, 1.5);
+    //interpolatedData = ctrl->interpolateData(data, 400, 100, 400);
 }
 
 void mainLoop() {
@@ -102,15 +109,15 @@ void mainLoop() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glPointSize(1);
 
-    //renderer->render(camera, window);
-    //quadRenderer->render(camera, window);     // somehow not working anymore; guess is shared rendering ..
-    marchingCubesRenderer->render(camera, window);
-    textureSlicingRenderer->render(window);
+    if (camera->Front != renderer->viewDirOnSlicing) {
+        algorithm->sliceVolumedata(camera->Front);
+        renderer->setBufferData(algorithm->getSlicedVolume());
+        renderer->viewDirOnSlicing = camera->Front;
+    }
+    renderer->render(camera, window);
 
 //    //using namespace std::chrono;        // slowing fps refresh down to ~ every .1 ms
 //    //if (duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() % 1000 > 900)
-//    fps = window->calculateFPS();
-//    //fpsRenderer->drawText(std::to_string(fps), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
     fpsRenderer->drawText(std::to_string(window->calculateFPS()), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
 
     glDisable(GL_BLEND);
