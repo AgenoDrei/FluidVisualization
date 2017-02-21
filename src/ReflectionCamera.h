@@ -14,6 +14,9 @@ public:
 
     virtual glm::mat4 GetViewMatrix() const override;
     virtual glm::mat4 GetProjectonMatrix(WindowHandler* wHandler, float nearPlane, float farPlane) const override;
+
+    virtual glm::vec3 getFront() const override;
+
 };
 
 

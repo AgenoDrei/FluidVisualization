@@ -6,16 +6,19 @@
 #include "VertexWelder.h"
 
 MarchingCubes::MarchingCubes(SkyBox* skyBox) {
-    _calculator = new MarchingCubesCalculator();
-    _renderer = new RendererMarchingCubes(skyBox);
+    std::unique_ptr<MarchingCubesCalculator> calculator(new MarchingCubesCalculator());
+    _calculator = std::move(calculator);
+
+    std::unique_ptr<RendererMarchingCubes> renderer(new RendererMarchingCubes(skyBox));
+    _renderer = std::move(renderer);
 }
 
 MarchingCubes::~MarchingCubes() {
-    delete _calculator;
-    delete _renderer;
 }
 
 void MarchingCubes::init(Timestep* timestep) {
+    _renderer->clean();
+
     Grid grid(timestep->getParticleNumberPerDirection(), timestep);
 
     _calculator->calculate(&grid);

@@ -81,6 +81,10 @@ void RendererMarchingCubes::addVertexIndexBuffer(const std::vector<VertexPositio
     _objects.push_back(new MarchingCubesRenderObject(indices.size(), indexBuffer, vertexBuffer));
 }
 
+void RendererMarchingCubes::clean() { // todo delete all stuff
+    _objects.clear();
+}
+
 void RendererMarchingCubes::renderReflectionMap(BaseCamera *camera, WindowHandler *wHandler) {
     glBindFramebuffer(GL_FRAMEBUFFER, _reflectionFramebuffer);
     glViewport(0, 0, 2048, 2048);
@@ -106,7 +110,6 @@ void RendererMarchingCubes::render(BaseCamera *camera, WindowHandler *wHandler) 
     _shader->setModelViewProjection(model, camera, wHandler);
 
     auto reflectionViewMatrix = reflectionCamera->GetViewMatrix();
-    auto reflectionProjectionMatrix = reflectionCamera->GetProjectonMatrix(wHandler, 0.5, 10.0f);
     _shader->setReflectionView(reflectionViewMatrix);
     glBindTexture(GL_TEXTURE_2D, _reflectionTexture);
 

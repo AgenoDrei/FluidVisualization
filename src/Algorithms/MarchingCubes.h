@@ -2,14 +2,16 @@
 
 #include "BaseAlgorithm.h"
 
+#include <memory>
+
 class MarchingCubesCalculator;
 class RendererMarchingCubes;
 class SkyBox;
 
 class MarchingCubes : public BaseAlgorithm {
 protected:
-    MarchingCubesCalculator* _calculator;
-    RendererMarchingCubes* _renderer;
+    std::unique_ptr<MarchingCubesCalculator> _calculator;
+    std::unique_ptr<RendererMarchingCubes> _renderer;
 public:
     MarchingCubes(SkyBox* skyBox);
 

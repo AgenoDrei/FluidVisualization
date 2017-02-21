@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include "BaseCamera.h"
-#include "Renderer3DTextureSlicing.h"
+#include "TextureSlicingRenderer.h"
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
@@ -61,7 +61,7 @@ public:
 
     virtual glm::mat4 GetProjectonMatrix(WindowHandler* wHandler, float nearPlane, float farPlane) const override;
 
-    glm::vec3 getTarget();
+    glm::vec3 getFront() const override;
 
     Camera* getCopy();
 private:
