@@ -20,6 +20,9 @@
 #include <iostream>
 #include "TextureSlicer.h"
 
+#include <chrono>
+#include "Ground.h"
+#include "SkyBox.h"
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <iostream>
@@ -33,11 +36,17 @@ TextRenderer* fpsRenderer;
 Camera* camera;
 DataSet* data = nullptr, *interpolatedData = nullptr;
 InterpolationController *ctrl;
+
 //RendererParticles* renderer;
 //RendererDebugQuad* quadRenderer;
 //RendererMarchingCubes* marchingCubesRenderer;
 
 TextureSlicer* algorithm;
+//Renderer3DTextureSlicing* renderer;
+RendererDebugQuad* quadRenderer;
+RendererMarchingCubes* marchingCubesRenderer;
+Ground* ground;
+SkyBox* skyBox;
 Renderer3DTextureSlicing* renderer;
 
 int main(int argc, char* argv[]) {
@@ -50,6 +59,7 @@ int main(int argc, char* argv[]) {
     //Window Initialisation
     window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop);
+
 
     //algorithm.draw();
 
@@ -87,12 +97,11 @@ void init() {
 
     fpsRenderer = new TextRenderer("../fonts/arial.ttf");
 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);       //    glCullFace(GL_BACK);
 //    glEnable(GL_BLEND);
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);       //    glPolygonMode(GL_FRONT, GL_LINE);
 //    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
     std::cout << "Log> Initalization done" << std::endl;
 

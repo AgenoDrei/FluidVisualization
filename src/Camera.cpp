@@ -14,7 +14,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) :
     this->Yaw = yaw;
     this->Pitch = pitch;
     this->updateCameraVectors();
-    std::cout << "Log> Camera created with pos: " << glm::to_string(this->Position) << std::endl;
+    //std::cout << "Log> Camera created with pos: " << glm::to_string(this->Position) << std::endl;
 }
 // Constructor with scalar values
 Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch) :
@@ -107,5 +107,16 @@ void Camera::updateCameraVectors() {
 }
 
 glm::mat4 Camera::GetProjectonMatrix(WindowHandler* wHandler, float nearPlane, float farPlane) const {
-    return glm::perspective(Zoom, wHandler->getWidth()/wHandler->getHeight(), 0.1f, 10.0f);
+    return glm::perspective(Zoom, wHandler->getWidth()/wHandler->getHeight(), nearPlane, farPlane);
+}
+
+Camera* Camera::getCopy() {
+    auto result = new Camera(Position, Up, Yaw, Pitch);
+    result->Right = Right;
+    result->Front = Front;
+    result->WorldUp = WorldUp;
+    result->MovementSpeed = MovementSpeed;
+    result->MouseSensitivity = MouseSensitivity;
+    result->Zoom = Zoom;
+    return result;
 }
