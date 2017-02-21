@@ -34,8 +34,8 @@ Camera* camera;
 DataSet* data = nullptr, *interpolatedData = nullptr;
 InterpolationController *ctrl;
 //RendererParticles* renderer;
-RendererDebugQuad* quadRenderer;
-RendererMarchingCubes* marchingCubesRenderer;
+//RendererDebugQuad* quadRenderer;
+//RendererMarchingCubes* marchingCubesRenderer;
 
 TextureSlicer* algorithm;
 Renderer3DTextureSlicing* renderer;
@@ -74,13 +74,12 @@ void init() {
 //    marchingCubesRenderer->addVertexIndexBuffer(weldedResult->VertexBuffer, weldedResult->IndexBuffer);
 
     algorithm = new TextureSlicer();
-//    algorithm->setNumSlices(84);        // TODO: make it s.t. numSLices adjusted in Renderer as well ... !!
+    algorithm->setNumSlices(256);
     algorithm->sliceVolumedata(camera->Front);
     glm::vec3* slicedVolume = algorithm->getSlicedVolume();
 
     renderer = new Renderer3DTextureSlicing(100, 100, 100);
-    renderer->updateSizeofTextureSlicesVolume(84);
-    renderer->setupParamsAndBinds();
+    renderer->updateSizeofTextureSlicesVolume(256);
     renderer->setTextureData(data->getTimestep(0));
     renderer->setBufferData(slicedVolume);
     renderer->viewDirOnSlicing = camera->Front;

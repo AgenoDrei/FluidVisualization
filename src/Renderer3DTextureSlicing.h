@@ -12,9 +12,7 @@ class Renderer3DTextureSlicing {
 public:
     Renderer3DTextureSlicing(uint32_t dimX, uint32_t dimY, uint32_t dimZ);
     ~Renderer3DTextureSlicing();
-//    void setData(Timestep* step);
     void setTextureData(Timestep* step);
-    void setupParamsAndBinds();
     void setBufferData(glm::vec3* vTextureSlices);
     void updateSizeofTextureSlicesVolume(int numSlices);
     void render(Camera* camera, WindowHandler* wHandler);
@@ -24,4 +22,5 @@ private:
     int sizeofTextureSlicesVolume;
     uint32_t dimX, dimY, dimZ;
     GLuint VAO, VBO, texture;
+    void setupParamsAndBinds();
 };

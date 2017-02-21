@@ -2,8 +2,9 @@
 #include "TextureSlicer.h"
 
 TextureSlicer::TextureSlicer() {
-    numSlices = 42;     // default
+    numSlices = 42;     // default is 42
     vTextureSlices = new glm::vec3[numSlices*12];
+//    vTextureSlices = (glm::vec3*) malloc (sizeof(glm::vec3) * numSlices * 12);
 
     // xyz-coordinates for each UC-vertice
     ucVertices = new glm::vec3[8] {
@@ -43,7 +44,10 @@ TextureSlicer::~TextureSlicer() {
 
 
 void TextureSlicer::setNumSlices(int numSlices) {
-    TextureSlicer::numSlices = numSlices;
+    int newNumSlices = numSlices;
+
+    TextureSlicer::numSlices = newNumSlices;
+    vTextureSlices = (glm::vec3*) realloc (vTextureSlices, sizeof(glm::vec3) * newNumSlices * 12);
 }
 
 glm::vec3* TextureSlicer::getSlicedVolume() {
@@ -83,7 +87,8 @@ void TextureSlicer::calcMaxMinDistances(glm::vec3 viewDir,
     max_dist += EPSILON;    //expand it a little bit
 
     *resMinDist = min_dist;
-    *resMaxDist = max_index;
+    *resMaxDist = max_dist;
+    *maxIdx = max_index;
 }
 
 void TextureSlicer::calcVecsAndLambdas(glm::vec3 viewDir, float minDist, float maxDist, int maxIdx,
@@ -91,7 +96,10 @@ void TextureSlicer::calcVecsAndLambdas(glm::vec3 viewDir, float minDist, float m
     float plane_dist = minDist,    //set the minimum distance as the plane_dist
             plane_dist_inc = (maxDist-minDist)/float(numSlices),
             denom;
-
+//
+//        vecStart[i] = ucVertices[ucEdgesPos[possibleTraverses[max_index][i]][0]];     // get positionVector
+//        vecDir[i] = ucVertices[ucEdgesPos[possibleTraverses[max_index][i]][1]] - vecStart[i];   // get directionVector based from positionVector and accoridng traverse direction
+//
     int* chosenTraverse = &(possibleTraverses[maxIdx*12]);  //chosenTraverse is int[12] ...
     for(int i=0;i<12;i++) {     //for all edges
         int edgeIdx = chosenTraverse[i];
@@ -105,7 +113,7 @@ void TextureSlicer::calcVecsAndLambdas(glm::vec3 viewDir, float minDist, float m
             lambda[i] = (plane_dist - glm::dot(vecStart[i],viewDir))/denom;
             lambdaInc[i] =  plane_dist_inc/denom;
         } else {
-            lambda[i] = -1.0;
+            lambda[i] = -1.0f;
             lambdaInc[i] =  0.0;
         }
     }
