@@ -46,7 +46,6 @@ void mainLoop() {
 
     fluidVisualisation->render();
 
-    glDisable(GL_BLEND);
     glutSwapBuffers();
 }
 

@@ -10,17 +10,17 @@ class Shader;
 
 class Renderer3DTextureSlicing {
 public:
-    Renderer3DTextureSlicing(float quality, uint32_t dimX, uint32_t dimY, uint32_t dimZ, Camera* camera);
+    Renderer3DTextureSlicing(uint32_t dimX, uint32_t dimY, uint32_t dimZ);
     ~Renderer3DTextureSlicing();
-    void setData(Timestep* step);
-    void render(WindowHandler* wHandler);
+    void setTextureData(Timestep* step);
+    void setBufferData(glm::vec3* vTextureSlices);
+    void updateSizeofTextureSlicesVolume(int numSlices);
+    void render(Camera* camera, WindowHandler* wHandler);
+    glm::vec3 viewDirOnSlicing;
 private:
-    Camera* camera;
-    glm::vec3 viewDirSlicing;
+    Shader* shader;
+    int sizeofTextureSlicesVolume;
     uint32_t dimX, dimY, dimZ;
     GLuint VAO, VBO, texture;
-    Shader* shader;
-    glm::vec3 *vTextureSlices, *intersection;
-    void sliceVolume();
-    int num_slices, sizeof_vTextureSlices;
+    void setupParamsAndBinds();
 };
