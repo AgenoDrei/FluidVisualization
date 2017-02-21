@@ -1,0 +1,26 @@
+#pragma once
+#include <GL/glew.h>
+#include <glm/ext.hpp>
+
+class BaseCamera;
+class WindowHandler;
+class DataSet;
+class Timestep;
+class Shader;
+
+class TextureSlicingRenderer {
+public:
+    TextureSlicingRenderer(uint32_t dimX, uint32_t dimY, uint32_t dimZ);
+    ~TextureSlicingRenderer();
+    void setTextureData(Timestep* step);
+    void setBufferData(glm::vec3* vTextureSlices);
+    void updateSizeofTextureSlicesVolume(int numSlices);
+    void render(BaseCamera* camera, WindowHandler* wHandler);
+    glm::vec3 viewDirOnSlicing;
+private:
+    Shader* shader;
+    int sizeofTextureSlicesVolume;
+    uint32_t dimX, dimY, dimZ;
+    GLuint VAO, VBO, texture;
+    void setupParamsAndBinds();
+};
