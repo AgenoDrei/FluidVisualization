@@ -1,9 +1,12 @@
 #include "MarchingCubes.h"
-#include "MarchingCubesCalculator.h"
-#include "RendererMarchingCubes.h"
-#include "Timestep.h"
-#include "Grid.h"
-#include "VertexWelder.h"
+
+#include "Renderer/RendererMarchingCubes.h"
+
+#include "DataManagement/Timestep.h"
+
+#include "MarchingCubes/MarchingCubesCalculator.h"
+#include "MarchingCubes/Grid.h"
+#include "MarchingCubes/VertexWelder.h"
 
 MarchingCubes::MarchingCubes(SkyBox* skyBox) {
     std::unique_ptr<MarchingCubesCalculator> calculator(new MarchingCubesCalculator());

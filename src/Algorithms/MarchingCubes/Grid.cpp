@@ -1,6 +1,5 @@
-#include <cmath>
 #include "Grid.h"
-#include "Timestep.h"
+#include "DataManagement/Timestep.h"
 #include "GridCell.h"
 
 Grid::Grid(glm::ivec3 dimension, Timestep* timestep) :

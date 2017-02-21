@@ -6,7 +6,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include "Camera.h"
+#include "Cameras/Camera.h"
 
 void debugOutput(unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, const void* userParam);
 void onShutdown();

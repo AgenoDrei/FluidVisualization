@@ -1,10 +1,10 @@
 #include "Ground.h"
 #include "VertexArrayBuffer.h"
-#include "GroundShader.h"
+#include "Shader/GroundShader.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/ext.hpp>
 #include <SOIL/SOIL.h>
-#include "Camera.h"
+#include "Cameras/Camera.h"
 
 Ground::Ground() {
     _shader = new GroundShader();

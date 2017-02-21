@@ -1,6 +1,10 @@
-#include <Camera.h>
 #include "TextureSlicing3D.h"
-#include "TextureSlicer.h"
+
+#include "TextureSlicer/TextureSlicer.h"
+
+#include "Renderer/TextureSlicingRenderer.h"
+
+#include "Cameras/BaseCamera.h"
 
 TextureSlicing3D::TextureSlicing3D(BaseCamera* camera) {
     auto front = camera->getFront();

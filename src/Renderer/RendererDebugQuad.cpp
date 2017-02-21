@@ -1,10 +1,9 @@
 #include <iostream>
-#include <stdlib.h>
 #include <glm/gtc/random.inl>
 #include "RendererDebugQuad.h"
-#include "Shader.h"
-#include "Particle.h"
-#include "Timestep.h"
+#include "Shader/Shader.h"
+#include "DataManagement/Particle.h"
+#include "DataManagement/Timestep.h"
 
 RendererDebugQuad::RendererDebugQuad() {
     shader = new Shader("shader/quad.vert", "shader/quad.frag");

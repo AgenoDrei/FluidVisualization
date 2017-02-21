@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MVPShader.h"
+#include "Shader/MVPShader.h"
 
 class MarchingCubesShader : public MVPShader {
 protected:

@@ -5,7 +5,7 @@
 #include <glm/detail/type_mat.hpp>
 #include <glm/ext.hpp>
 #include "TextRenderer.h"
-#include "Shader.h"
+#include "Shader/Shader.h"
 #include "freetype/freetype.h"
 
 struct Character {

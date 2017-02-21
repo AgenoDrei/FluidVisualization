@@ -1,16 +1,12 @@
-//
-// Created by simon on 07.12.16.
-//
-
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/ext.hpp>
 #include "CpuInterpolationController.h"
-#include "DataSet.h"
-#include "Shader.h"
+#include "DataManagement/DataSet.h"
+#include "Shader/Shader.h"
 #include "Particle.h"
 #include "Timestep.h"
-#include "Camera.h"
+#include "Cameras/Camera.h"
 #include "WindowHandler.h"
 
 CpuInterpolationController::CpuInterpolationController() :

@@ -1,14 +1,9 @@
-//
-// Created by simon on 22.01.17.
-//
-
 #include <iostream>
 #include <glm/ext.hpp>
 #include "OctreeInterpolationController.h"
-#include "DataSet.h"
+#include "DataManagement/DataSet.h"
 #include "OctreeNode.h"
 #include "Timestep.h"
-
 
 OctreeInterpolationController::OctreeInterpolationController(GLfloat minSize, GLfloat distanceCorrectionFactor) :
         interpolatedData(nullptr),

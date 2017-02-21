@@ -1,10 +1,10 @@
 #include <iostream>
 #include "TextureSlicingRenderer.h"
 
-#include "DataSet.h"
-#include "Timestep.h"
+#include "DataManagement/DataSet.h"
+#include "DataManagement/Timestep.h"
 #include "WindowHandler.h"
-#include "Shader.h"
+#include "Shader/Shader.h"
 
 TextureSlicingRenderer::TextureSlicingRenderer(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
     shader = new Shader("shader/textureSlicer.vert", "shader/textureSlicer.frag");

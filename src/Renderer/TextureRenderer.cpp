@@ -1,5 +1,5 @@
 #include "TextureRenderer.h"
-#include "Shader.h"
+#include "Shader/Shader.h"
 
 TextureRenderer::TextureRenderer(GLuint texture) :
     _texture(texture) {

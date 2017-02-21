@@ -1,10 +1,28 @@
-SET(ALGORITHM_CPP Algorithms/BaseAlgorithm.cpp Algorithms/MarchingCubes.cpp Algorithms/TextureSlicing3D.cpp)
-SET(ALGORITHM_H Algorithms/BaseAlgorithm.h Algorithms/MarchingCubes.h Algorithms/TextureSlicing3D.h)
+SET(ALGORITHM_MARCHING_CUBES_CPP Algorithms/MarchingCubes/Grid.cpp Algorithms/MarchingCubes/GridCell.cpp Algorithms/MarchingCubes/MarchinCubesData.cpp Algorithms/MarchingCubes/MarchingCubesCalculator.cpp Algorithms/MarchingCubes/MarchingCubesRenderObject.cpp Algorithms/MarchingCubes/Triangle.cpp Algorithms/MarchingCubes/VertexWelder.cpp)
+SET(ALGORITHM_MARCHING_CUBES_H Algorithms/MarchingCubes/Grid.h Algorithms/MarchingCubes/GridCell.h Algorithms/MarchingCubes/MarchinCubesData.h Algorithms/MarchingCubes/MarchingCubesCalculator.h Algorithms/MarchingCubes/MarchingCubesRenderObject.h Algorithms/MarchingCubes/Triangle.h Algorithms/MarchingCubes/VertexWelder.h)
 
-SET(SRC_CPP main.cpp DataImporter.cpp DataSet.cpp Timestep.cpp Particle.cpp WindowHandler.cpp Shader.cpp Camera.cpp CpuInterpolationController.cpp RendererParticles.cpp RendererParticles.h RendererDebugQuad.cpp TextRenderer.cpp DataExporter.cpp OctreeInterpolationController.cpp OctreeNode.cpp MarchingCubesCalculator.cpp Grid.cpp GridCell.cpp Triangle.cpp RendererMarchingCubes.cpp MarchinCubesData.cpp VertexArrayBuffer.cpp MarchingCubesShader.cpp VertexPositionNormal.cpp VertexWelder.cpp MarchingCubesRenderObject.cpp Ground.cpp GroundShader.cpp MVPShader.cpp SkyBox.cpp SkyBoxShader.cpp TextureRenderer.cpp ReflectionCamera.cpp BaseCamera.cpp TextureSlicingRenderer.cpp FluidVisualisation.cpp TextureSlicer.cpp)
-SET(SRC_H main.h DataImporter.h DataSet.h Timestep.h Particle.h WindowHandler.h Shader.h Camera.h InterpolationController.h CpuInterpolationController.h RendererParticles.cpp RendererParticles.h RendererDebugQuad.h TextRenderer.h  DataExporter.h  OctreeInterpolationController.h  OctreeNode.h MarchingCubesCalculator.h Grid.h GridCell.h Triangle.h RendererMarchingCubes.h MarchinCubesData.h VertexArrayBuffer.h MarchingCubesShader.h VertexPositionNormal.h VertexWelder.h MarchingCubesRenderObject.h Ground.h GroundShader.h MVPShader.h SkyBox.h SkyBoxShader.h TextureRenderer.h ReflectionCamera.h BaseCamera.h TextureSlicingRenderer.h FluidVisualisation.h TextureSlicer.h)
+SET(ALGORITHM_TEXTURE_SLICER_CPP Algorithms/TextureSlicer/TextureSlicer.cpp)
+SET(ALGORITHM_TEXTURE_SLICER_H Algorithms/TextureSlicer/TextureSlicer.h)
 
-SET(SRC ${SRC_CPP} ${SRC_H} ${ALGORITHM_CPP} ${ALGORITHM_H})
+SET(ALGORITHM_CPP ${ALGORITHM_MARCHING_CUBES_CPP} ${ALGORITHM_TEXTURE_SLICER_CPP} Algorithms/BaseAlgorithm.cpp Algorithms/MarchingCubes.cpp Algorithms/TextureSlicing3D.cpp)
+SET(ALGORITHM_H ${ALGORITHM_MARCHING_CUBES_H} ${ALGORITHM_TEXTURE_SLICER_H} Algorithms/BaseAlgorithm.h Algorithms/MarchingCubes.h Algorithms/TextureSlicing3D.h)
+
+SET(CAMERAS_CPP Cameras/BaseCamera.cpp Cameras/Camera.cpp Cameras/ReflectionCamera.cpp)
+SET(CAMERAS_H Cameras/BaseCamera.h Cameras/Camera.h Cameras/ReflectionCamera.h)
+
+SET(DATA_MANAGEMENT_CPP DataManagement/CpuInterpolationController.cpp DataManagement/DataExporter.cpp DataManagement/DataImporter.cpp DataManagement/DataSet.cpp DataManagement/OctreeInterpolationController.cpp DataManagement/OctreeNode.cpp DataManagement/Particle.cpp DataManagement/Timestep.cpp)
+SET(DATA_MANAGEMENT_H DataManagement/CpuInterpolationController.h DataManagement/DataExporter.h DataManagement/DataImporter.h DataManagement/DataSet.h DataManagement/OctreeInterpolationController.h DataManagement/OctreeNode.h DataManagement/Particle.h DataManagement/Timestep.h DataManagement/InterpolationController.h)
+
+SET(RENDERER_CPP Renderer/RendererDebugQuad.cpp Renderer/RendererMarchingCubes.cpp Renderer/RendererParticles.cpp Renderer/TextureRenderer.cpp Renderer/TextRenderer.cpp Renderer/TextureSlicingRenderer.cpp)
+SET(RENDERER_H Renderer/RendererDebugQuad.h Renderer/RendererMarchingCubes.h Renderer/RendererParticles.h Renderer/TextureRenderer.h Renderer/TextRenderer.h Renderer/TextureSlicingRenderer.h)
+
+SET(SHADER_CPP Shader/GroundShader.cpp Shader/MarchingCubesShader.cpp Shader/MVPShader.cpp Shader/Shader.cpp Shader/SkyBoxShader.cpp)
+SET(SHADER_CH Shader/GroundShader.h Shader/MarchingCubesShader.h Shader/MVPShader.h Shader/Shader.h Shader/SkyBoxShader.h)
+
+SET(SRC_CPP main.cpp FluidVisualisation.cpp Ground.cpp SkyBox.cpp VertexPositionNormal.cpp VertexArrayBuffer.cpp WindowHandler.cpp)
+SET(SRC_H main.h FluidVisualisation.h Ground.h SkyBox.h VertexPositionNormal.h VertexArrayBuffer.h WindowHandler.h)
+
+SET(SRC ${SRC_CPP} ${SRC_H} ${ALGORITHM_CPP} ${ALGORITHM_H} ${CAMERAS_CPP} ${CAMERAS_H} ${DATA_MANAGEMENT_CPP} ${DATA_MANAGEMENT_H} ${RENDERER_CPP} ${RENDERER_H} ${SHADER_CPP} ${SHADER_H})
 
 add_executable(FluidVisualisation ${SRC})
 

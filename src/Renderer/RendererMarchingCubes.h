@@ -6,7 +6,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/gl.h>
-#include "Triangle.h"
+#include "Algorithms/MarchingCubes/Triangle.h"
 
 class WindowHandler;
 class BaseCamera;

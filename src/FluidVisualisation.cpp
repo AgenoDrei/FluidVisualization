@@ -1,7 +1,7 @@
 #include "FluidVisualisation.h"
 #include "SkyBox.h"
 #include "WindowHandler.h"
-#include "TextRenderer.h"
+#include "Renderer/TextRenderer.h"
 
 #include "Algorithms/MarchingCubes.h"
 #include "Algorithms/TextureSlicing3D.h"

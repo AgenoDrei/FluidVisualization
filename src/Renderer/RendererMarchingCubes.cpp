@@ -1,14 +1,14 @@
 #include "RendererMarchingCubes.h"
-#include "Camera.h"
+#include "Cameras/Camera.h"
 #include "VertexArrayBuffer.h"
-#include "MarchingCubesShader.h"
+#include "Shader/MarchingCubesShader.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/ext.hpp>
-#include "MarchingCubesRenderObject.h"
+#include "Algorithms/MarchingCubes/MarchingCubesRenderObject.h"
 #include "SkyBox.h"
 #include "WindowHandler.h"
 #include "TextureRenderer.h"
-#include "ReflectionCamera.h"
+#include "Cameras/ReflectionCamera.h"
 
 RendererMarchingCubes::RendererMarchingCubes(SkyBox* skyBox) :
     _skyBox(skyBox) {

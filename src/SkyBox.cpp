@@ -1,8 +1,7 @@
 #include "SkyBox.h"
 #include "VertexArrayBuffer.h"
-#include "SkyBoxShader.h"
+#include "Shader/SkyBoxShader.h"
 #include <SOIL/SOIL.h>
-#include <glm/detail/type_mat.hpp>
 
 SkyBox::SkyBox() {
     _shader = new SkyBoxShader();

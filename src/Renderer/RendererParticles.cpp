@@ -1,15 +1,9 @@
-//
-// Created by simon on 07.12.16.
-//
-
 #include <glm/ext.hpp>
 #include "RendererParticles.h"
-#include "DataSet.h"
-#include "Timestep.h"
-#include "glm/vec4.hpp"
+#include "DataManagement/DataSet.h"
+#include "DataManagement/Timestep.h"
 #include "WindowHandler.h"
-#include "Camera.h"
-#include "Shader.h"
+#include "Shader/Shader.h"
 
 RendererParticles::RendererParticles() {
     shader = new Shader("shader/basic.vert", "shader/basic.frag");

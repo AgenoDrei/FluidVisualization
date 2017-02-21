@@ -1,8 +1,8 @@
 #include "main.h"
 #include "FluidVisualisation.h"
 #include "WindowHandler.h"
-#include "DataImporter.h"
-#include "DataSet.h"
+#include "DataManagement/DataImporter.h"
+#include "DataManagement/DataSet.h"
 
 #include <iostream>
 

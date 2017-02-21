@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "BaseCamera.h"
+#include "Cameras/BaseCamera.h"
 
 class ReflectionCamera : public BaseCamera {
 private:

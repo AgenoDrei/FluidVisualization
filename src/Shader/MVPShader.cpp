@@ -1,5 +1,5 @@
 #include "MVPShader.h"
-#include "BaseCamera.h"
+#include "Cameras/BaseCamera.h"
 #include <glm/gtc/type_ptr.hpp>
 
 MVPShader::MVPShader(const GLchar* vertexShader, const GLchar* fragmentShader)
