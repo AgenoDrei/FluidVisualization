@@ -36,6 +36,8 @@ public:
     void addVertexIndexBuffer(const std::vector<VertexPositionNormal>& vertices, const std::vector<int>& indices);
 
     void render(BaseCamera *camera, WindowHandler *wHandler);
+
+    void clean();
 };
 
 

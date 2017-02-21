@@ -1,35 +1,35 @@
 #include <iostream>
-#include "Renderer3DTextureSlicing.h"
+#include "TextureSlicingRenderer.h"
 
 #include "DataSet.h"
 #include "Timestep.h"
 #include "WindowHandler.h"
 #include "Shader.h"
 
-Renderer3DTextureSlicing::Renderer3DTextureSlicing(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+TextureSlicingRenderer::TextureSlicingRenderer(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
     shader = new Shader("shader/textureSlicer.vert", "shader/textureSlicer.frag");
-    Renderer3DTextureSlicing::sizeofTextureSlicesVolume = 42*12*sizeof(glm::vec3);  // default numSlices is 42
-    Renderer3DTextureSlicing::dimX = dimX;
-    Renderer3DTextureSlicing::dimY = dimY;
-    Renderer3DTextureSlicing::dimZ = dimZ;
+    TextureSlicingRenderer::sizeofTextureSlicesVolume = 42*12*sizeof(glm::vec3);  // default numSlices is 42
+    TextureSlicingRenderer::dimX = dimX;
+    TextureSlicingRenderer::dimY = dimY;
+    TextureSlicingRenderer::dimZ = dimZ;
 
     setupParamsAndBinds();
 }
 
-Renderer3DTextureSlicing::~Renderer3DTextureSlicing() {
+TextureSlicingRenderer::~TextureSlicingRenderer() {
     delete shader;
 }
 
-void Renderer3DTextureSlicing::updateSizeofTextureSlicesVolume(int numSlices) {
+void TextureSlicingRenderer::updateSizeofTextureSlicesVolume(int numSlices) {
     int newSizeofTSV = numSlices*12*sizeof(glm::vec3);
 
-    Renderer3DTextureSlicing::sizeofTextureSlicesVolume = newSizeofTSV;
+    TextureSlicingRenderer::sizeofTextureSlicesVolume = newSizeofTSV;
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, newSizeofTSV, 0, GL_DYNAMIC_DRAW);
 }
 
-void Renderer3DTextureSlicing::setupParamsAndBinds() {
+void TextureSlicingRenderer::setupParamsAndBinds() {
     // setup texture parameters
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);      // GL_CLAMP_TO_BORDER instead of GL_CLAMP resolved GL_INVALID_ENUM error
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
@@ -50,7 +50,7 @@ void Renderer3DTextureSlicing::setupParamsAndBinds() {
     glBindVertexArray(0);
 }
 
-void Renderer3DTextureSlicing::setTextureData(Timestep *step) {
+void TextureSlicingRenderer::setTextureData(Timestep *step) {
     auto particleCount = step->getSize();
     auto pData = new float[particleCount];
     for (auto i = 0u; i < particleCount; i++) {
@@ -65,13 +65,13 @@ void Renderer3DTextureSlicing::setTextureData(Timestep *step) {
     delete [] pData;
 }
 
-void Renderer3DTextureSlicing::setBufferData(glm::vec3 *vTextureSlices) {
+void TextureSlicingRenderer::setBufferData(glm::vec3 *vTextureSlices) {
     //update buffer object with the new vertices
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeofTextureSlicesVolume, &(vTextureSlices[0].x));
 }
 
-void Renderer3DTextureSlicing::render(Camera* camera, WindowHandler* wHandler) {
+void TextureSlicingRenderer::render(BaseCamera* camera, WindowHandler* wHandler) {
     glm::mat4 model, view, projection;
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
     view = camera->GetViewMatrix();

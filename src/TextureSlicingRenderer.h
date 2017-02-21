@@ -2,20 +2,20 @@
 #include <GL/glew.h>
 #include <glm/ext.hpp>
 
-class Camera;
+class BaseCamera;
 class WindowHandler;
 class DataSet;
 class Timestep;
 class Shader;
 
-class Renderer3DTextureSlicing {
+class TextureSlicingRenderer {
 public:
-    Renderer3DTextureSlicing(uint32_t dimX, uint32_t dimY, uint32_t dimZ);
-    ~Renderer3DTextureSlicing();
+    TextureSlicingRenderer(uint32_t dimX, uint32_t dimY, uint32_t dimZ);
+    ~TextureSlicingRenderer();
     void setTextureData(Timestep* step);
     void setBufferData(glm::vec3* vTextureSlices);
     void updateSizeofTextureSlicesVolume(int numSlices);
-    void render(Camera* camera, WindowHandler* wHandler);
+    void render(BaseCamera* camera, WindowHandler* wHandler);
     glm::vec3 viewDirOnSlicing;
 private:
     Shader* shader;

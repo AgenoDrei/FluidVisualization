@@ -29,3 +29,7 @@ glm::mat4 ReflectionCamera::getReflectionMatrix() const {
 glm::mat4 ReflectionCamera::GetProjectonMatrix(WindowHandler* wHandler, float nearPlane, float farPlane) const {
     return glm::perspective(1.0f, wHandler->getWidth()/wHandler->getHeight(), nearPlane, farPlane);
 };
+
+glm::vec3 ReflectionCamera::getFront() const {
+    return _camera->getFront();
+}

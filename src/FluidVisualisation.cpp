@@ -4,6 +4,7 @@
 #include "TextRenderer.h"
 
 #include "Algorithms/MarchingCubes.h"
+#include "Algorithms/TextureSlicing3D.h"
 
 #include <algorithm>
 
@@ -16,6 +17,9 @@ FluidVisualisation::FluidVisualisation(Timestep* data) :
 
     std::unique_ptr<BaseAlgorithm> marchingCubes(new MarchingCubes(_skyBox));
     _algorithms.push_back(std::move(marchingCubes));
+
+    std::unique_ptr<BaseAlgorithm> textureSlicing3D(new TextureSlicing3D(_camera));
+    _algorithms.push_back(std::move(textureSlicing3D));
 
     switchAlgorithm(&_algorithms.front());
 }

@@ -124,3 +124,7 @@ Camera* Camera::getCopy() {
     result->Zoom = Zoom;
     return result;
 }
+
+glm::vec3 Camera::getFront() const {
+    return Front;
+}
