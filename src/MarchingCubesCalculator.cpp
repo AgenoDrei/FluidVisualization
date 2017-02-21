@@ -1,15 +1,15 @@
-#include "MarchingCubes.h"
+#include "MarchingCubesCalculator.h"
 #include "Timestep.h"
 #include "Grid.h"
 #include "GridCell.h"
 #include "MarchinCubesData.h"
 #include <iostream>
 
-MarchingCubes::MarchingCubes() {
+MarchingCubesCalculator::MarchingCubesCalculator() {
 
 }
 
-void MarchingCubes::calculate(Grid* grid) {
+void MarchingCubesCalculator::calculate(Grid* grid) {
     triangleMesh.clear();
 
     auto gridDimension = grid->getDimension();
@@ -26,7 +26,7 @@ void MarchingCubes::calculate(Grid* grid) {
     std::cout<<"Marching cubes found "<<triangleMesh.size()<<" triangles"<<std::endl;
 }
 
-int MarchingCubes::getCubeIndex(GridCell* cell, float isolevel) {
+int MarchingCubesCalculator::getCubeIndex(GridCell* cell, float isolevel) {
     auto cubeIndex = 0;
 
     if(cell->value[0]->density < isolevel) {
@@ -107,7 +107,7 @@ glm::vec3 getNormalAtPoint(GridCell* cell, int index) {
     return result;
 }
 
-std::vector<Triangle> MarchingCubes::polygonise(GridCell* cell, float isolevel) {
+std::vector<Triangle> MarchingCubesCalculator::polygonise(GridCell* cell, float isolevel) {
     auto cubeIndex = getCubeIndex(cell, isolevel);
 
     if(edgeTable[cubeIndex] == 0) {
@@ -207,7 +207,7 @@ std::vector<Triangle> MarchingCubes::polygonise(GridCell* cell, float isolevel) 
     return result;
 }
 
-glm::vec3 MarchingCubes::VertexInterp(float isolevel, glm::vec3 p1, glm::vec3 p2, float vlaueP1, float vlaueP2) {
+glm::vec3 MarchingCubesCalculator::VertexInterp(float isolevel, glm::vec3 p1, glm::vec3 p2, float vlaueP1, float vlaueP2) {
     float mu;
     glm::vec3 p;
 
@@ -228,11 +228,11 @@ glm::vec3 MarchingCubes::VertexInterp(float isolevel, glm::vec3 p1, glm::vec3 p2
     return p;
 }
 
-const std::vector<Triangle>& MarchingCubes::getTriangles() const {
+const std::vector<Triangle>& MarchingCubesCalculator::getTriangles() const {
     return triangleMesh;
 }
 
-std::vector<VertexPositionNormal> MarchingCubes::getVertices() {
+std::vector<VertexPositionNormal> MarchingCubesCalculator::getVertices() {
     std::vector<VertexPositionNormal> result;
     for(auto i: triangleMesh) {
         result.push_back(i.Vertices[0]);

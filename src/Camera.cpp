@@ -30,6 +30,10 @@ Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat up
     std::cout << "Log> Camera created!" << std::endl;
 }
 
+Camera::~Camera() {
+
+}
+
 // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
 glm::mat4 Camera::GetViewMatrix() const {
     return glm::lookAt(this->Position, this->Position + this->Front, this->Up);

@@ -92,7 +92,7 @@ void RendererMarchingCubes::renderReflectionMap(BaseCamera *camera, WindowHandle
 
 }
 
-void RendererMarchingCubes::render(Camera *camera, WindowHandler *wHandler) {
+void RendererMarchingCubes::render(BaseCamera *camera, WindowHandler *wHandler) {
     auto reflectionCamera = new ReflectionCamera(camera, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
 
     //TODO: set clipping
@@ -107,7 +107,6 @@ void RendererMarchingCubes::render(Camera *camera, WindowHandler *wHandler) {
 
     auto reflectionViewMatrix = reflectionCamera->GetViewMatrix();
     auto reflectionProjectionMatrix = reflectionCamera->GetProjectonMatrix(wHandler, 0.5, 10.0f);
-    auto reflectionMatrix = reflectionProjectionMatrix * reflectionViewMatrix;
     _shader->setReflectionView(reflectionViewMatrix);
     glBindTexture(GL_TEXTURE_2D, _reflectionTexture);
 
@@ -115,6 +114,7 @@ void RendererMarchingCubes::render(Camera *camera, WindowHandler *wHandler) {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
     glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     for(auto object : _objects) {

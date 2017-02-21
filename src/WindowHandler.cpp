@@ -120,12 +120,6 @@ int WindowHandler::calculateFPS() {
     return (int)((1000.0 / deltaTime) + 0.5);
 }
 
-void WindowHandler::drawText(const char *text, int length, int x, int y) {
-
-
-
-}
-
 double WindowHandler::getDeltaTime() const {
     return deltaTime / 1000.0f;
 }

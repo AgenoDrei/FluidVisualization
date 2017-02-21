@@ -6,6 +6,8 @@ class WindowHandler;
 
 class BaseCamera {
 public:
+    virtual ~BaseCamera();
+
     virtual glm::mat4 GetViewMatrix() const = 0;
     virtual glm::mat4 GetProjectonMatrix(WindowHandler* wHandler, float nearPlane, float farPlane) const = 0;
 };

@@ -1,7 +1,3 @@
-//
-// Created by oliver on 17.12.16.
-//
-
 #include <string>
 #include <iostream>
 #include <glm/vec2.hpp>
@@ -10,7 +6,6 @@
 #include <glm/ext.hpp>
 #include "TextRenderer.h"
 #include "Shader.h"
-//#include "freetype/freetype.h" FT_FREETYPE_H
 #include "freetype/freetype.h"
 
 struct Character {
@@ -109,6 +104,10 @@ void TextRenderer::drawText(std::string text, glm::vec2 pos, GLfloat scale, glm:
     glUniform3f(glGetUniformLocation(shader->Program, "textColor"), color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
+    //glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Iterate through all characters
     std::string::const_iterator c;

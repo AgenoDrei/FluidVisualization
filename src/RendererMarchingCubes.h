@@ -10,7 +10,6 @@
 
 class WindowHandler;
 class BaseCamera;
-class Camera;
 class VertexArrayBuffer;
 class MarchingCubesShader;
 class MarchingCubesRenderObject;
@@ -36,7 +35,7 @@ public:
     void addTriangles(const std::vector<Triangle>& triangles);
     void addVertexIndexBuffer(const std::vector<VertexPositionNormal>& vertices, const std::vector<int>& indices);
 
-    void render(Camera *camera, WindowHandler *wHandler);
+    void render(BaseCamera *camera, WindowHandler *wHandler);
 };
 
 

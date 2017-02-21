@@ -48,6 +48,8 @@ public:
     // Constructor with scalar values
     Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch);
 
+    ~Camera();
+
     // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
     virtual glm::mat4 GetViewMatrix() const override;
     // Processes input received from any keyboard-like input system.
