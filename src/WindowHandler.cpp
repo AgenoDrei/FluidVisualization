@@ -54,6 +54,9 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
 
     currentTime = 0;
 
+    glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
+    glutIgnoreKeyRepeat(0);
+
     (*init)();
     glutCloseFunc(onShutdown);
     glutKeyboardFunc(onKeyDown); //Keyboard

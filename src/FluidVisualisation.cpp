@@ -77,6 +77,10 @@ void FluidVisualisation::doMovement() {
     }
 
     if(_windowHandler->getKey('l')) {
+        _nextKeyPresset = true;
+    }
+    if(!_windowHandler->getKey('l') && _nextKeyPresset) {
+        _nextKeyPresset = false;
         auto place = std::find(_algorithms.begin(), _algorithms.end(), *_currentAlgorithm);
         place++;
         if(place == _algorithms.end()) {
