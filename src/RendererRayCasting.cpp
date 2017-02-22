@@ -5,6 +5,7 @@
 #include <glm/geometric.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 #include "RendererRayCasting.h"
 #include "Particle.h"
 #include "Timestep.h"
@@ -23,10 +24,13 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
     //Load buffer to 3D texture
     particleCount = count;
     GLfloat* pData = new GLfloat[particleCount];
+    //GLubyte* pData = new GLubyte[particleCount];
 
-    for (auto i = 0u; i < particleCount; i++) {
-        pData[i] = step->getParticle(i).density;   // each pData-value 0..255
-        //pData[i] = step->getParticle(i).density;   // each pData-value 0..255
+    for (auto i = 0u; i < count; i++) {
+        Particle tmp = step->getParticle(i);
+        pData[i] = tmp.density * 1000;   // each pData-value 0..255
+        //pData[i] = step->getParticle(i).density >= 0.0f ? 255 : 0;
+        //pData[i] = 1.0f;
     }
 
     glGenTextures(1, &texture);
@@ -35,12 +39,14 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-//    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, 200, 100, 200, 0, GL_RED, GL_FLOAT, pData); //Remove magic numbers
-    glGenerateMipmap(GL_TEXTURE_3D);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, 100, 100, 100, 0, GL_RED, GL_FLOAT, pData); //Remove magic numbers
+    //glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, 100, 100, 100, 0, GL_RED, GL_UNSIGNED_BYTE, pData); //Remove magic numbers
+    //glGenerateMipmap(GL_TEXTURE_3D);
+    glBindTexture(GL_TEXTURE_3D, 0);
 
     //Create Unit Cube and load it to GPU
     glGenVertexArrays(1, &cubeVAO);
@@ -72,8 +78,8 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
 void RendererRayCasting::render(Camera *camera, WindowHandler *wHandler) {
     glEnable(GL_BLEND);
 
+    glBindTexture(GL_TEXTURE_3D, texture);
     shader->use();
-    //glBindTexture(GL_TEXTURE_3D, texture);
 
     glm::mat4 model;
     model = glm::translate(model, glm::vec3(0.0f));
@@ -90,11 +96,9 @@ void RendererRayCasting::render(Camera *camera, WindowHandler *wHandler) {
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     glUniform3fv(glGetUniformLocation(shader->Program, "camPos"), 1, glm::value_ptr(camPos));
     glUniform3fv(glGetUniformLocation(shader->Program, "step_size"), 1, glm::value_ptr(step_size));
-    //glGetnUniformfv(glGetUniformLocation(shader->Program, "step_size"), 1, GL_FALSE, glm::value_ptr(step_size));
 
     glBindVertexArray(cubeVAO);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
-    //glDrawArrays(GL_TRIANGLES, 0, 8);
     glBindVertexArray(0);
 
     glDisable(GL_BLEND);

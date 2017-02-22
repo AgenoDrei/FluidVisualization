@@ -18,12 +18,15 @@ void main()
 	//get the 3D texture coordinates for lookup into the volume dataset
 	vec3 dataPos = vUV;
 
+	vec3 realCamPos = vec3(camPos.x, camPos.y, -camPos.z);
+	//vec3 realCamPos = vec3(0.5, 0.25, -1.5);;
+
 	//Getting the ray marching direction:
 	//get the object space position by subracting 0.5 from the
 	//3D texture coordinates. Then subtraact it from camera position
 	//and normalize to get the ray marching direction
-	//vec3 geomDir = normalize((vUV-vec3(0.5)) - camPos);
-	vec3 geomDir = normalize(vUV - camPos);
+	vec3 geomDir = normalize((vUV-vec3(0.5)) - realCamPos);
+	//vec3 geomDir = normalize(vUV - camPos);
 
 	//multiply the raymarching direction with the step size to get the
 	//sub-step size we need to take at each raymarching step
@@ -31,6 +34,10 @@ void main()
 
 	//flag to indicate if the raymarch loop should terminate
 	bool stop = false;
+
+    /*float sampleV = texture(volume, vec3(0.2, 0.12, 0.5)).r;
+	vFragColor.rgba = vec4(sampleV, sampleV, sampleV, 1.0f);
+	return;*/
 
 	//for all samples along the ray
 	for (int i = 0; i < MAX_SAMPLES; i++) {
@@ -49,13 +56,21 @@ void main()
 		//So to be within the dataset limits, the dot product will return a
 		//value less than 3. If it is greater than 3, we are already out of
 		//the volume dataset
-		stop = dot(sign(dataPos-texMin),sign(texMax-dataPos)) < 3.0;
+
+		if(dataPos.x > texMax.x || dataPos.x < texMin.x
+		    || dataPos.y > texMax.y || dataPos.y < texMin.y
+		    || dataPos.z > texMax.z || dataPos.z < texMin.z) {
+		    break;
+		}
+
+		/*stop = dot(sign(dataPos-texMin),sign(texMax-dataPos)) < 3.0;
 
 		//if the stopping condition is true we brek out of the ray marching loop
 		if (stop)
-			break;
+			break;*/
 
 		// data fetching from the red channel of volume texture
+		//float sampleValue = 0.0f;
 		float sampleValue = texture(volume, dataPos).r;
 
 		//Opacity calculation using compositing:
@@ -68,6 +83,9 @@ void main()
 		float prev_alpha = sampleValue - (sampleValue * vFragColor.a);
 		vFragColor.rgb = prev_alpha * vec3(sampleValue) + vFragColor.rgb;
 		vFragColor.a += prev_alpha;
+
+		//vFragColor.rgb = vec3(0.8f);
+		//vFragColor.a += 0.0000001;
 
 		//early ray termination
 		//if the currently composited colour alpha is already fully saturated

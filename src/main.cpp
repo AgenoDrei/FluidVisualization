@@ -34,7 +34,7 @@ RendererMarchingCubes* marchingCubesRenderer;
 int main(int argc, char* argv[]) {
     //std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
 	//data = DataImporter::load("/home/nils/Downloads/drop_interpolation_300.dat");
-	data = DataImporter::load("/home/simon/Downloads/drop_200.dat");
+	data = DataImporter::load("/home/simon/Downloads/drop_100.dat");
     //Window Initialisation
     window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop);
@@ -73,11 +73,11 @@ void init() {
     //renderer->setData(data->getTimestep(0), data->getNumberParticles());
     rayRenderer->setData(data->getTimestep(0), data->getNumberParticles());
     //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
-    /*glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glEnable(GL_BLEND);
-    glPolygonMode(GL_FRONT, GL_LINE);*/
+    //glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_FRONT);
+    //glEnable(GL_BLEND);
+    //glPolygonMode(GL_FRONT, GL_LINE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //fpsRenderer = new TextRenderer("../fonts/arial.ttf");
