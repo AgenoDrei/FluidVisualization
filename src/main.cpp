@@ -73,9 +73,9 @@ void init() {
     //renderer->setData(data->getTimestep(0), data->getNumberParticles());
     rayRenderer->setData(data->getTimestep(0), data->getNumberParticles());
     //quadRenderer->setData(data->getTimestep(0), data->getNumberParticles());
-    //glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_FRONT);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     //glEnable(GL_BLEND);
     //glPolygonMode(GL_FRONT, GL_LINE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -28,7 +28,7 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
 
     for (auto i = 0u; i < count; i++) {
         Particle tmp = step->getParticle(i);
-        pData[i] = tmp.density * 1000;   // each pData-value 0..255
+        pData[i] = tmp.density * 500;   // each pData-value 0..255
         //pData[i] = step->getParticle(i).density >= 0.0f ? 255 : 0;
         //pData[i] = 1.0f;
     }
@@ -57,13 +57,14 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
             glm::vec3(0.5f,-0.5f,-0.5f),
             glm::vec3( 0.5f, 0.5f,-0.5f),
             glm::vec3(-0.5f, 0.5f,-0.5f),
+
             glm::vec3(-0.5f,-0.5f, 0.5f),
             glm::vec3( 0.5f,-0.5f, 0.5f),
             glm::vec3( 0.5f, 0.5f, 0.5f),
             glm::vec3(-0.5f, 0.5f, 0.5f)
     };
 
-    GLushort cubeIndices[36]={0,5,4,5,0,1,3,7,6,3,6,2,7,4,6,6,4,5,2,1,3,3,1,0,3,0,7,7,0,4,6,5,2,2,5,1};
+    GLushort cubeIndices[36]={0,5,4, 5,0,1, 3,7,6, 3,6,2, 7,4,6, 6,4,5, 2,1,3, 3,1,0, 3,0,7, 7,0,4, 6,5,2, 2,5,1};
 
     glBindVertexArray(cubeVAO);
     glBindBuffer (GL_ARRAY_BUFFER, cubeVBO);
