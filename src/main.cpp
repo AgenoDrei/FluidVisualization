@@ -34,7 +34,7 @@ RendererMarchingCubes* marchingCubesRenderer;
 int main(int argc, char* argv[]) {
     //std::string path = std::getenv("HOME"); //weird clion bug, not important for compiling
 	//data = DataImporter::load("/home/nils/Downloads/drop_interpolation_300.dat");
-	data = DataImporter::load("/home/simon/Downloads/drop_100.dat");
+	data = DataImporter::load("/home/simon/Downloads/drop_200.dat");
     //Window Initialisation
     window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop);
@@ -51,7 +51,7 @@ void init() {
     //ctrl = new OctreeInterpolationController(0.0025, 1.5);
     //renderer = new RendererParticles();
     //quadRenderer = new RendererDebugQuad();
-    rayRenderer = new RendererRayCasting();
+    rayRenderer = new RendererRayCasting(0.01);
 
     //interpolatedData = ctrl->interpolateData(data, 200, 100, 200);
 

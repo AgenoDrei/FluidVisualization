@@ -12,7 +12,8 @@
 #include "Shader.h"
 #include "Camera.h"
 
-RendererRayCasting::RendererRayCasting() {
+RendererRayCasting::RendererRayCasting(GLfloat rayStepSize) :
+        rayStepSize(rayStepSize){
     shader = new Shader("shader/raycaster.vert", "shader/raycaster.frag");
 }
 
@@ -21,6 +22,7 @@ RendererRayCasting::~RendererRayCasting() {
 }
 
 void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep interpolated data
+    glm::vec3 stepDimension = step->getParticleNumberPerDirection();
     //Load buffer to 3D texture
     particleCount = count;
     GLfloat* pData = new GLfloat[particleCount];
@@ -28,7 +30,7 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
 
     for (auto i = 0u; i < count; i++) {
         Particle tmp = step->getParticle(i);
-        pData[i] = tmp.density * 500;   // each pData-value 0..255
+        pData[i] = tmp.density * 1000;   // each pData-value 0..255
         //pData[i] = step->getParticle(i).density >= 0.0f ? 255 : 0;
         //pData[i] = 1.0f;
     }
@@ -43,7 +45,7 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, 100, 100, 100, 0, GL_RED, GL_FLOAT, pData); //Remove magic numbers
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, stepDimension.x, stepDimension.y, stepDimension.z, 0, GL_RED, GL_FLOAT, pData); //Remove magic numbers
     //glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, 100, 100, 100, 0, GL_RED, GL_UNSIGNED_BYTE, pData); //Remove magic numbers
     //glGenerateMipmap(GL_TEXTURE_3D);
     glBindTexture(GL_TEXTURE_3D, 0);
@@ -89,7 +91,7 @@ void RendererRayCasting::render(Camera *camera, WindowHandler *wHandler) {
     glm::mat4 projection;
     projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
     glm::vec3 camPos = camera->Position;
-    glm::vec3 step_size = glm::vec3(0.01f);
+    glm::vec3 step_size = glm::vec3(rayStepSize);
 
     // Pass the matrices to the shader
     glUniformMatrix4fv(glGetUniformLocation(shader->Program, "model"), 1, GL_FALSE, glm::value_ptr(model));

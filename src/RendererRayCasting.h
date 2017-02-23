@@ -13,7 +13,7 @@ class Shader;
 
 class RendererRayCasting {
 public:
-    RendererRayCasting();
+    RendererRayCasting(GLfloat rayStepSize);
     ~RendererRayCasting();
     void setData(Timestep* step, uint32_t count);
     void render(Camera* camera, WindowHandler* wHandler);
@@ -22,6 +22,7 @@ private:
     uint32_t particleCount;
     glm::vec4* buffer;
     Shader* shader;
+    GLfloat rayStepSize;
 
 };
 
