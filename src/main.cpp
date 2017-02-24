@@ -51,7 +51,7 @@ void init() {
     //ctrl = new OctreeInterpolationController(0.0025, 1.5);
     //renderer = new RendererParticles();
     //quadRenderer = new RendererDebugQuad();
-    rayRenderer = new RendererRayCasting(0.01);
+    rayRenderer = new RendererRayCasting(0.005);
 
     //interpolatedData = ctrl->interpolateData(data, 200, 100, 200);
 
