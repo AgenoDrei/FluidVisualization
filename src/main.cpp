@@ -3,7 +3,6 @@
 #include "WindowHandler.h"
 #include "DataManagement/DataImporter.h"
 #include "DataManagement/DataSet.h"
-
 #include <iostream>
 
 WindowHandler* window;

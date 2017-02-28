@@ -1,5 +1,5 @@
-SET(ALGORITHM_MARCHING_CUBES_CPP Algorithms/MarchingCubes/Grid.cpp Algorithms/MarchingCubes/GridCell.cpp Algorithms/MarchingCubes/MarchinCubesData.cpp Algorithms/MarchingCubes/MarchingCubesCalculator.cpp Algorithms/MarchingCubes/MarchingCubesRenderObject.cpp Algorithms/MarchingCubes/Triangle.cpp Algorithms/MarchingCubes/VertexWelder.cpp)
-SET(ALGORITHM_MARCHING_CUBES_H Algorithms/MarchingCubes/Grid.h Algorithms/MarchingCubes/GridCell.h Algorithms/MarchingCubes/MarchinCubesData.h Algorithms/MarchingCubes/MarchingCubesCalculator.h Algorithms/MarchingCubes/MarchingCubesRenderObject.h Algorithms/MarchingCubes/Triangle.h Algorithms/MarchingCubes/VertexWelder.h)
+SET(ALGORITHM_MARCHING_CUBES_CPP Algorithms/MarchingCubes/Grid.cpp Algorithms/MarchingCubes/GridCell.cpp Algorithms/MarchingCubes/MarchinCubesData.cpp Algorithms/MarchingCubes/MarchingCubesCalculator.cpp Algorithms/MarchingCubes/MarchingCubesRenderObject.cpp Algorithms/MarchingCubes/Triangle.cpp Algorithms/MarchingCubes/VertexWelder.cpp Algorithms/RayCasting.cpp)
+SET(ALGORITHM_MARCHING_CUBES_H Algorithms/MarchingCubes/Grid.h Algorithms/MarchingCubes/GridCell.h Algorithms/MarchingCubes/MarchinCubesData.h Algorithms/MarchingCubes/MarchingCubesCalculator.h Algorithms/MarchingCubes/MarchingCubesRenderObject.h Algorithms/MarchingCubes/Triangle.h Algorithms/MarchingCubes/VertexWelder.h Algorithms/RayCasting.h)
 
 SET(ALGORITHM_TEXTURE_SLICER_CPP Algorithms/TextureSlicer/TextureSlicer.cpp)
 SET(ALGORITHM_TEXTURE_SLICER_H Algorithms/TextureSlicer/TextureSlicer.h)
@@ -13,8 +13,8 @@ SET(CAMERAS_H Cameras/BaseCamera.h Cameras/Camera.h Cameras/ReflectionCamera.h)
 SET(DATA_MANAGEMENT_CPP DataManagement/CpuInterpolationController.cpp DataManagement/DataExporter.cpp DataManagement/DataImporter.cpp DataManagement/DataSet.cpp DataManagement/OctreeInterpolationController.cpp DataManagement/OctreeNode.cpp DataManagement/Particle.cpp DataManagement/Timestep.cpp)
 SET(DATA_MANAGEMENT_H DataManagement/CpuInterpolationController.h DataManagement/DataExporter.h DataManagement/DataImporter.h DataManagement/DataSet.h DataManagement/OctreeInterpolationController.h DataManagement/OctreeNode.h DataManagement/Particle.h DataManagement/Timestep.h DataManagement/InterpolationController.h)
 
-SET(RENDERER_CPP Renderer/RendererDebugQuad.cpp Renderer/RendererMarchingCubes.cpp Renderer/RendererParticles.cpp Renderer/TextureRenderer.cpp Renderer/TextRenderer.cpp Renderer/TextureSlicingRenderer.cpp)
-SET(RENDERER_H Renderer/RendererDebugQuad.h Renderer/RendererMarchingCubes.h Renderer/RendererParticles.h Renderer/TextureRenderer.h Renderer/TextRenderer.h Renderer/TextureSlicingRenderer.h)
+SET(RENDERER_CPP Renderer/RendererDebugQuad.cpp Renderer/RendererMarchingCubes.cpp Renderer/RendererParticles.cpp Renderer/TextureRenderer.cpp Renderer/TextRenderer.cpp Renderer/TextureSlicingRenderer.cpp Renderer/RendererRayCasting.cpp)
+SET(RENDERER_H Renderer/RendererDebugQuad.h Renderer/RendererMarchingCubes.h Renderer/RendererParticles.h Renderer/TextureRenderer.h Renderer/TextRenderer.h Renderer/TextureSlicingRenderer.h Renderer/RendererRayCasting.h)
 
 SET(SHADER_CPP Shader/GroundShader.cpp Shader/MarchingCubesShader.cpp Shader/MVPShader.cpp Shader/Shader.cpp Shader/SkyBoxShader.cpp)
 SET(SHADER_CH Shader/GroundShader.h Shader/MarchingCubesShader.h Shader/MVPShader.h Shader/Shader.h Shader/SkyBoxShader.h)

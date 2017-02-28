@@ -33,8 +33,8 @@ void RendererParticles::setData(Timestep* step, uint32_t count) {
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * particleCount * bufferElementSize, buffer, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, bufferElementSize * sizeof(GLfloat), static_cast<GLvoid*>(nullptr));     // Position attribute
     glEnableVertexAttribArray(0);
-    /*glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, bufferElementSize * sizeof(GLfloat), reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);*/
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, bufferElementSize * sizeof(GLfloat), reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
 
@@ -45,7 +45,7 @@ void RendererParticles::render(Camera *camera, WindowHandler *wHandler) {
     glm::mat4 model;
     model = glm::translate(model, glm::vec3(0.0f));
     glm::mat4 view;
-    model = camera->GetViewMatrix();
+    view = camera->GetViewMatrix();
     glm::mat4 projection;
     projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
 
