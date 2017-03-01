@@ -52,9 +52,10 @@ void TextureSlicingRenderer::setupParamsAndBinds() {
 
 void TextureSlicingRenderer::setTextureData(Timestep *step) {
     auto particleCount = step->getSize();
+    float maxDensity = step->getMaxDensity();
     auto pData = new float[particleCount];
     for (auto i = 0u; i < particleCount; i++) {
-        pData[i] = step->getParticle(i).density * 1000;   // *1000 s.t. values big enough to get integer red value
+        pData[i] = step->getParticle(i).density * (1/maxDensity);
     }
 
     glGenTextures(1, &_texture);
