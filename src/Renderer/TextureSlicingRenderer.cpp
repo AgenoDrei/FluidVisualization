@@ -55,7 +55,7 @@ void TextureSlicingRenderer::setTextureData(Timestep *step) {
     float maxDensity = step->getMaxDensity();
     auto pData = new float[particleCount];
     for (auto i = 0u; i < particleCount; i++) {
-        pData[i] = step->getParticle(i).density * (1/maxDensity);
+        pData[i] = step->getParticle(i).density * (1.0f/maxDensity);
     }
 
     glGenTextures(1, &_texture);
@@ -78,11 +78,12 @@ void TextureSlicingRenderer::render(BaseCamera* camera, WindowHandler* wHandler)
     view = camera->GetViewMatrix();
     projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
 
-    glBindVertexArray(_VAO);
+    glBindVertexArray(_VAO);    // TODO: right at this place?
     _shader->use();
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glUniform1f(glGetUniformLocation(_shader->Program, "alphaFactorInc"), 5.0f);
 //    glUniform1i(glGetUniformLocation(_shader->Program, "volume"), 0);
     glDrawArrays(GL_TRIANGLES, 0, _sizeofTextureSlicesVolume / sizeof(glm::vec3));
     _shader->unUse();
