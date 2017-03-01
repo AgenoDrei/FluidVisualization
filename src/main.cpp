@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
 }
 
 void init() {
-    std::cout << "Log> Render initialization running" << std::endl;
+    std::cout << "Log> FluidVisualization init running" << std::endl;
 
     std::string path = std::getenv("HOME");
     auto data = DataImporter::load(path + "/Downloads/drop_100.dat");
@@ -34,7 +34,7 @@ void init() {
 
     fluidVisualisation->init(window);
 
-    std::cout << "Log> Initalization done" << std::endl;
+    std::cout << "Log> FluidVisualization init done" << std::endl;
 }
 
 void mainLoop() {
