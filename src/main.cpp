@@ -31,7 +31,6 @@ void init() {
     //delete interpolationController; TODO: segfault --- simon whats going on? Create the controller on stack?
 
     fluidVisualisation = new FluidVisualisation(firstTimestep);
-
     fluidVisualisation->init(window);
 
     std::cout << "Log> FluidVisualization init done" << std::endl;
@@ -39,12 +38,8 @@ void init() {
 
 void mainLoop() {
     fluidVisualisation->doMovement();
-    window->calculateFPS();
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     fluidVisualisation->render();
-
     glutSwapBuffers();
 }
 

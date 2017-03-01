@@ -6,14 +6,14 @@
 
 #include "Cameras/BaseCamera.h"
 
-TextureSlicing3D::TextureSlicing3D(BaseCamera* camera) {
+TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uint dimZ) {
     auto front = camera->getFront();
 
     std::unique_ptr<TextureSlicer> calculator(new TextureSlicer());
     _calculator = std::move(calculator);
     _calculator->sliceVolumedata(front);
 
-    std::unique_ptr<TextureSlicingRenderer> renderer(new TextureSlicingRenderer(100, 100, 100));
+    std::unique_ptr<TextureSlicingRenderer> renderer(new TextureSlicingRenderer(dimX, dimY, dimZ));
     _renderer = std::move(renderer);
     _renderer->setBufferData(_calculator->getSlicedVolume());
     _renderer->viewDirOnSlicing = front;
@@ -21,13 +21,14 @@ TextureSlicing3D::TextureSlicing3D(BaseCamera* camera) {
     setNumSlices(128);
 }
 
-TextureSlicing3D::~TextureSlicing3D() {
-
-}
+TextureSlicing3D::~TextureSlicing3D() {}
 
 void TextureSlicing3D::setNumSlices(int slices) {
     _calculator->setNumSlices(slices);
     _renderer->updateSizeofTextureSlicesVolume(slices);
+    // now slice again with new num and old viewDir
+    _calculator->sliceVolumedata(_renderer->viewDirOnSlicing);
+    _renderer->setBufferData(_calculator->getSlicedVolume());
 }
 
 void TextureSlicing3D::init(Timestep* timestep) {

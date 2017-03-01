@@ -13,7 +13,7 @@ protected:
     std::unique_ptr<TextureSlicer> _calculator;
     std::unique_ptr<TextureSlicingRenderer> _renderer;
 public:
-    TextureSlicing3D(BaseCamera* camera);
+    TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uint dimZ);
 
     ~TextureSlicing3D();
 
