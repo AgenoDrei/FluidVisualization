@@ -18,9 +18,9 @@ public:
     void render(BaseCamera* camera, WindowHandler* wHandler);
     glm::vec3 viewDirOnSlicing;
 private:
-    Shader* shader;
-    int sizeofTextureSlicesVolume;
-    uint32_t dimX, dimY, dimZ;
-    GLuint VAO, VBO, texture;
+    Shader* _shader;
+    int _sizeofTextureSlicesVolume;
+    uint32_t _dimX, _dimY, _dimZ;
+    GLuint _VAO, _VBO, _texture;
     void setupParamsAndBinds();
 };
