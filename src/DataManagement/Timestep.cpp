@@ -182,3 +182,13 @@ Particle* Timestep::getParticleAt(glm::vec3 position) {
 
     return closestParticle;
 }
+
+float Timestep::getMaxDensity() {
+    float max = _particles[0].density;
+    for(int i = 1; i < _numberParticles; i++) {
+        float particleDensity = _particles[i].density;
+        if (particleDensity > max)
+            max = particleDensity;
+    }
+    return max;
+}

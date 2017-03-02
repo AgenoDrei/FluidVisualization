@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
 }
 
 void init() {
-    std::cout << "Log> Render initialization running" << std::endl;
+    std::cout << "Log> FluidVisualization init running" << std::endl;
 
     std::string path = std::getenv("HOME");
     auto data = DataImporter::load(path + "/Downloads/drop_100.dat");
@@ -31,20 +31,15 @@ void init() {
     //delete interpolationController; TODO: segfault --- simon whats going on? Create the controller on stack?
 
     fluidVisualisation = new FluidVisualisation(firstTimestep);
-
     fluidVisualisation->init(window);
 
-    std::cout << "Log> Initalization done" << std::endl;
+    std::cout << "Log> FluidVisualization init done" << std::endl;
 }
 
 void mainLoop() {
     fluidVisualisation->doMovement();
-    window->calculateFPS();
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     fluidVisualisation->render();
-
     glutSwapBuffers();
 }
 

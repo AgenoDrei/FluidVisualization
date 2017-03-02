@@ -3,11 +3,11 @@
 
 TextureSlicer::TextureSlicer() {
     numSlices = 42;     // default is 42
-    vTextureSlices = new glm::vec3[numSlices*12];
-//    vTextureSlices = (glm::vec3*) malloc (sizeof(glm::vec3) * numSlices * 12);
+    _vTextureSlices = new glm::vec3[numSlices*12];
+//    _vTextureSlices = (glm::vec3*) malloc (sizeof(glm::vec3) * numSlices * 12);
 
     // xyz-coordinates for each UC-vertice
-    ucVertices = new glm::vec3[8] {
+    _ucVertices = new glm::vec3[8] {
         glm::vec3(0,0,0),
         glm::vec3(1,0,0),
         glm::vec3(1,1,0),
@@ -18,13 +18,13 @@ TextureSlicer::TextureSlicer() {
         glm::vec3(0,1,1)
     };
     // between which vertices the UC-edges reside
-    ucEdgesPos = new int[12*2] {
+    _ucEdgesPos = new int[12*2] {
         0,1, 1,2, 2,3, 3,0,
         0,4, 1,5, 2,6, 3,7,
         4,5, 5,6, 6,7, 7,4
     };
     // There are only three unique paths when going from the nearest vertex to the farthest vertex from the camera
-    possibleTraverses = new int[8*12] {
+    _possibleTraverses = new int[8*12] {
         0,1,5,6,   4,8,11,9,  3,7,2,10, // v0 is front; v0 -> v6
         0,4,3,11,  1,2,6,7,   5,9,8,10, // v1 is front; v1 -> v7
         1,5,0,8,   2,3,7,4,   6,10,9,11, // v2 is front: v2 -> v4
@@ -37,9 +37,9 @@ TextureSlicer::TextureSlicer() {
 }
 
 TextureSlicer::~TextureSlicer() {
-    delete [] ucVertices;
-    delete [] ucEdgesPos;
-    delete [] possibleTraverses;
+    delete [] _ucVertices;
+    delete [] _ucEdgesPos;
+    delete [] _possibleTraverses;
 }
 
 
@@ -47,11 +47,11 @@ void TextureSlicer::setNumSlices(int numSlices) {
     int newNumSlices = numSlices;
 
     TextureSlicer::numSlices = newNumSlices;
-    vTextureSlices = (glm::vec3*) realloc (vTextureSlices, sizeof(glm::vec3) * newNumSlices * 12);
+    _vTextureSlices = (glm::vec3*) realloc (_vTextureSlices, sizeof(glm::vec3) * newNumSlices * 12);
 }
 
 glm::vec3* TextureSlicer::getSlicedVolume() {
-    return vTextureSlices;
+    return _vTextureSlices;
 }
 
 void TextureSlicer::sliceVolumedata(glm::vec3 viewDir) {
@@ -71,11 +71,11 @@ void TextureSlicer::sliceVolumedata(glm::vec3 viewDir) {
 void TextureSlicer::calcMaxMinDistances(glm::vec3 viewDir,
                                         float* resMinDist, float* resMaxDist, int* maxIdx) {
     //get the max and min distance of each UC-vertex in the viewing direction
-    float max_dist = glm::dot(viewDir, ucVertices[0]);
+    float max_dist = glm::dot(viewDir, _ucVertices[0]);
     float min_dist = max_dist;
     int max_index = 0;
     for(int i=1;i<8;i++) {
-        float dist = glm::dot(viewDir, ucVertices[i]);
+        float dist = glm::dot(viewDir, _ucVertices[i]);
         if(dist > max_dist) {
             max_dist = dist;
             max_index = i;
@@ -97,16 +97,16 @@ void TextureSlicer::calcVecsAndLambdas(glm::vec3 viewDir, float minDist, float m
             plane_dist_inc = (maxDist-minDist)/float(numSlices),
             denom;
 //
-//        vecStart[i] = ucVertices[ucEdgesPos[possibleTraverses[max_index][i]][0]];     // get positionVector
-//        vecDir[i] = ucVertices[ucEdgesPos[possibleTraverses[max_index][i]][1]] - vecStart[i];   // get directionVector based from positionVector and accoridng traverse direction
+//        vecStart[i] = _ucVertices[_ucEdgesPos[_possibleTraverses[max_index][i]][0]];     // get positionVector
+//        vecDir[i] = _ucVertices[_ucEdgesPos[_possibleTraverses[max_index][i]][1]] - vecStart[i];   // get directionVector based from positionVector and accoridng traverse direction
 //
-    int* chosenTraverse = &(possibleTraverses[maxIdx*12]);  //chosenTraverse is int[12] ...
+    int* chosenTraverse = &(_possibleTraverses[maxIdx*12]);  //chosenTraverse is int[12] ...
     for(int i=0;i<12;i++) {     //for all edges
         int edgeIdx = chosenTraverse[i];
-        int vStartIdx = ucEdgesPos[edgeIdx*2];
-        int vEndIdx = ucEdgesPos[edgeIdx*2 + 1];
-        vecStart[i] = ucVertices[vStartIdx];
-        vecDir[i] = ucVertices[vEndIdx] - ucVertices[vStartIdx];
+        int vStartIdx = _ucEdgesPos[edgeIdx*2];
+        int vEndIdx = _ucEdgesPos[edgeIdx*2 + 1];
+        vecStart[i] = _ucVertices[vStartIdx];
+        vecDir[i] = _ucVertices[vEndIdx] - _ucVertices[vStartIdx];
 
         denom = glm::dot(vecDir[i], viewDir);       // combine traverseDirectionVetor with viewDirectionVector
         if (1.0 + denom != 1.0) {       // denom = 0 <=> vecDir _|_ viewDirSlicing
@@ -183,8 +183,8 @@ void TextureSlicer::fillTextureSlicesVolume(glm::vec3 *vecStart, glm::vec3 *vecD
 
         //after all 6 possible intersection vertices are obtained, we calculated the proper polygon indices by using indices of a triangular fan
         int indices[]={0,1,2, 0,2,3, 0,3,4, 0,4,5};
-        //Using the indices, pass the intersection vertices to the vTextureSlices vector
+        //Using the indices, pass the intersection vertices to the _vTextureSlices vector
         for(int j=0;j<12;j++)
-            vTextureSlices[count++]=intersection[indices[j]];   // FILL TEXTURE SLICES VOLUME
+            _vTextureSlices[count++]=intersection[indices[j]];   // FILL TEXTURE SLICES VOLUME
     }
 }

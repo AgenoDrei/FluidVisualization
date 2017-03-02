@@ -16,8 +16,8 @@ struct Character {
 };
 
 TextRenderer::TextRenderer(std::string path){
-    pathToFont = path;
-    shader = new Shader("shader/text.vert", "shader/text.frag");
+    _pathToFont = path;
+    _shader = new Shader("shader/text.vert", "shader/text.frag");
     setupShader();
     prepareFreeType();
     manageVertexObjects();
@@ -26,8 +26,8 @@ TextRenderer::~TextRenderer(){};
 
 void TextRenderer::setupShader() {
     glm::mat4 projection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
-    shader->use();
-    glUniformMatrix4fv(glGetUniformLocation(shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    _shader->use();
+    glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 }
 
 void TextRenderer::prepareFreeType() {
@@ -35,7 +35,7 @@ void TextRenderer::prepareFreeType() {
     if (FT_Init_FreeType(&ft))
         std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
     FT_Face face;
-    if (FT_New_Face(ft, pathToFont.c_str(), 0, &face))
+    if (FT_New_Face(ft, _pathToFont.c_str(), 0, &face))
         std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
     FT_Set_Pixel_Sizes(face, 0, 42);
     if (FT_Load_Char(face, 'X', FT_LOAD_RENDER))
@@ -77,7 +77,7 @@ void TextRenderer::prepareFreeType() {
             glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
             face->glyph->advance.x
         };
-        Characters.insert(std::pair<GLchar, Character>(c, character));
+        _Characters.insert(std::pair<GLchar, Character>(c, character));
     }
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -87,10 +87,10 @@ void TextRenderer::prepareFreeType() {
 }
 
 void TextRenderer::manageVertexObjects() {
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glGenVertexArrays(1, &_VAO);
+    glGenBuffers(1, &_VBO);
+    glBindVertexArray(_VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, _VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
@@ -100,10 +100,10 @@ void TextRenderer::manageVertexObjects() {
 
 void TextRenderer::drawText(std::string text, glm::vec2 pos, GLfloat scale, glm::vec3 color) {
     // Activate corresponding render state
-    shader->use();
-    glUniform3f(glGetUniformLocation(shader->Program, "textColor"), color.x, color.y, color.z);
+    _shader->use();
+    glUniform3f(glGetUniformLocation(_shader->Program, "textColor"), color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
-    glBindVertexArray(VAO);
+    glBindVertexArray(_VAO);
     //glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
@@ -112,7 +112,7 @@ void TextRenderer::drawText(std::string text, glm::vec2 pos, GLfloat scale, glm:
     // Iterate through all characters
     std::string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++) {
-        Character ch = Characters[*c];
+        Character ch = _Characters[*c];
         GLfloat xpos = pos.x + ch.Bearing.x * scale;
         GLfloat ypos = pos.y - (ch.Size.y - ch.Bearing.y) * scale;
         GLfloat w = ch.Size.x * scale;
@@ -131,7 +131,7 @@ void TextRenderer::drawText(std::string text, glm::vec2 pos, GLfloat scale, glm:
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
 
         // Update content of VBO memory
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, _VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 

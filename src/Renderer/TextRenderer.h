@@ -21,8 +21,8 @@ private:
     void setupShader();
     void prepareFreeType();
     void manageVertexObjects();
-    std::string pathToFont;
-    std::map<GLchar, Character> Characters;
-    Shader* shader;
-    GLuint VBO, VAO;
+    std::string _pathToFont;
+    std::map<GLchar, Character> _Characters;
+    Shader* _shader;
+    GLuint _VBO, _VAO;
 };

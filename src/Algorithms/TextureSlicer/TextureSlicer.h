@@ -13,10 +13,10 @@ public:
     int numSlices;
 private:
     const float EPSILON = 0.0001f;
-    glm::vec3* ucVertices;
-    int* ucEdgesPos;
-    int* possibleTraverses;
-    glm::vec3* vTextureSlices;
+    glm::vec3* _ucVertices;
+    int* _ucEdgesPos;
+    int* _possibleTraverses;
+    glm::vec3* _vTextureSlices;
     void calcMaxMinDistances(glm::vec3 viewDir,
                              float* minDist, float* maxDist, int* maxIdx);
     void calcVecsAndLambdas(glm::vec3 viewDir, float minDist, float maxDist, int maxIdx,

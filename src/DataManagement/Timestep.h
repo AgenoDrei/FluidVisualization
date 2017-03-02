@@ -33,4 +33,6 @@ public:
 
     bool isIndexValid(int index);
     bool isIndexValid(uint32_t index);
+
+    float getMaxDensity();
 };
