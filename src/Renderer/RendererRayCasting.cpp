@@ -55,15 +55,15 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
     glGenBuffers(1, &cubeVBO);
     glGenBuffers(1, &cubeEBO);
     glm::vec3 vertices[8]= {
-            glm::vec3(-0.5f,-0.5f,-0.5f),
-            glm::vec3(0.5f,-0.5f,-0.5f),
-            glm::vec3( 0.5f, 0.5f,-0.5f),
-            glm::vec3(-0.5f, 0.5f,-0.5f),
+            glm::vec3(0.0f,0.0f,0.0f),
+            glm::vec3(1.0f,0.0f,0.0f),
+            glm::vec3( 1.0f, 1.0f,0.0f),
+            glm::vec3(0.0f, 1.0f,0.0f),
 
-            glm::vec3(-0.5f,-0.5f, 0.5f),
-            glm::vec3( 0.5f,-0.5f, 0.5f),
-            glm::vec3( 0.5f, 0.5f, 0.5f),
-            glm::vec3(-0.5f, 0.5f, 0.5f)
+            glm::vec3(0.0f,0.0f, 1.0f),
+            glm::vec3( 1.0f,0.0f, 1.0f),
+            glm::vec3( 1.0f, 1.0f, 1.0f),
+            glm::vec3(0.0f, 1.0f, 1.0f)
     };
 
     GLushort cubeIndices[36]={0,5,4, 5,0,1, 3,7,6, 3,6,2, 7,4,6, 6,4,5, 2,1,3, 3,1,0, 3,0,7, 7,0,4, 6,5,2, 2,5,1};

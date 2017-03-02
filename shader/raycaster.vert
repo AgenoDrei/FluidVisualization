@@ -15,5 +15,5 @@ void main() {
 	//vertex position. Since the unit cube is at origin (min: (-0.5,-0.5,-0.5) and max: (0.5,0.5,0.5))
 	//adding (0.5,0.5,0.5) to the unit cube object space position gives us values from (0,0,0) to
 	//(1,1,1)
-	vUV = position + vec3(0.5);
+	vUV = position;
 }

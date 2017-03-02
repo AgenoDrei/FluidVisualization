@@ -23,7 +23,7 @@ void main()
 	//get the object space position by subracting 0.5 from the
 	//3D texture coordinates. Then subtraact it from camera position
 	//and normalize to get the ray marching direction
-	vec3 geomDir = normalize((vUV-vec3(0.5)) - camPos);
+	vec3 geomDir = normalize(vUV - camPos);
 	//vec3 geomDir = normalize(vUV - camPos);
 
 	//multiply the raymarching direction with the step size to get the
