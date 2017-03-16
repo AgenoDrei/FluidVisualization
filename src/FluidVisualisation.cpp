@@ -8,6 +8,7 @@
 #include "Algorithms/RayCasting.h"
 
 #include <algorithm>
+#include <Algorithms/ParticlePoints.h>
 
 FluidVisualisation::FluidVisualisation(Timestep* data) :
     _data(data) {
@@ -24,6 +25,9 @@ FluidVisualisation::FluidVisualisation(Timestep* data) :
 
     std::unique_ptr<BaseAlgorithm> rayCasting(new RayCasting());
     _algorithms.push_back(std::move(rayCasting));
+
+    std::unique_ptr<BaseAlgorithm> particlePoints(new ParticlePoints());
+    _algorithms.push_back(std::move(particlePoints));
 
     switchAlgorithm(&_algorithms.front());
 }
