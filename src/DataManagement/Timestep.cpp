@@ -140,7 +140,7 @@ glm::vec3 Timestep::getDimension() {
         }
     }
 
-    return glm::vec3(abs(minX) + maxX, abs(minY) + maxY, abs(minZ) + maxZ);
+    return glm::vec3(std::abs(minX) + maxX, std::abs(minY) + maxY, std::abs(minZ) + maxZ);
 }
 
 float Timestep::getAverageDensityAt(glm::vec3 position, float area) {

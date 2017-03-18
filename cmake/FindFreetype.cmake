@@ -43,6 +43,7 @@ FIND_PATH(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
         /sw/include
         /opt/local/include
         /usr/freeware/include
+        /usr/include/freetype2
         )
 
 FIND_PATH(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h

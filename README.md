@@ -27,3 +27,14 @@ Then compile via CMake and run the application
 
 >$ cmake .. && make
 >$ ./FluidVisualization
+
+## Run
+
+FluidVisualization FILE
+
+## Keys
+
+- W/A/S/D - Move
+- N/M - Up/Down
+- L - Toggle Algorithm
+- R/T - Toggle Reflection
