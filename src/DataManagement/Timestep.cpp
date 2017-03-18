@@ -185,7 +185,7 @@ Particle* Timestep::getParticleAt(glm::vec3 position) {
 
 float Timestep::getMaxDensity() {
     float max = _particles[0].density;
-    for(int i = 1; i < _numberParticles; i++) {
+    for(auto i = 1u; i < _numberParticles; i++) {
         float particleDensity = _particles[i].density;
         if (particleDensity > max)
             max = particleDensity;

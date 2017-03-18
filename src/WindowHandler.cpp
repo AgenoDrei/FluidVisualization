@@ -22,7 +22,7 @@ WindowHandler::~WindowHandler() {
     std::cout << "Log> Destroyed window handler" << std::endl;
 }
 
-void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*mainLoop)()) {
+void WindowHandler::initWindow(int argc, char* argv[], void (*init)(InitParameter*), void (*mainLoop)(), InitParameter* parameter) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE |
                         GLUT_RGBA);
@@ -57,7 +57,7 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(), void (*ma
     glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
     glutIgnoreKeyRepeat(0);
 
-    (*init)();
+    (*init)(parameter);
     glutCloseFunc(onShutdown);
     glutKeyboardFunc(onKeyDown); //Keyboard
     glutKeyboardUpFunc(onKeyUp);

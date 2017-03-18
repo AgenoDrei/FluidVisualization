@@ -14,7 +14,6 @@ RendererMarchingCubes::RendererMarchingCubes(SkyBox* skyBox) :
     _skyBox(skyBox) {
     _shader = new MarchingCubesShader();
 
-
     glGenFramebuffers(1, &_reflectionFramebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, _reflectionFramebuffer);
 
@@ -83,6 +82,16 @@ void RendererMarchingCubes::addVertexIndexBuffer(const std::vector<VertexPositio
 
 void RendererMarchingCubes::clean() { // todo delete all stuff
     _objects.clear();
+}
+
+void RendererMarchingCubes::enableReflection() {
+    _shader->use();
+    _shader->enableReflection();
+}
+
+void RendererMarchingCubes::disableReflection() {
+    _shader->use();
+    _shader->disableReflection();
 }
 
 void RendererMarchingCubes::renderReflectionMap(BaseCamera *camera, WindowHandler *wHandler) {

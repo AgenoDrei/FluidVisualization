@@ -32,6 +32,9 @@ private:
 public:
     RendererMarchingCubes(SkyBox* skyBox);
 
+    void enableReflection();
+    void disableReflection();
+
     void addTriangles(const std::vector<Triangle>& triangles);
     void addVertexIndexBuffer(const std::vector<VertexPositionNormal>& vertices, const std::vector<int>& indices);
 

@@ -28,3 +28,7 @@ void RayCasting::render(BaseCamera *camera, WindowHandler *windowHandler) {
 std::string RayCasting::getName() const {
     return "Volume Ray Casting";
 }
+
+void RayCasting::processKeyboard(WindowHandler* windowHandler) {
+
+}
