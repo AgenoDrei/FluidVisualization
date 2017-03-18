@@ -24,6 +24,8 @@ public:
     virtual std::string getName() const override;
 
     void setNumSlices(int slices);
+
+    virtual void processKeyboard(WindowHandler* windowHandler) override;
 };
 
 

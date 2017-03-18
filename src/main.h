@@ -1,4 +1,6 @@
 #pragma once
 
+class InitParameter;
+
 void mainLoop();
-void init();
+void init(InitParameter* parameter);

@@ -1,5 +1,7 @@
 #include "MarchingCubes.h"
 
+#include "WindowHandler.h"
+
 #include "Renderer/RendererMarchingCubes.h"
 
 #include "DataManagement/Timestep.h"
@@ -38,3 +40,13 @@ void MarchingCubes::render(BaseCamera* camera, WindowHandler* windowHandler)  {
 std::string MarchingCubes::getName() const {
     return "Marching Cubes";
 };
+
+void MarchingCubes::processKeyboard(WindowHandler* windowHandler) {
+    if(windowHandler->getKey('r')) {
+        _renderer->enableReflection();
+    }
+
+    if(windowHandler->getKey('t')) {
+        _renderer->disableReflection();
+    }
+}

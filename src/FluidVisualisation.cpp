@@ -17,6 +17,9 @@ FluidVisualisation::FluidVisualisation(Timestep* data) :
 
     _camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
 
+    std::unique_ptr<BaseAlgorithm> particlePoints(new ParticlePoints());
+    _algorithms.push_back(std::move(particlePoints));
+
     std::unique_ptr<BaseAlgorithm> marchingCubes(new MarchingCubes(_skyBox));
     _algorithms.push_back(std::move(marchingCubes));
 
@@ -25,9 +28,6 @@ FluidVisualisation::FluidVisualisation(Timestep* data) :
 
     std::unique_ptr<BaseAlgorithm> rayCasting(new RayCasting());
     _algorithms.push_back(std::move(rayCasting));
-
-    std::unique_ptr<BaseAlgorithm> particlePoints(new ParticlePoints());
-    _algorithms.push_back(std::move(particlePoints));
 
     switchAlgorithm(&_algorithms.front());
 }
@@ -97,4 +97,5 @@ void FluidVisualisation::doMovement() {
             switchAlgorithm(&(*place));
         }
     }
+    _currentAlgorithm->get()->processKeyboard(_windowHandler);
 }

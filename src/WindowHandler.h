@@ -15,12 +15,13 @@ void onKeyDown(unsigned char key, int x, int y);
 void onKeyUp(unsigned char key, int x, int y);
 void onMouse(int button, int state, int x, int y);
 
+class InitParameter;
 
 class WindowHandler {
 public:
     WindowHandler(unsigned int windowWidth, unsigned int windowHeight);
     ~WindowHandler();
-    void initWindow(int argc, char* argv[], void (*init)(),void (*mainLoop)());
+    void initWindow(int argc, char* argv[], void (*init)(InitParameter*),void (*mainLoop)(),InitParameter*);
     void setCamera(Camera* camera);
     void resize(int newWidth, int newHeight) const;
     void processKeyboard(bool pressed, unsigned char key, int x, int y);

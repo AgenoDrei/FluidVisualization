@@ -28,3 +28,7 @@ void ParticlePoints::render(BaseCamera *camera, WindowHandler *windowHandler) {
 std::string ParticlePoints::getName() const {
     return "Particle Points";
 }
+
+void ParticlePoints::processKeyboard(WindowHandler* windowHandler) {
+
+}

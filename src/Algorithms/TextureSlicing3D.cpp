@@ -18,7 +18,7 @@ TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uin
     _renderer->setBufferData(_calculator->getSlicedVolume());
     _renderer->viewDirOnSlicing = front;
 
-    setNumSlices(128);
+    setNumSlices(16);
 }
 
 TextureSlicing3D::~TextureSlicing3D() {}
@@ -48,4 +48,8 @@ void TextureSlicing3D::render(BaseCamera* camera, WindowHandler* windowHandler) 
 
 std::string TextureSlicing3D::getName() const{
     return "Texture Slicing 3D";
+}
+
+void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
+
 }

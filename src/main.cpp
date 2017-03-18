@@ -8,10 +8,18 @@
 WindowHandler* window;
 FluidVisualisation* fluidVisualisation;
 
+class InitParameter {
+public:
+    std::string pathToData;
+};
+
 int main(int argc, char* argv[]) {
+    InitParameter parameter;
+    parameter.pathToData = argv[1]; // TODO: proper command line parsing
+
     //Window Initialisation
-    window = new WindowHandler(800, 600);
-    window->initWindow(argc, argv, &init, &mainLoop);
+    window = new WindowHandler(1024, 768);
+    window->initWindow(argc, argv, &init, &mainLoop, &parameter);
 
     delete fluidVisualisation;
     delete window;
@@ -19,11 +27,12 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-void init() {
+void init(InitParameter* parameter) {
     std::cout << "Log> FluidVisualization init running" << std::endl;
 
-    std::string path = std::getenv("HOME");
-    auto data = DataImporter::load(path + "/Downloads/drop_100.dat");
+    /*std::string path = std::getenv("HOME");
+    auto data = DataImporter::load(path + "/Downloads/drop_100.dat");*/
+    auto data = DataImporter::load(parameter->pathToData);
     //auto interpolationController = new OctreeInterpolationController(0.0025, 1.5);
     //auto interpolatedData = interpolationController->interpolateData(data, 100, 100, 20);
     auto interpolatedData = data;
