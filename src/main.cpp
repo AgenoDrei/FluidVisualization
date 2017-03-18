@@ -5,6 +5,8 @@
 #include "DataManagement/DataSet.h"
 #include <iostream>
 #include <string>
+#include <DataManagement/CpuInterpolationController.h>
+#include <DataManagement/DataExporter.h>
 
 WindowHandler* window;
 FluidVisualisation* fluidVisualisation;
@@ -78,9 +80,10 @@ void init(InitParameter* parameter) {
     auto data = DataImporter::load(path + "/Downloads/drop_100.dat");*/
     auto data = DataImporter::load(parameter->pathToData);
     //auto interpolationController = new OctreeInterpolationController(0.0025, 1.5);
-    //auto interpolatedData = interpolationController->interpolateData(data, 100, 100, 20);
+    //auto interpolatedData = interpolationController->interpolateData(data, 100, 20, 100);
     auto interpolatedData = data;
     auto firstTimestep = interpolatedData->getTimestep(0);
+    //DataExporter::write(path + "/Downloads/drop_normals_100.dat", interpolatedData);
     //delete interpolationController; TODO: segfault --- simon whats going on? Create the controller on stack?
 
     fluidVisualisation = new FluidVisualisation(firstTimestep, parameter->algorithm);
