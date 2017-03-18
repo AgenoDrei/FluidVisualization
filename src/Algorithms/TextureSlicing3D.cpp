@@ -18,7 +18,7 @@ TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uin
     _renderer->setBufferData(_calculator->getSlicedVolume());
     _renderer->viewDirOnSlicing = front;
 
-    setNumSlices(16);
+    setNumSlices(128);
 }
 
 TextureSlicing3D::~TextureSlicing3D() {}
