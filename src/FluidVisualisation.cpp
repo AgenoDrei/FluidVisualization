@@ -10,31 +10,41 @@
 #include <algorithm>
 #include <Algorithms/ParticlePoints.h>
 
-FluidVisualisation::FluidVisualisation(Timestep* data) :
+#include <iostream>
+
+FluidVisualisation::FluidVisualisation(Timestep* data, std::string startAlgorithm) :
     _data(data) {
     _skyBox = new SkyBox();
     _textRenderer = new TextRenderer("../fonts/arial.ttf");
+    _nextKeyPresset = false;
 
     _camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
 
     std::unique_ptr<BaseAlgorithm> particlePoints(new ParticlePoints());
-    _algorithms.push_back(std::move(particlePoints));
-
     std::unique_ptr<BaseAlgorithm> marchingCubes(new MarchingCubes(_skyBox));
-    _algorithms.push_back(std::move(marchingCubes));
-
     std::unique_ptr<BaseAlgorithm> textureSlicing3D(new TextureSlicing3D(_camera, 100, 100, 100));
-    _algorithms.push_back(std::move(textureSlicing3D));
-
     std::unique_ptr<BaseAlgorithm> rayCasting(new RayCasting());
+
+    _algorithms.push_back(std::move(particlePoints));
+    _algorithms.push_back(std::move(marchingCubes));
+    _algorithms.push_back(std::move(textureSlicing3D));
     _algorithms.push_back(std::move(rayCasting));
 
-    switchAlgorithm(&_algorithms.front());
+    switchAlgorithm(findAlgorithm(startAlgorithm));
 }
 
 FluidVisualisation::~FluidVisualisation() {
     delete _skyBox;
     delete _camera;
+}
+
+std::unique_ptr<BaseAlgorithm>* FluidVisualisation::findAlgorithm(std::string name) {
+    for(auto it = _algorithms.begin(); it != _algorithms.end(); it++) {
+        if(it->get()->getName() == name) {
+            return &(*it);
+        }
+    }
+    return &_algorithms.front();
 }
 
 void FluidVisualisation::init(WindowHandler* windowHandler) {
@@ -88,6 +98,7 @@ void FluidVisualisation::doMovement() {
         _nextKeyPresset = true;
     }
     if(!_windowHandler->getKey('l') && _nextKeyPresset) {
+        std::cout<<"Switching algorithm"<<std::endl;
         _nextKeyPresset = false;
         auto place = std::find(_algorithms.begin(), _algorithms.end(), *_currentAlgorithm);
         place++;

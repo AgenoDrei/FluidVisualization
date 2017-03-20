@@ -15,6 +15,8 @@ void onKeyDown(unsigned char key, int x, int y);
 void onKeyUp(unsigned char key, int x, int y);
 void onMouse(int button, int state, int x, int y);
 
+#define KEYS_SIZE 1204
+
 class InitParameter;
 
 class WindowHandler {
@@ -37,7 +39,7 @@ public:
 private:
     unsigned int width, height;
     Camera* camera;
-    bool keys[1024];
+    bool keys[KEYS_SIZE];
     long currentTime, lastTime, deltaTime;
     bool firstMouse = true;
     int lastX, lastY;

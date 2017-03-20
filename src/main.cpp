@@ -4,6 +4,7 @@
 #include "DataManagement/DataImporter.h"
 #include "DataManagement/DataSet.h"
 #include <iostream>
+#include <string>
 
 WindowHandler* window;
 FluidVisualisation* fluidVisualisation;
@@ -11,11 +12,33 @@ FluidVisualisation* fluidVisualisation;
 class InitParameter {
 public:
     std::string pathToData;
+    std::string algorithm;
 };
 
+namespace po = boost::program_options;
+
 int main(int argc, char* argv[]) {
+    po::options_description desc("Allowed options");
+    auto vm = setupCommandLine(argc, argv, desc);
+    if(vm.count("help")) {
+        printHelp(desc);
+        return 0;
+    }
+
+    if(vm.count("input-file") < 1) {
+        std::cout<<"No input file specified"<<std::endl;
+        return -1;
+    }
+
     InitParameter parameter;
-    parameter.pathToData = argv[1]; // TODO: proper command line parsing
+    parameter.pathToData = vm["input-file"].as<std::string>();
+    if(vm.count("algorithm")) {
+        parameter.algorithm = vm["algorithm"].as<std::string>();
+    } else {
+        parameter.algorithm = "pointCloud";
+    }
+
+    std::cout<<"Input file: "<<parameter.pathToData<<std::endl;
 
     //Window Initialisation
     window = new WindowHandler(1024, 768);
@@ -25,6 +48,27 @@ int main(int argc, char* argv[]) {
     delete window;
 
     return 0;
+}
+
+void printHelp(boost::program_options::options_description& desc) {
+    std::cout<<desc<<std::endl;
+}
+
+po::variables_map setupCommandLine(int argc, char* argv[], po::options_description& desc) {
+    desc.add_options()
+            ("help", "produce help message")
+            ("input-file", po::value<std::string>(), "input file")
+            ("algorithm", po::value<std::string>(), "Default Algorithm")
+            ;
+
+    po::positional_options_description p;
+    p.add("input-file", -1);
+
+    po::variables_map vm;
+    po::store(po::command_line_parser(argc, argv).options(desc).positional(p).run(), vm);
+    po::notify(vm);
+
+    return vm;
 }
 
 void init(InitParameter* parameter) {
@@ -39,7 +83,7 @@ void init(InitParameter* parameter) {
     auto firstTimestep = interpolatedData->getTimestep(0);
     //delete interpolationController; TODO: segfault --- simon whats going on? Create the controller on stack?
 
-    fluidVisualisation = new FluidVisualisation(firstTimestep);
+    fluidVisualisation = new FluidVisualisation(firstTimestep, parameter->algorithm);
     fluidVisualisation->init(window);
 
     std::cout << "Log> FluidVisualization init done" << std::endl;

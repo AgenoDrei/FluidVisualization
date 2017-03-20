@@ -11,7 +11,7 @@ double lastTime = 0.0;
 
 WindowHandler::WindowHandler(unsigned int windowWidth, unsigned int windowHeight) {
     WindowHandler::instance = this;
-    std::memset(keys, 0, sizeof(keys));
+    std::memset(keys, 0, sizeof(bool) * KEYS_SIZE);
     width = windowWidth;
     height = windowHeight;
     lastTime = glutGet(GLUT_ELAPSED_TIME);
@@ -82,11 +82,7 @@ void WindowHandler::resize(int newWidth, int newHeight) const {
 void WindowHandler::processKeyboard(bool pressed, unsigned char key, int x, int y) {
     //std::cout << "Log> Key pressed: " << pressed << " - Specifc key: " << (int)key << std::endl;
     if (key >= 0 && key < 1024){
-        if(pressed) {
-            keys[key] = true;
-        } else if(!pressed) {
-            keys[key] = false;
-        }
+        keys[key] = pressed;
     }
 }
 

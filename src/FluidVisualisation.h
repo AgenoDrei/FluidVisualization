@@ -1,7 +1,8 @@
 #pragma once
 
-#include <list>
+#include <vector>
 #include <memory>
+#include <Algorithms/BaseAlgorithm.h>
 
 class WindowHandler;
 class BaseAlgorithm;
@@ -12,7 +13,7 @@ class TextRenderer;
 
 class FluidVisualisation {
 private:
-    std::list<std::unique_ptr<BaseAlgorithm>> _algorithms;
+    std::vector<std::unique_ptr<BaseAlgorithm>> _algorithms;
     std::unique_ptr<BaseAlgorithm>* _currentAlgorithm;
 
     SkyBox* _skyBox;
@@ -28,9 +29,11 @@ private:
 
     bool _nextKeyPresset;
 public:
-    FluidVisualisation(Timestep* data);
+    FluidVisualisation(Timestep* data, std::string startAlgorithm);
 
     ~FluidVisualisation();
+
+    std::unique_ptr<BaseAlgorithm>* findAlgorithm(std::string name);
 
     void init(WindowHandler* windowHandler);
 

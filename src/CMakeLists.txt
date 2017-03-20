@@ -57,6 +57,11 @@ find_package(SOIL REQUIRED)
 include_directories(${SOIL_INCLUDE_DIRS})
 target_link_libraries(FluidVisualisation ${SOIL_LIBRARY})
 
+#Boost
+find_package(Boost COMPONENTS program_options REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+target_link_libraries(FluidVisualisation ${Boost_LIBRARIES})
+
 file(COPY ../shader DESTINATION ..)
 file(COPY ../textures DESTINATION ..)
 
