@@ -158,5 +158,6 @@ void onShutdown() {
 }
 
 void debugOutput(unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, const void* userParam) {
-    std::cout<< "GlLog> Source: "<< source << " Message: "<<message<<std::endl;
+    if (source != 33350 && source != 33352)     // knowing these already ...
+        std::cout<< "GlLog> Source: "<< source << " Message: "<<message<<std::endl;
 }

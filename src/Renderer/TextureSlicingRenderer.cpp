@@ -78,13 +78,14 @@ void TextureSlicingRenderer::render(BaseCamera* camera, WindowHandler* wHandler)
     view = camera->GetViewMatrix();
     projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
 
-    glBindVertexArray(_VAO);    // TODO: right at this place?
     _shader->use();
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     glUniform1f(glGetUniformLocation(_shader->Program, "alphaFactorInc"), 5.0f);
-//    glUniform1i(glGetUniformLocation(_shader->Program, "volume"), 0);
+    glUniform1i(glGetUniformLocation(_shader->Program, "volume"), 0);
+    glBindVertexArray(_VAO);
     glDrawArrays(GL_TRIANGLES, 0, _sizeofTextureSlicesVolume / sizeof(glm::vec3));
+    glBindVertexArray(0);
     _shader->unUse();
 }
