@@ -2,6 +2,7 @@
 #include "SkyBox.h"
 #include "WindowHandler.h"
 #include "Renderer/TextRenderer.h"
+#include "DataManagement/Timestep.h"
 
 #include "Algorithms/MarchingCubes.h"
 #include "Algorithms/TextureSlicing3D.h"
@@ -14,6 +15,7 @@
 
 FluidVisualisation::FluidVisualisation(Timestep* data, std::string startAlgorithm) :
     _data(data) {
+    glm::vec3 partNumsPerDir = _data->getParticleNumberPerDirection();
     _skyBox = new SkyBox();
     _textRenderer = new TextRenderer("../fonts/arial.ttf");
     _nextKeyPresset = false;
@@ -22,7 +24,7 @@ FluidVisualisation::FluidVisualisation(Timestep* data, std::string startAlgorith
 
     std::unique_ptr<BaseAlgorithm> particlePoints(new ParticlePoints());
     std::unique_ptr<BaseAlgorithm> marchingCubes(new MarchingCubes(_skyBox));
-    std::unique_ptr<BaseAlgorithm> textureSlicing3D(new TextureSlicing3D(_camera, 100, 100, 100));
+    std::unique_ptr<BaseAlgorithm> textureSlicing3D(new TextureSlicing3D(_camera, (uint)partNumsPerDir.x, (uint)partNumsPerDir.y, (uint)partNumsPerDir.z));
     std::unique_ptr<BaseAlgorithm> rayCasting(new RayCasting());
 
     _algorithms.push_back(std::move(particlePoints));
