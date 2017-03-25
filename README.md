@@ -26,15 +26,22 @@ Preferably compile the code into a separate directory, e.g.
 Then compile via CMake and run the application
 
 >$ cmake .. && make
->$ ./FluidVisualization
 
 ## Run
 
-FluidVisualization FILE
+For help
+>$ ./FluidVisualization --help
+
+Running the application with specified inputfile
+>$ ./FluidVisualization --input-file /path/to/file.dat
+
+Running the application with specified inputfile and starting with specific algorithm
+>$ ./FluidVisualization --input-file /path/to/file.dat --algorithm NameOfAlgorithm
 
 ## Keys
 
 - W/A/S/D - Move
 - N/M - Up/Down
 - L - Toggle Algorithm
-- R/T - Toggle Reflection
+- R/T - [MarchingCubes] Toggle Reflection
+- F/G - [TextureSlicing] Increase / Decrease Number of slices

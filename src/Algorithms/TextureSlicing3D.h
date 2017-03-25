@@ -12,10 +12,15 @@ class TextureSlicing3D : public BaseAlgorithm {
 protected:
     std::unique_ptr<TextureSlicer> _calculator;
     std::unique_ptr<TextureSlicingRenderer> _renderer;
+private:
+    bool _initedIncSlicesPress;
+    bool _initedDecSlicesPress;
 public:
     TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uint dimZ);
 
     ~TextureSlicing3D();
+
+    int numSlices;
 
     virtual void init(Timestep* timestep) override;
 

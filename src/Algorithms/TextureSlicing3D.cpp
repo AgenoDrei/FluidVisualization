@@ -1,9 +1,8 @@
 #include "TextureSlicing3D.h"
-
 #include "TextureSlicer/TextureSlicer.h"
-
 #include "Renderer/TextureSlicingRenderer.h"
 
+#include "WindowHandler.h"
 #include "Cameras/BaseCamera.h"
 
 TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uint dimZ) {
@@ -18,7 +17,8 @@ TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uin
     _renderer->setBufferData(_calculator->getSlicedVolume());
     _renderer->viewDirOnSlicing = front;
 
-    setNumSlices(128);
+    numSlices = 64;
+    setNumSlices(numSlices);
 }
 
 TextureSlicing3D::~TextureSlicing3D() {}
@@ -47,9 +47,24 @@ void TextureSlicing3D::render(BaseCamera* camera, WindowHandler* windowHandler) 
 }
 
 std::string TextureSlicing3D::getName() const{
-    return "Texture Slicing 3D";
+    return "TextureSlicing_3D";
 }
 
 void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
-
+    if(windowHandler->getKey('f')) {
+        _initedDecSlicesPress = true;
+    }
+    if(windowHandler->getKey('g')) {
+        _initedIncSlicesPress = true;
+    }
+    if(!windowHandler->getKey('f') && _initedDecSlicesPress) {
+        numSlices /= 2;
+        setNumSlices(numSlices);
+        _initedDecSlicesPress = false;
+    }
+    if(!windowHandler->getKey('g') && _initedIncSlicesPress) {
+        numSlices *= 2;
+        setNumSlices(numSlices);
+        _initedIncSlicesPress = false;
+    }
 }
