@@ -26,6 +26,8 @@ public:
 
     void render(BaseCamera *camera, WindowHandler *wHandler);
     void render(BaseCamera *camera, WindowHandler *wHandler, glm::mat4x4 model);
+
+    GLuint getTexturePointer();
 };
 
 

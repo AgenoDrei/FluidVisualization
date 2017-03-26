@@ -5,14 +5,14 @@
 #include "WindowHandler.h"
 #include "Cameras/BaseCamera.h"
 
-TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uint dimZ) {
+TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uint dimZ, SkyBox* skyBox) {
     auto front = camera->getFront();
 
     std::unique_ptr<TextureSlicer> calculator(new TextureSlicer());
     _calculator = std::move(calculator);
     _calculator->sliceVolumedata(front);
 
-    std::unique_ptr<TextureSlicingRenderer> renderer(new TextureSlicingRenderer(dimX, dimY, dimZ));
+    std::unique_ptr<TextureSlicingRenderer> renderer(new TextureSlicingRenderer(dimX, dimY, dimZ, skyBox));
     _renderer = std::move(renderer);
     _renderer->setBufferData(_calculator->getSlicedVolume());
     _renderer->viewDirOnSlicing = front;
