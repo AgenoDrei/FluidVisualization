@@ -28,8 +28,9 @@ FluidVisualisation::FluidVisualisation(Timestep* data, std::string startAlgorith
 
     _algorithms.push_back(std::move(particlePoints));
     _algorithms.push_back(std::move(marchingCubes));
-    _algorithms.push_back(std::move(textureSlicing3D));
     _algorithms.push_back(std::move(rayCasting));
+    _algorithms.push_back(std::move(textureSlicing3D));
+
 
     switchAlgorithm(findAlgorithm(startAlgorithm));
 }

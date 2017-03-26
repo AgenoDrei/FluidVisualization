@@ -25,12 +25,17 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
     glm::vec3 stepDimension = step->getParticleNumberPerDirection();
     //Load buffer to 3D texture
     particleCount = count;
-    GLfloat* pData = new GLfloat[particleCount];
+    GLfloat* pData = new GLfloat[particleCount*4];
     //GLubyte* pData = new GLubyte[particleCount];
+
+    uint32_t index = 0;
 
     for (auto i = 0u; i < count; i++) {
         Particle tmp = step->getParticle(i);
-        pData[i] = tmp.density * 1000;   // each pData-value 0..255
+        pData[index++] = 0.0f;
+        pData[index++] = 0.0f;
+        pData[index++] = 0.0f;
+        pData[index++] = tmp.density * 500;   // each pData-value 0..255
         //pData[i] = step->getParticle(i).density >= 0.0f ? 255 : 0;
         //pData[i] = 1.0f;
     }
@@ -45,7 +50,7 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, stepDimension.x, stepDimension.y, stepDimension.z, 0, GL_RED, GL_FLOAT, pData); //Remove magic numbers
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA4, stepDimension.x, stepDimension.y, stepDimension.z, 0, GL_RGBA, GL_FLOAT, pData); //Remove magic numbers
     //glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, 100, 100, 100, 0, GL_RED, GL_UNSIGNED_BYTE, pData); //Remove magic numbers
     //glGenerateMipmap(GL_TEXTURE_3D);
     glBindTexture(GL_TEXTURE_3D, 0);

@@ -40,7 +40,6 @@ void CpuInterpolationController::compute(GLfloat resolutionX, GLfloat resolution
         for(auto j = 0u; j < resolutionY; j++) {
             for(auto k = 0u; k < resolutionX; k++) {
                 glm::vec3 position = glm::vec3(k/(float)resolution, j/(float)resolution, i/(float)resolution);
-                float density;
                 float distance = FLT_MAX;
                 uint32_t nearestNeighbor = 0;
 
@@ -67,6 +66,7 @@ void CpuInterpolationController::compute(GLfloat resolutionX, GLfloat resolution
                 } else {
                     //std::cout << "No particle found with distance: " << distance << std::endl;
                     grid[index].density = 0;
+                    grid[index].normal = glm::vec3(0.0f);
                     //grid[index] = new Particle(position, glm::vec3(0.0f), glm::vec3(0.0f), 0, 0);
                 }
                 //std::cout<<"Position: "<<grid[index]->position.x<< " "<<grid[index]->position.y<<" "<<grid[index]->position.z<<std::endl;

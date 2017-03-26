@@ -7,6 +7,7 @@
 #include <string>
 #include <DataManagement/CpuInterpolationController.h>
 #include <DataManagement/DataExporter.h>
+#include <DataManagement/OctreeInterpolationController.h>
 
 WindowHandler* window;
 FluidVisualisation* fluidVisualisation;
@@ -43,7 +44,7 @@ int main(int argc, char* argv[]) {
     std::cout<<"Input file: "<<parameter.pathToData<<std::endl;
 
     //Window Initialisation
-    window = new WindowHandler(1024, 768);
+    window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop, &parameter);
 
     delete fluidVisualisation;
@@ -79,11 +80,11 @@ void init(InitParameter* parameter) {
     /*std::string path = std::getenv("HOME");
     auto data = DataImporter::load(path + "/Downloads/drop_100.dat");*/
     auto data = DataImporter::load(parameter->pathToData);
-    //auto interpolationController = new OctreeInterpolationController(0.0025, 1.5);
-    //auto interpolatedData = interpolationController->interpolateData(data, 100, 20, 100);
+    //auto interpolationController = new CpuInterpolationController();
+    //auto interpolatedData = interpolationController->interpolateData(data, 100, 50, 100);
     auto interpolatedData = data;
     auto firstTimestep = interpolatedData->getTimestep(0);
-    //DataExporter::write(path + "/Downloads/drop_normals_100.dat", interpolatedData);
+    //DataExporter::write("/home/simon/Downloads/drop_normals_100.dat", interpolatedData);
     //delete interpolationController; TODO: segfault --- simon whats going on? Create the controller on stack?
 
     fluidVisualisation = new FluidVisualisation(firstTimestep, parameter->algorithm);
