@@ -19,6 +19,8 @@ TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uin
 
     numSlices = 64;
     setNumSlices(numSlices);
+    _initedDecSlicesPress = false;
+    _initedIncSlicesPress = false;
 }
 
 TextureSlicing3D::~TextureSlicing3D() {}
@@ -58,7 +60,8 @@ void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
         _initedIncSlicesPress = true;
     }
     if(!windowHandler->getKey('f') && _initedDecSlicesPress) {
-        numSlices /= 2;
+        if (numSlices > 1)
+            numSlices /= 2;
         setNumSlices(numSlices);
         _initedDecSlicesPress = false;
     }
