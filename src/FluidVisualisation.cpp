@@ -24,7 +24,7 @@ FluidVisualisation::FluidVisualisation(Timestep* data, std::string startAlgorith
     std::unique_ptr<BaseAlgorithm> particlePoints(new ParticlePoints());
     std::unique_ptr<BaseAlgorithm> marchingCubes(new MarchingCubes(_skyBox));
     std::unique_ptr<BaseAlgorithm> textureSlicing3D(new TextureSlicing3D(_camera, (uint)partNumsPerDir.x, (uint)partNumsPerDir.y, (uint)partNumsPerDir.z));
-    std::unique_ptr<BaseAlgorithm> rayCasting(new RayCasting());
+    std::unique_ptr<BaseAlgorithm> rayCasting(new RayCasting(_skyBox));
 
     _algorithms.push_back(std::move(particlePoints));
     _algorithms.push_back(std::move(marchingCubes));

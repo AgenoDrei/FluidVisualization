@@ -7,12 +7,13 @@
 #include "BaseAlgorithm.h"
 
 class RendererRayCasting;
+class SkyBox;
 
 class RayCasting : public BaseAlgorithm {
 protected:
     std::unique_ptr<RendererRayCasting> _renderer;
 public:
-    RayCasting();
+    RayCasting(SkyBox*);
 
     ~RayCasting();
 

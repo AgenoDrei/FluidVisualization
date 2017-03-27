@@ -1,10 +1,12 @@
 #version 330 core
 out vec4 vFragColor;	//fragment shader output
 
-in vec3 vUV;				//3D texture coordinates form vertex shader
-								//interpolated by rasterizer
+in vec3 vUV;				//3D texture coordinates form vertex shader interpolated by rasterizer
+in vec3 posViewSpace;
 
+uniform mat4        view;
 uniform sampler3D	volume;		//volume dataset
+uniform samplerCube cubeTexture;
 uniform vec3		camPos;		//camera position
 uniform vec3		step_size;	//ray step size
 
@@ -12,7 +14,7 @@ uniform vec3		step_size;	//ray step size
 const int MAX_SAMPLES = 300;	//total samples for each ray march step
 const vec3 texMin = vec3(0.0);	//minimum texture access coordinate
 const vec3 texMax = vec3(1.0);	//maximum texture access coordinate
-const float normalVoxelSize = 0.0001;
+const float normalVoxelSize = 0.001;
 
 
 vec3 getNormal(vec3 at) {
@@ -28,6 +30,7 @@ void main()
 {
 	//get the 3D texture coordinates for lookup into the volume dataset
 	vec3 dataPos = vUV;
+	vec3 normal = vec3(1.0f);
 	vFragColor.rgba = vec4(0.0f);
 
 	//Getting the ray marching direction:
@@ -61,21 +64,18 @@ void main()
 		if (stop)
 			break;*/
 
-		// data fetching from the red channel of volume texture
+		// data fetching from the alpha channel of volume texture
 		float sampleValue = texture(volume, dataPos).a;
 
         //Enter Fluid
 		if(sampleValue != 0.0f && !fluidEntered) {
-		    vec3 lot = getNormal(dataPos);
 		    fluidEntered = true;
-            dirStepOutside = dirStep;
-		    dirStep = refract(dirStepOutside, lot, 1.33);
-		}
-
-		//Exit Fluid
-		if(fluidEntered && sampleValue == 0.0f) {
-		    fluidEntered = false;
-		    dirStep = dirStepOutside;
+		    //vFragColor.rgb = vec3(0.5f);
+		    vec3 normal = getNormal(dataPos);
+		    vec3 incidentEye = normalize(posViewSpace);
+		    vec3 reflected = reflect(incidentEye, normal);
+            reflected = vec3(inverse(view) * vec4(reflected, 0.0));    // convert from view to world space
+            vFragColor.rgb = texture(cubeTexture, reflected).rgb;
 		}
 
 		//Opacity calculation using compositing:
@@ -86,7 +86,7 @@ void main()
 		//to the composited colour. The alpha value from the previous steps is then
 		//accumulated to the composited colour alpha.
 		float prev_alpha = sampleValue - (sampleValue * vFragColor.a);
-		vFragColor.rgb = prev_alpha * sampleValue + vFragColor.rgb;
+		//vFragColor.rgb = prev_alpha * sampleValue + vFragColor.rgb;
 		vFragColor.a += prev_alpha;
 
 		//early ray termination

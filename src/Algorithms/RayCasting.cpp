@@ -6,9 +6,10 @@
 #include <memory>
 #include "RayCasting.h"
 #include "DataManagement/Timestep.h"
+#include "SkyBox.h"
 
-RayCasting::RayCasting() {
-    std::unique_ptr<RendererRayCasting> renderer(new RendererRayCasting(0.005f));
+RayCasting::RayCasting(SkyBox* skyBox) {
+    std::unique_ptr<RendererRayCasting> renderer(new RendererRayCasting(0.005f, skyBox));
     _renderer = std::move(renderer);
 }
 
