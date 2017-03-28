@@ -16,6 +16,7 @@ void onKeyUp(unsigned char key, int x, int y);
 void onMouse(int button, int state, int x, int y);
 
 #define KEYS_SIZE 1204
+#define SPECIAL_KEYS_SIZE 1024
 
 class InitParameter;
 
@@ -28,6 +29,12 @@ public:
     void resize(int newWidth, int newHeight) const;
     void processKeyboard(bool pressed, unsigned char key, int x, int y);
     void processMouse(int button, int state, int x, int y);
+    void onSpecialKey(int key, int x, int y);
+    void onSpecialKeyUp(int key, int x, int y);
+    static void onSpecialKeyStatic(int key, int x, int y);
+    static void onSpecialKeyUpStatic(int key, int x, int y);
+
+    bool getSpecialKey(int key);
 
     static WindowHandler* instance;
     bool getKey(char key);
@@ -40,6 +47,7 @@ private:
     unsigned int width, height;
     Camera* camera;
     bool keys[KEYS_SIZE];
+    bool specialKeys[SPECIAL_KEYS_SIZE];
     long currentTime, lastTime, deltaTime;
     bool firstMouse = true;
     int lastX, lastY;

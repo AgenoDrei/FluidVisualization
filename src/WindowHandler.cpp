@@ -12,6 +12,8 @@ double lastTime = 0.0;
 WindowHandler::WindowHandler(unsigned int windowWidth, unsigned int windowHeight) {
     WindowHandler::instance = this;
     std::memset(keys, 0, sizeof(bool) * KEYS_SIZE);
+    std::memset(specialKeys, 0, sizeof(bool) * SPECIAL_KEYS_SIZE);
+
     width = windowWidth;
     height = windowHeight;
     lastTime = glutGet(GLUT_ELAPSED_TIME);
@@ -61,7 +63,9 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(InitParamete
     glutCloseFunc(onShutdown);
     glutKeyboardFunc(onKeyDown); //Keyboard
     glutKeyboardUpFunc(onKeyUp);
-    glutIgnoreKeyRepeat(false);
+    glutSpecialFunc(onSpecialKeyStatic);
+    glutSpecialUpFunc(onSpecialKeyUpStatic);
+    glutIgnoreKeyRepeat(true);
     glutMouseFunc(onMouse);
     glutDisplayFunc(mainLoop); //Rendering Loop
     glutIdleFunc(mainLoop);
@@ -98,6 +102,18 @@ void WindowHandler::processMouse(int button, int state, int x, int y) {
         auto yoffset = lastY - y;
         camera->ProcessMouseMovement(static_cast<GLfloat>(xoffset), static_cast<GLfloat>(yoffset), true);
     }
+}
+
+void WindowHandler::onSpecialKey(int key, int x, int y) {
+    specialKeys[key] = true;
+}
+
+void WindowHandler::onSpecialKeyUp(int key, int x, int y) {
+    specialKeys[key] = false;
+}
+
+bool WindowHandler::getSpecialKey(int key) {
+    return specialKeys[key];
 }
 
 bool WindowHandler::getKey(char key) {
@@ -151,6 +167,19 @@ void onMouse(int button, int state, int x, int y) {
         WindowHandler::instance->processMouse(button, state, x, y);
     }
 }
+
+void WindowHandler::onSpecialKeyStatic(int key, int x, int y) {
+    if(WindowHandler::instance != nullptr) {
+        WindowHandler::instance->onSpecialKey(key, x, y);
+    }
+}
+
+void WindowHandler::onSpecialKeyUpStatic(int key, int x, int y) {
+    if(WindowHandler::instance != nullptr) {
+        WindowHandler::instance->onSpecialKeyUp(key, x, y);
+    }
+}
+
 
 void onShutdown() {
     delete WindowHandler::instance;

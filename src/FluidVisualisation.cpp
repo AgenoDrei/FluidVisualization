@@ -89,10 +89,10 @@ void FluidVisualisation::doMovement() {
     if(_windowHandler->getKey('d')) {
         _camera->ProcessKeyboard(RIGHT, deltaTime);
     }
-    if(_windowHandler->getKey('n')) {
+    if(_windowHandler->getKey('n') || _windowHandler->getSpecialKey(GLUT_KEY_PAGE_UP)) {
         _camera->ProcessKeyboard(UP, deltaTime);
     }
-    if(_windowHandler->getKey('m')) {
+    if(_windowHandler->getKey('m') || _windowHandler->getSpecialKey(GLUT_KEY_PAGE_DOWN)) {
         _camera->ProcessKeyboard(DOWN, deltaTime);
     }
 

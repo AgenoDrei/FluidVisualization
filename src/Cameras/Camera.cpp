@@ -44,24 +44,23 @@ void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {
     //std::cout << "Process Keyboard called: " << direction << std::endl;
     GLfloat velocity = this->MovementSpeed * deltaTime;
     if (direction == FORWARD) {
-        this->Position += glm::vec3(this->Front.x, 0, this->Front.z) * velocity;
+        this->Position += glm::normalize(glm::vec3(this->Front.x, 0, this->Front.z)) * velocity;
     }
     if (direction == BACKWARD) {
-        this->Position -= glm::vec3(this->Front.x, 0, this->Front.z) * velocity;
+        this->Position -= glm::normalize(glm::vec3(this->Front.x, 0, this->Front.z)) * velocity;
     }
     if (direction == LEFT) {
-        this->Position -= glm::vec3(this->Right.x, 0, this->Right.z) * velocity;
+        this->Position -= glm::normalize(glm::vec3(this->Right.x, 0, this->Right.z)) * velocity;
     }
     if (direction == RIGHT) {
-        this->Position += glm::vec3(this->Right.x, 0, this->Right.z) * velocity;
+        this->Position += glm::normalize(glm::vec3(this->Right.x, 0, this->Right.z)) * velocity;
     }
     if (direction == UP) {
-        this->Position += glm::vec3(0, this->Up.y, 0) * velocity;
+        this->Position += glm::normalize(glm::vec3(0, this->Up.y, 0)) * velocity;
     }
     if (direction == DOWN) {
-        this->Position -= glm::vec3(0, this->Up.y, 0) * velocity;
+        this->Position -= glm::normalize(glm::vec3(0, this->Up.y, 0)) * velocity;
     }
-
 }
 
 // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
