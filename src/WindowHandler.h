@@ -34,6 +34,9 @@ public:
     static void onSpecialKeyStatic(int key, int x, int y);
     static void onSpecialKeyUpStatic(int key, int x, int y);
 
+    void onMotion(int x, int y);
+    static void onMotionStatic(int x, int y);
+
     bool getSpecialKey(int key);
 
     static WindowHandler* instance;
@@ -53,8 +56,8 @@ private:
 
     bool specialKeys[SPECIAL_KEYS_SIZE];
     long currentTime, lastTime, deltaTime;
-    bool firstMouse = true;
-    int lastX, lastY;
+    volatile bool firstMouse = true;
+    float lastX, lastY;
 };
 
 

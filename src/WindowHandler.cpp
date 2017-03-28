@@ -5,12 +5,19 @@
 #include "WindowHandler.h"
 #include <iostream>
 #include <cstring>
+#include <cmath>
+#include <X11/Xlib.h>
 
 WindowHandler* WindowHandler::instance = nullptr;
 double lastTime = 0.0;
 
 WindowHandler::WindowHandler(unsigned int windowWidth, unsigned int windowHeight) {
     WindowHandler::instance = this;
+
+    firstMouse = false;
+
+    lastX = std::numeric_limits<float>::quiet_NaN();
+    lastY = std::numeric_limits<float>::quiet_NaN();
 
     std::memset(keys, 0, sizeof(bool) * KEYS_SIZE);
     std::memset(keysDebounce, 0, sizeof(bool) * KEYS_SIZE);
@@ -70,10 +77,18 @@ void WindowHandler::initWindow(int argc, char* argv[], void (*init)(InitParamete
     glutSpecialUpFunc(onSpecialKeyUpStatic);
     glutIgnoreKeyRepeat(true);
     glutMouseFunc(onMouse);
+    glutMotionFunc(onMotionStatic);
     glutDisplayFunc(mainLoop); //Rendering Loop
     glutIdleFunc(mainLoop);
     glutReshapeFunc(onResize); //Resize
 
+    auto windowX = glutGet(GLUT_WINDOW_X);
+    auto windowY = glutGet(GLUT_WINDOW_Y);
+
+    auto windowWidth = glutGet(GLUT_WINDOW_WIDTH);
+    auto windowHeight = glutGet(GLUT_WINDOW_HEIGHT);
+
+    glutWarpPointer(windowX + windowWidth / 2, windowY + windowHeight / 2);
 
     glutMainLoop(); //Start Rendering Loop
 }
@@ -96,16 +111,30 @@ void WindowHandler::processKeyboard(bool pressed, unsigned char key, int x, int 
 
 void WindowHandler::processMouse(int button, int state, int x, int y) {
     //std::cout << "Mouse Pos (" << x << " | " << y << ")" << std::endl;
-    if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && firstMouse) {
-        firstMouse = false;
+
+    if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        firstMouse = true;
         lastX = x;
         lastY = y;
     } else if(button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-        firstMouse = true;
-        auto xoffset = x - lastX;
-        auto yoffset = lastY - y;
-        camera->ProcessMouseMovement(static_cast<GLfloat>(xoffset), static_cast<GLfloat>(yoffset), true);
+        firstMouse = false;
+        //auto xoffset = x - lastX;
+        //auto yoffset = lastY - y;
+        //camera->ProcessMouseMovement(static_cast<GLfloat>(xoffset), static_cast<GLfloat>(yoffset), true);
     }
+}
+
+void WindowHandler::onMotion(int x, int y) {
+    //std::cout << "Mouse Pos (" << x << " | " << y << ")" << std::endl;
+    if(firstMouse) {
+        if (!std::isnan(lastX) && !std::isnan(lastY)) {
+            auto xoffset = x - lastX;
+            auto yoffset = lastY - y;
+            camera->ProcessMouseMovement(xoffset, yoffset, true);
+        }
+    }
+    lastX = x;
+    lastY = y;
 }
 
 void WindowHandler::onSpecialKey(int key, int x, int y) {
@@ -189,6 +218,12 @@ void WindowHandler::onSpecialKeyStatic(int key, int x, int y) {
 void WindowHandler::onSpecialKeyUpStatic(int key, int x, int y) {
     if(WindowHandler::instance != nullptr) {
         WindowHandler::instance->onSpecialKeyUp(key, x, y);
+    }
+}
+
+void WindowHandler::onMotionStatic(int x, int y) {
+    if(WindowHandler::instance != nullptr) {
+        WindowHandler::instance->onMotion(x, y);
     }
 }
 
