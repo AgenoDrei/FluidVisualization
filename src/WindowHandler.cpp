@@ -11,7 +11,10 @@ double lastTime = 0.0;
 
 WindowHandler::WindowHandler(unsigned int windowWidth, unsigned int windowHeight) {
     WindowHandler::instance = this;
+
     std::memset(keys, 0, sizeof(bool) * KEYS_SIZE);
+    std::memset(keysDebounce, 0, sizeof(bool) * KEYS_SIZE);
+
     std::memset(specialKeys, 0, sizeof(bool) * SPECIAL_KEYS_SIZE);
 
     width = windowWidth;
@@ -87,6 +90,7 @@ void WindowHandler::processKeyboard(bool pressed, unsigned char key, int x, int 
     //std::cout << "Log> Key pressed: " << pressed << " - Specifc key: " << (int)key << std::endl;
     if (key >= 0 && key < 1024){
         keys[key] = pressed;
+        keysDebounce[key] = true;
     }
 }
 
@@ -118,6 +122,14 @@ bool WindowHandler::getSpecialKey(int key) {
 
 bool WindowHandler::getKey(char key) {
     return keys[static_cast<int>(key)] != 0;
+}
+
+bool WindowHandler::getKeyDebounce(char key) {
+    if(!keys[static_cast<int>(key)] && keysDebounce[static_cast<int>(key)]) {
+        keysDebounce[static_cast<int>(key)] = false;
+        return true;
+    }
+    return false;
 }
 
 float WindowHandler::getWidth() const {

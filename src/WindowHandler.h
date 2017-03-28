@@ -38,6 +38,7 @@ public:
 
     static WindowHandler* instance;
     bool getKey(char key);
+    bool getKeyDebounce(char key);
     double getDeltaTime() const;
 	float getWidth() const;
 	float getHeight() const;
@@ -46,7 +47,10 @@ public:
 private:
     unsigned int width, height;
     Camera* camera;
+
     bool keys[KEYS_SIZE];
+    bool keysDebounce[KEYS_SIZE];
+
     bool specialKeys[SPECIAL_KEYS_SIZE];
     long currentTime, lastTime, deltaTime;
     bool firstMouse = true;

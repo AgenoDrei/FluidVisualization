@@ -18,7 +18,6 @@ FluidVisualisation::FluidVisualisation(Timestep* data, std::string startAlgorith
     glm::vec3 partNumsPerDir = _data->getParticleNumberPerDirection();
     _skyBox = new SkyBox();
     _textRenderer = new TextRenderer("../fonts/arial.ttf");
-    _nextKeyPresset = false;
 
     _camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
 
@@ -96,12 +95,8 @@ void FluidVisualisation::doMovement() {
         _camera->ProcessKeyboard(DOWN, deltaTime);
     }
 
-    if(_windowHandler->getKey('l')) {
-        _nextKeyPresset = true;
-    }
-    if(!_windowHandler->getKey('l') && _nextKeyPresset) {
+    if(_windowHandler->getKeyDebounce('l')) {
         std::cout<<"Switching algorithm"<<std::endl;
-        _nextKeyPresset = false;
         auto place = std::find(_algorithms.begin(), _algorithms.end(), *_currentAlgorithm);
         place++;
         if(place == _algorithms.end()) {
