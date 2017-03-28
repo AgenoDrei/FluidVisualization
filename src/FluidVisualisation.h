@@ -26,8 +26,6 @@ private:
     void switchAlgorithm(std::unique_ptr<BaseAlgorithm>* newAlgorithm);
 
     TextRenderer* _textRenderer;
-
-    bool _nextKeyPresset;
 public:
     FluidVisualisation(Timestep* data, std::string startAlgorithm);
 
