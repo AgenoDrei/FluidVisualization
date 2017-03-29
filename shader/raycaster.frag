@@ -2,9 +2,7 @@
 out vec4 vFragColor;	//fragment shader output
 
 in vec3 vUV;				//3D texture coordinates form vertex shader interpolated by rasterizer
-in vec3 posViewSpace;
 
-uniform mat4        view;
 uniform sampler3D	volume;		//volume dataset
 uniform samplerCube cubeTexture;
 uniform vec3		camPos;		//camera position
@@ -72,9 +70,8 @@ void main()
 		    fluidEntered = true;
 		    //vFragColor.rgb = vec3(0.5f);
 		    vec3 normal = getNormal(dataPos);
-		    vec3 incidentEye = normalize(posViewSpace);
-		    vec3 reflected = reflect(incidentEye, normal);
-            reflected = vec3(inverse(view) * vec4(reflected, 0.0));    // convert from view to world space
+		    vec3 reflected = reflect(geomDir, normal);
+            //reflected = vec3(inverse(view) * vec4(reflected, 0.0));    // convert from view to world space
             vFragColor.rgb = texture(cubeTexture, reflected).rgb;
 		}
 
