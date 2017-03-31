@@ -10,11 +10,21 @@ uniform float alphaFactorInc;   // adjust for overly opace values
 uniform samplerCube cube_texture;
 uniform mat4 view; // view matrix
 
+const float epsilon = 0.001;
+
+vec3 getNormal(vec3 at) {
+    vec3 n = vec3(
+        texture(volume, at - vec3(epsilon, 0.0, 0.0)).r - texture(volume, at + vec3(epsilon, 0.0, 0.0)).r,
+        texture(volume, at - vec3(0.0, epsilon, 0.0)).r - texture(volume, at + vec3(0.0, epsilon, 0.0)).r,
+        texture(volume, at - vec3(0.0, 0.0, epsilon)).r - texture(volume, at + vec3(0.0, 0.0, epsilon)).r
+    );
+    return normalize(n);
+}
+
 void main() {
   /* reflect ray around normal from eye to surface */
     vec3 incident_eye = normalize(pos_eye);
-    vec3 normal = normalize(n_eye);
-//    vec3 normal = getNormal(vUV);
+    vec3 normal = getNormal(vUV);       // Old staticly reflected version: vec3 normal = normalize(n_eye);
 
     vec3 reflected = reflect(incident_eye, normal);
     // convert from eye to world space
