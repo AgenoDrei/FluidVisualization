@@ -6,7 +6,7 @@ class BaseCamera;
 class WindowHandler;
 class DataSet;
 class Timestep;
-class Shader;
+class ReflectionShader;
 class SkyBox;
 
 class TextureSlicingRenderer {
@@ -17,10 +17,12 @@ public:
     void setBufferData(glm::vec3* vTextureSlices);
     void updateSizeofTextureSlicesVolume(int numSlices);
     void render(BaseCamera* camera, WindowHandler* wHandler);
+    void enableReflection();
+    void disableReflection();
     glm::vec3 viewDirOnSlicing;
 private:
     SkyBox* _skyBox;
-    Shader* _shader;
+    ReflectionShader* _shader;
     int _sizeofTextureSlicesVolume;
     uint32_t _dimX, _dimY, _dimZ;
     GLuint _VAO, _VBO, _texture;

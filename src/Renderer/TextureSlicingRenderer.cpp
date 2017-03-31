@@ -5,10 +5,10 @@
 #include "DataManagement/DataSet.h"
 #include "DataManagement/Timestep.h"
 #include "WindowHandler.h"
-#include "Shader/Shader.h"
+#include "Shader/ReflectionShader.h"
 
 TextureSlicingRenderer::TextureSlicingRenderer(uint32_t dimX, uint32_t dimY, uint32_t dimZ, SkyBox* skyBox) {
-    _shader = new Shader("shader/textureSlicer.vert", "shader/textureSlicer.frag");
+    _shader = new ReflectionShader("shader/textureSlicer.vert", "shader/textureSlicer.frag");
     _skyBox = skyBox;
     TextureSlicingRenderer::_sizeofTextureSlicesVolume = 42*12*sizeof(glm::vec3);  // default numSlices is 42
     TextureSlicingRenderer::_dimX = dimX;
@@ -73,6 +73,16 @@ void TextureSlicingRenderer::setBufferData(glm::vec3 *vTextureSlices) {
     //update buffer object with the new vertices
     glBindBuffer(GL_ARRAY_BUFFER, _VBO);
     glBufferSubData(GL_ARRAY_BUFFER, 0, _sizeofTextureSlicesVolume, &(vTextureSlices[0].x));
+}
+
+void TextureSlicingRenderer::enableReflection() {
+    _shader->use();
+    _shader->enableReflection();
+}
+
+void TextureSlicingRenderer::disableReflection() {
+    _shader->use();
+    _shader->disableReflection();
 }
 
 void TextureSlicingRenderer::render(BaseCamera* camera, WindowHandler* wHandler) {

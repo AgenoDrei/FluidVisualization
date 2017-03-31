@@ -53,6 +53,14 @@ std::string TextureSlicing3D::getName() const{
 }
 
 void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
+    if(windowHandler->getKey('r')) {
+        _renderer->enableReflection();
+    }
+
+    if(windowHandler->getKey('t')) {
+        _renderer->disableReflection();
+    }
+
     if(windowHandler->getKey('f')) {
         _initedDecSlicesPress = true;
     }
