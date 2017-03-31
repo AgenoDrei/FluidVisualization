@@ -7,6 +7,7 @@
 class TextureSlicer;
 class TextureSlicingRenderer;
 class BaseCamera;
+class SkyBox;
 
 class TextureSlicing3D : public BaseAlgorithm {
 protected:
@@ -16,7 +17,7 @@ private:
     bool _initedIncSlicesPress;
     bool _initedDecSlicesPress;
 public:
-    TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uint dimZ);
+    TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uint dimZ, SkyBox* skyBox);
 
     ~TextureSlicing3D();
 

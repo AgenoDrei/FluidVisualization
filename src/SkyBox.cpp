@@ -124,4 +124,3 @@ void SkyBox::render(BaseCamera *camera, WindowHandler *wHandler, glm::mat4x4 mod
 GLuint SkyBox::getTexturePointer() {
     return _texture;
 }
-

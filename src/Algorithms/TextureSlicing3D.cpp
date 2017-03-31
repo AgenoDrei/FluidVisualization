@@ -5,20 +5,22 @@
 #include "WindowHandler.h"
 #include "Cameras/BaseCamera.h"
 
-TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uint dimZ) {
+TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uint dimZ, SkyBox* skyBox) {
     auto front = camera->getFront();
 
     std::unique_ptr<TextureSlicer> calculator(new TextureSlicer());
     _calculator = std::move(calculator);
     _calculator->sliceVolumedata(front);
 
-    std::unique_ptr<TextureSlicingRenderer> renderer(new TextureSlicingRenderer(dimX, dimY, dimZ));
+    std::unique_ptr<TextureSlicingRenderer> renderer(new TextureSlicingRenderer(dimX, dimY, dimZ, skyBox));
     _renderer = std::move(renderer);
     _renderer->setBufferData(_calculator->getSlicedVolume());
     _renderer->viewDirOnSlicing = front;
 
     numSlices = 64;
     setNumSlices(numSlices);
+    _initedDecSlicesPress = false;
+    _initedIncSlicesPress = false;
 }
 
 TextureSlicing3D::~TextureSlicing3D() {}
@@ -47,10 +49,18 @@ void TextureSlicing3D::render(BaseCamera* camera, WindowHandler* windowHandler) 
 }
 
 std::string TextureSlicing3D::getName() const{
-    return "TextureSlicing_3D";
+    return "Texture Slicing 3D";
 }
 
 void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
+    if(windowHandler->getKey('r')) {
+        _renderer->enableReflection();
+    }
+
+    if(windowHandler->getKey('t')) {
+        _renderer->disableReflection();
+    }
+
     if(windowHandler->getKey('f')) {
         _initedDecSlicesPress = true;
     }
@@ -58,7 +68,8 @@ void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
         _initedIncSlicesPress = true;
     }
     if(!windowHandler->getKey('f') && _initedDecSlicesPress) {
-        numSlices /= 2;
+        if (numSlices > 1)
+            numSlices /= 2;
         setNumSlices(numSlices);
         _initedDecSlicesPress = false;
     }

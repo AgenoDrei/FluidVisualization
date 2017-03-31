@@ -41,7 +41,7 @@ Running the application with specified inputfile and starting with specific algo
 ## Keys
 
 - W/A/S/D - Move
-- N/M - Up/Down
+- N/M or PageUp/PageDown - Up/Down
 - L - Toggle Algorithm
 - R/T - [MarchingCubes] Toggle Reflection
 - F/G - [TextureSlicing] Increase / Decrease Number of slices

@@ -1,13 +1,15 @@
 #include <iostream>
+#include <SkyBox.h>
 #include "TextureSlicingRenderer.h"
 
 #include "DataManagement/DataSet.h"
 #include "DataManagement/Timestep.h"
 #include "WindowHandler.h"
-#include "Shader/Shader.h"
+#include "Shader/ReflectionShader.h"
 
-TextureSlicingRenderer::TextureSlicingRenderer(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
-    _shader = new Shader("shader/textureSlicer.vert", "shader/textureSlicer.frag");
+TextureSlicingRenderer::TextureSlicingRenderer(uint32_t dimX, uint32_t dimY, uint32_t dimZ, SkyBox* skyBox) {
+    _shader = new ReflectionShader("shader/textureSlicer.vert", "shader/textureSlicer.frag");
+    _skyBox = skyBox;
     TextureSlicingRenderer::_sizeofTextureSlicesVolume = 42*12*sizeof(glm::vec3);  // default numSlices is 42
     TextureSlicingRenderer::_dimX = dimX;
     TextureSlicingRenderer::_dimY = dimY;
@@ -59,6 +61,7 @@ void TextureSlicingRenderer::setTextureData(Timestep *step) {
     }
 
     glGenTextures(1, &_texture);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_3D, _texture);
     glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, _dimX, _dimY, _dimZ, 0, GL_RED, GL_FLOAT, pData);
     glGenerateMipmap(GL_TEXTURE_3D);
@@ -72,6 +75,16 @@ void TextureSlicingRenderer::setBufferData(glm::vec3 *vTextureSlices) {
     glBufferSubData(GL_ARRAY_BUFFER, 0, _sizeofTextureSlicesVolume, &(vTextureSlices[0].x));
 }
 
+void TextureSlicingRenderer::enableReflection() {
+    _shader->use();
+    _shader->enableReflection();
+}
+
+void TextureSlicingRenderer::disableReflection() {
+    _shader->use();
+    _shader->disableReflection();
+}
+
 void TextureSlicingRenderer::render(BaseCamera* camera, WindowHandler* wHandler) {
     glm::mat4 model, view, projection;
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -82,8 +95,13 @@ void TextureSlicingRenderer::render(BaseCamera* camera, WindowHandler* wHandler)
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-    glUniform1f(glGetUniformLocation(_shader->Program, "alphaFactorInc"), 5.0f);
+    glUniform1f(glGetUniformLocation(_shader->Program, "alphaFactorInc"), 50.0f);
     glUniform1i(glGetUniformLocation(_shader->Program, "volume"), 0);
+    glUniform1i(glGetUniformLocation(_shader->Program, "cube_texture"), 1);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, _skyBox->getTexturePointer());
+
     glBindVertexArray(_VAO);
     glDrawArrays(GL_TRIANGLES, 0, _sizeofTextureSlicesVolume / sizeof(glm::vec3));
     glBindVertexArray(0);
