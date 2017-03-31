@@ -49,7 +49,7 @@ void TextureSlicing3D::render(BaseCamera* camera, WindowHandler* windowHandler) 
 }
 
 std::string TextureSlicing3D::getName() const{
-    return "TextureSlicing_3D";
+    return "Texture Slicing 3D";
 }
 
 void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
