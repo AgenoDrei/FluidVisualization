@@ -63,7 +63,7 @@ void RendererDebugQuad::setData(Timestep* step, uint32_t count) {
 
 }
 
-void RendererDebugQuad::render(Camera *camera, WindowHandler *wHandler) {
+void RendererDebugQuad::render(BaseCamera *camera, WindowHandler *wHandler) {
     glBindTexture(GL_TEXTURE_2D, texture);
 
     shader->use();

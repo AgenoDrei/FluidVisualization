@@ -32,7 +32,7 @@ TextureRenderer::TextureRenderer(GLuint texture) :
 
 }
 
-void TextureRenderer::render(Camera *camera, WindowHandler *wHandler) {
+void TextureRenderer::render(BaseCamera *camera, WindowHandler *wHandler) {
     glBindTexture(GL_TEXTURE_2D, _texture);
 
     _shader->use();
