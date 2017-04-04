@@ -31,7 +31,7 @@ void main() {
     if(reflection != 0) {
         float transperency = 0.3;
 
-        vec2 reflectionCoordinates = vec2(reflectionMapCoordinates.x / reflectionMapCoordinates.w / 2.0f + 0.5f, reflectionMapCoordinates.y / reflectionMapCoordinates.w / 2.0f + 0.5f);
+        vec2 reflectionCoordinates = vec2(reflectionMapCoordinates.x / reflectionMapCoordinates.w / 2.0f + 0.5f, -reflectionMapCoordinates.y / reflectionMapCoordinates.w / 2.0f + 0.5f);
         vec4 reflectiveColor = texture(ourTexture, reflectionCoordinates);
         reflectiveColor.w = transperency;
 
