@@ -19,4 +19,6 @@ public:
     virtual std::string getName() const override;
 
     virtual void processKeyboard(WindowHandler* windowHandler) override;
+
+    virtual void setConfiguration(Configuration* configuration) override;
 };

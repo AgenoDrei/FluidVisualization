@@ -1,3 +1,4 @@
+#include <Configuration.h>
 #include "MarchingCubes.h"
 
 #include "WindowHandler.h"
@@ -48,5 +49,11 @@ void MarchingCubes::processKeyboard(WindowHandler* windowHandler) {
 
     if(windowHandler->getKey('t')) {
         _renderer->disableReflection();
+    }
+}
+
+void MarchingCubes::setConfiguration(Configuration* configuration) {
+    if(configuration->MarchingCubes.reflection) {
+        _renderer->enableReflection();
     }
 }

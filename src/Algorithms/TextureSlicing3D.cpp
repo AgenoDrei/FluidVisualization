@@ -79,3 +79,7 @@ void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
         _initedIncSlicesPress = false;
     }
 }
+
+void TextureSlicing3D::setConfiguration(Configuration* configuration) {
+
+}

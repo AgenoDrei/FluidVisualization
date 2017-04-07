@@ -32,6 +32,8 @@ public:
     void setNumSlices(int slices);
 
     virtual void processKeyboard(WindowHandler* windowHandler) override;
+
+    virtual void setConfiguration(Configuration* configuration) override;
 };
 
 

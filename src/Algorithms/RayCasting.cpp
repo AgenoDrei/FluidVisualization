@@ -33,3 +33,7 @@ std::string RayCasting::getName() const {
 void RayCasting::processKeyboard(WindowHandler* windowHandler) {
 
 }
+
+void RayCasting::setConfiguration(Configuration* configuration) {
+
+}

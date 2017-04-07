@@ -9,20 +9,16 @@
 #include <DataManagement/OctreeInterpolationController.h>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
+#include "Configuration.h"
 
 WindowHandler* window;
 FluidVisualisation* fluidVisualisation;
 
-class InitParameter {
-public:
-    std::string pathToData;
-    std::string algorithm;
-};
 
 namespace po = boost::program_options;
 
-int main(int argc, char* argv[]) {
-    InitParameter parameter;
+int main(int argc, const char* argv[]) {
+    Configuration parameter;
 
     std::ifstream file("config.ini", std::ifstream::in);
     if(!file.fail()) {
@@ -37,6 +33,11 @@ int main(int argc, char* argv[]) {
         auto inputFile = pt.get_child_optional("Main.InputFile");
         if(inputFile) {
             parameter.pathToData = pt.get<std::string>("Main.InputFile");
+        }
+
+        auto marchingCubeReflection = pt.get_child_optional("MarchingCube.Reflection");
+        if(marchingCubeReflection) {
+            parameter.MarchingCubes.reflection = pt.get<bool>("MarchingCube.Reflection");
         }
     }
 
@@ -78,7 +79,7 @@ void printHelp(boost::program_options::options_description& desc) {
     std::cout<<desc<<std::endl;
 }
 
-po::variables_map setupCommandLine(int argc, char* argv[], po::options_description& desc) {
+po::variables_map setupCommandLine(int argc, const char* argv[], po::options_description& desc) {
     desc.add_options()
             ("help", "produce help message")
             ("input-file", po::value<std::string>(), "input file")
@@ -95,7 +96,7 @@ po::variables_map setupCommandLine(int argc, char* argv[], po::options_descripti
     return vm;
 }
 
-void init(InitParameter* parameter) {
+void init(Configuration* parameter) {
     std::cout << "Log> FluidVisualization init running" << std::endl;
 
     /*std::string path = std::getenv("HOME");
@@ -108,7 +109,7 @@ void init(InitParameter* parameter) {
     //DataExporter::write("/home/simon/Downloads/drop_normals_100.dat", interpolatedData);
     //delete interpolationController; TODO: segfault --- simon whats going on? Create the controller on stack?
 
-    fluidVisualisation = new FluidVisualisation(firstTimestep, parameter->algorithm);
+    fluidVisualisation = new FluidVisualisation(firstTimestep, parameter);
     fluidVisualisation->init(window);
 
     std::cout << "Log> FluidVisualization init done" << std::endl;

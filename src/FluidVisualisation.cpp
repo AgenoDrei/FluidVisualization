@@ -7,13 +7,14 @@
 #include "Algorithms/MarchingCubes.h"
 #include "Algorithms/TextureSlicing3D.h"
 #include "Algorithms/RayCasting.h"
+#include "Configuration.h"
 
 #include <algorithm>
 #include <Algorithms/ParticlePoints.h>
 
 #include <iostream>
 
-FluidVisualisation::FluidVisualisation(Timestep* data, std::string startAlgorithm) :
+FluidVisualisation::FluidVisualisation(Timestep* data, Configuration* configuration) :
     _data(data) {
     glm::vec3 partNumsPerDir = _data->getParticleNumberPerDirection();
     _skyBox = new SkyBox();
@@ -22,9 +23,13 @@ FluidVisualisation::FluidVisualisation(Timestep* data, std::string startAlgorith
     _camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
 
     std::unique_ptr<BaseAlgorithm> particlePoints(new ParticlePoints());
+    particlePoints->setConfiguration(configuration);
     std::unique_ptr<BaseAlgorithm> marchingCubes(new MarchingCubes(_skyBox));
+    marchingCubes->setConfiguration(configuration);
     std::unique_ptr<BaseAlgorithm> textureSlicing3D(new TextureSlicing3D(_camera, (uint)partNumsPerDir.x, (uint)partNumsPerDir.y, (uint)partNumsPerDir.z, _skyBox));
+    textureSlicing3D->setConfiguration(configuration);
     std::unique_ptr<BaseAlgorithm> rayCasting(new RayCasting(_skyBox));
+    rayCasting->setConfiguration(configuration);
 
     _algorithms.push_back(std::move(particlePoints));
     _algorithms.push_back(std::move(marchingCubes));
@@ -32,7 +37,7 @@ FluidVisualisation::FluidVisualisation(Timestep* data, std::string startAlgorith
     _algorithms.push_back(std::move(textureSlicing3D));
 
 
-    switchAlgorithm(findAlgorithm(startAlgorithm));
+    switchAlgorithm(findAlgorithm(configuration->algorithm));
 }
 
 FluidVisualisation::~FluidVisualisation() {

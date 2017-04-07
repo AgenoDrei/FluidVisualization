@@ -32,3 +32,7 @@ std::string ParticlePoints::getName() const {
 void ParticlePoints::processKeyboard(WindowHandler* windowHandler) {
 
 }
+
+void ParticlePoints::setConfiguration(Configuration* configuration) {
+
+}
