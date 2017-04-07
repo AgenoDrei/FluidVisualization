@@ -1,3 +1,4 @@
+#include <Configuration.h>
 #include "TextureSlicing3D.h"
 #include "TextureSlicer/TextureSlicer.h"
 #include "Renderer/TextureSlicingRenderer.h"
@@ -81,5 +82,7 @@ void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
 }
 
 void TextureSlicing3D::setConfiguration(Configuration* configuration) {
-
+    if(configuration->TextureSlicing3D.numSlices != -1) {
+        setNumSlices(configuration->TextureSlicing3D.numSlices);
+    }
 }

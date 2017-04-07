@@ -39,6 +39,14 @@ int main(int argc, const char* argv[]) {
         if(marchingCubeReflection) {
             parameter.MarchingCubes.reflection = pt.get<bool>("MarchingCube.Reflection");
         }
+
+
+        auto numSlices = pt.get_child_optional("TextureSlicing3D.NumSlices");
+        if(numSlices) {
+            parameter.TextureSlicing3D.numSlices = pt.get<int>("TextureSlicing3D.NumSlices");
+        } else {
+            parameter.TextureSlicing3D.numSlices = -1;
+        }
     }
 
     po::options_description desc("Allowed options");

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>   
+#include <string>
 
 class Configuration {
 public:
@@ -10,4 +10,8 @@ public:
     struct {
         bool reflection;
     } MarchingCubes;
+
+    struct {
+        int numSlices;
+    } TextureSlicing3D;
 };
