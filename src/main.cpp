@@ -4,10 +4,11 @@
 #include "DataManagement/DataImporter.h"
 #include "DataManagement/DataSet.h"
 #include <iostream>
-#include <string>
 #include <DataManagement/CpuInterpolationController.h>
 #include <DataManagement/DataExporter.h>
 #include <DataManagement/OctreeInterpolationController.h>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
 
 WindowHandler* window;
 FluidVisualisation* fluidVisualisation;
@@ -21,6 +22,24 @@ public:
 namespace po = boost::program_options;
 
 int main(int argc, char* argv[]) {
+    InitParameter parameter;
+
+    std::ifstream file("config.ini", std::ifstream::in);
+    if(!file.fail()) {
+        file.close();
+
+        boost::property_tree::ptree pt;
+        boost::property_tree::ini_parser::read_ini("config.ini", pt);
+        auto algorithm = pt.get_child_optional("Main.StartAlgorithm");
+        if(algorithm) {
+            parameter.algorithm = pt.get<std::string>("Main.StartAlgorithm");
+        }
+        auto inputFile = pt.get_child_optional("Main.InputFile");
+        if(inputFile) {
+            parameter.pathToData = pt.get<std::string>("Main.InputFile");
+        }
+    }
+
     po::options_description desc("Allowed options");
     auto vm = setupCommandLine(argc, argv, desc);
     if(vm.count("help")) {
@@ -28,16 +47,18 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    if(vm.count("input-file") < 1) {
+    if(vm.count("input-file") < 1 && parameter.pathToData == "") {
         std::cout<<"No input file specified"<<std::endl;
         return -1;
     }
 
-    InitParameter parameter;
-    parameter.pathToData = vm["input-file"].as<std::string>();
+    if(vm.count("input-file") >= 1) {
+        parameter.pathToData = vm["input-file"].as<std::string>();
+    }
     if(vm.count("algorithm")) {
+        std::cout<<"New algorithm"<<std::endl;
         parameter.algorithm = vm["algorithm"].as<std::string>();
-    } else {
+    } else if(parameter.algorithm == "") {
         parameter.algorithm = "pointCloud";
     }
 
