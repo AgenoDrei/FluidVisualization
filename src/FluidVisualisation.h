@@ -10,6 +10,7 @@ class SkyBox;
 class Camera;
 class Timestep;
 class TextRenderer;
+class Configuration;
 
 class FluidVisualisation {
 private:
@@ -27,7 +28,7 @@ private:
 
     TextRenderer* _textRenderer;
 public:
-    FluidVisualisation(Timestep* data, std::string startAlgorithm);
+    FluidVisualisation(Timestep* data, Configuration* configuration);
 
     ~FluidVisualisation();
 

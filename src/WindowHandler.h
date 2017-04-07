@@ -18,13 +18,13 @@ void onMouse(int button, int state, int x, int y);
 #define KEYS_SIZE 1204
 #define SPECIAL_KEYS_SIZE 1024
 
-class InitParameter;
+class Configuration;
 
 class WindowHandler {
 public:
     WindowHandler(unsigned int windowWidth, unsigned int windowHeight);
     ~WindowHandler();
-    void initWindow(int argc, char* argv[], void (*init)(InitParameter*),void (*mainLoop)(),InitParameter*);
+    void initWindow(int argc, const char* argv[], void (*init)(Configuration*),void (*mainLoop)(),Configuration*);
     void setCamera(Camera* camera);
     void resize(int newWidth, int newHeight) const;
     void processKeyboard(bool pressed, unsigned char key, int x, int y);

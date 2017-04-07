@@ -5,6 +5,7 @@
 class BaseCamera;
 class WindowHandler;
 class Timestep;
+class Configuration;
 
 class BaseAlgorithm {
 protected:
@@ -18,6 +19,8 @@ public:
     virtual std::string getName() const = 0;
 
     virtual void processKeyboard(WindowHandler* windowHandler) = 0;
+
+    virtual void setConfiguration(Configuration* configuration) = 0;
 };
 
 

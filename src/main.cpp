@@ -4,23 +4,51 @@
 #include "DataManagement/DataImporter.h"
 #include "DataManagement/DataSet.h"
 #include <iostream>
-#include <string>
 #include <DataManagement/CpuInterpolationController.h>
 #include <DataManagement/DataExporter.h>
 #include <DataManagement/OctreeInterpolationController.h>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
+#include "Configuration.h"
 
 WindowHandler* window;
 FluidVisualisation* fluidVisualisation;
 
-class InitParameter {
-public:
-    std::string pathToData;
-    std::string algorithm;
-};
 
 namespace po = boost::program_options;
 
-int main(int argc, char* argv[]) {
+int main(int argc, const char* argv[]) {
+    Configuration parameter;
+
+    std::ifstream file("config.ini", std::ifstream::in);
+    if(!file.fail()) {
+        file.close();
+
+        boost::property_tree::ptree pt;
+        boost::property_tree::ini_parser::read_ini("config.ini", pt);
+        auto algorithm = pt.get_child_optional("Main.StartAlgorithm");
+        if(algorithm) {
+            parameter.algorithm = pt.get<std::string>("Main.StartAlgorithm");
+        }
+        auto inputFile = pt.get_child_optional("Main.InputFile");
+        if(inputFile) {
+            parameter.pathToData = pt.get<std::string>("Main.InputFile");
+        }
+
+        auto marchingCubeReflection = pt.get_child_optional("MarchingCube.Reflection");
+        if(marchingCubeReflection) {
+            parameter.MarchingCubes.reflection = pt.get<bool>("MarchingCube.Reflection");
+        }
+
+
+        auto numSlices = pt.get_child_optional("TextureSlicing3D.NumSlices");
+        if(numSlices) {
+            parameter.TextureSlicing3D.numSlices = pt.get<int>("TextureSlicing3D.NumSlices");
+        } else {
+            parameter.TextureSlicing3D.numSlices = -1;
+        }
+    }
+
     po::options_description desc("Allowed options");
     auto vm = setupCommandLine(argc, argv, desc);
     if(vm.count("help")) {
@@ -28,16 +56,18 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    if(vm.count("input-file") < 1) {
+    if(vm.count("input-file") < 1 && parameter.pathToData == "") {
         std::cout<<"No input file specified"<<std::endl;
         return -1;
     }
 
-    InitParameter parameter;
-    parameter.pathToData = vm["input-file"].as<std::string>();
+    if(vm.count("input-file") >= 1) {
+        parameter.pathToData = vm["input-file"].as<std::string>();
+    }
     if(vm.count("algorithm")) {
+        std::cout<<"New algorithm"<<std::endl;
         parameter.algorithm = vm["algorithm"].as<std::string>();
-    } else {
+    } else if(parameter.algorithm == "") {
         parameter.algorithm = "pointCloud";
     }
 
@@ -57,7 +87,7 @@ void printHelp(boost::program_options::options_description& desc) {
     std::cout<<desc<<std::endl;
 }
 
-po::variables_map setupCommandLine(int argc, char* argv[], po::options_description& desc) {
+po::variables_map setupCommandLine(int argc, const char* argv[], po::options_description& desc) {
     desc.add_options()
             ("help", "produce help message")
             ("input-file", po::value<std::string>(), "input file")
@@ -74,7 +104,7 @@ po::variables_map setupCommandLine(int argc, char* argv[], po::options_descripti
     return vm;
 }
 
-void init(InitParameter* parameter) {
+void init(Configuration* parameter) {
     std::cout << "Log> FluidVisualization init running" << std::endl;
 
     /*std::string path = std::getenv("HOME");
@@ -87,7 +117,7 @@ void init(InitParameter* parameter) {
     //DataExporter::write("/home/simon/Downloads/drop_normals_100.dat", interpolatedData);
     //delete interpolationController; TODO: segfault --- simon whats going on? Create the controller on stack?
 
-    fluidVisualisation = new FluidVisualisation(firstTimestep, parameter->algorithm);
+    fluidVisualisation = new FluidVisualisation(firstTimestep, parameter);
     fluidVisualisation->init(window);
 
     std::cout << "Log> FluidVisualization init done" << std::endl;

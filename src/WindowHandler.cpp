@@ -34,8 +34,8 @@ WindowHandler::~WindowHandler() {
     std::cout << "Log> Destroyed window handler" << std::endl;
 }
 
-void WindowHandler::initWindow(int argc, char* argv[], void (*init)(InitParameter*), void (*mainLoop)(), InitParameter* parameter) {
-    glutInit(&argc, argv);
+void WindowHandler::initWindow(int argc, const char* argv[], void (*init)(Configuration*), void (*mainLoop)(), Configuration* parameter) {
+    glutInit(&argc, const_cast<char**>(argv));
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE |
                         GLUT_RGBA);
     glutInitContextVersion (3, 3);
