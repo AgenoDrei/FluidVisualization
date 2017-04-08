@@ -26,6 +26,7 @@ private:
     Shader* _shader;
     GLfloat _rayStepSize;
     SkyBox* _skyBox;
+    glm::vec3 _lightDir;
 };
 
 

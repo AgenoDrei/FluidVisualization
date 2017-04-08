@@ -7,12 +7,14 @@ uniform sampler3D	volume;		//volume dataset
 uniform samplerCube cubeTexture;
 uniform vec3		camPos;		//camera position
 uniform vec3		step_size;	//ray step size
+uniform vec3        lightDir;   //directional light
 
 //constants
 const int MAX_SAMPLES = 300;	//total samples for each ray march step
 const vec3 texMin = vec3(0.0);	//minimum texture access coordinate
 const vec3 texMax = vec3(1.0);	//maximum texture access coordinate
 const float normalVoxelSize = 0.001;
+const vec3 ambient = vec3(0.5, 0.5, 0.6);
 
 
 vec3 getNormal(vec3 at) {
@@ -21,8 +23,28 @@ vec3 getNormal(vec3 at) {
         texture(volume, at - vec3(0.0, 0.0, normalVoxelSize)).a - texture(volume, at + vec3(0.0, 0.0, normalVoxelSize)).a);
 
     return normalize(n);
- }
+}
 
+vec3 getShadow(vec3 at) {
+    vec3 dataPos = at;
+    vec3 geomDir = -lightDir;
+    vec3 dirStep = geomDir * step_size;
+    bool shadow = false;
+
+    for (int i = 0; i < MAX_SAMPLES; i++) {
+        dataPos = dataPos + dirStep;
+        if(dataPos.x > texMax.x || dataPos.x < texMin.x
+        		    || dataPos.y > texMax.y || dataPos.y < texMin.y
+        		    || dataPos.z > texMax.z || dataPos.z < texMin.z) {
+        		    return vec3(1.0f);
+        }
+        float sampleValue = texture(volume, dataPos).a;
+        if(sampleValue != 0.0f)
+            return vec3(0.5f);
+    }
+
+    return vec3(1.0f);
+}
 
 void main()
 {
@@ -41,7 +63,6 @@ void main()
 	//multiply the raymarching direction with the step size to get the
 	//sub-step size we need to take at each raymarching step
 	vec3 dirStep = geomDir * step_size;
-	vec3 dirStepOutside = vec3(0.0f);
 
 	//flag to indicate if the raymarch loop should terminate
 	bool fluidEntered = false;
@@ -68,11 +89,10 @@ void main()
         //Enter Fluid
 		if(sampleValue != 0.0f && !fluidEntered) {
 		    fluidEntered = true;
-		    //vFragColor.rgb = vec3(0.5f);
 		    vec3 normal = getNormal(dataPos);
 		    vec3 reflected = reflect(geomDir, normal);
-            //reflected = vec3(inverse(view) * vec4(reflected, 0.0));    // convert from view to world space
-            vFragColor.rgb = texture(cubeTexture, reflected).rgb;
+		    vec3 shadow = getShadow(dataPos);
+            vFragColor.rgb = texture(cubeTexture, reflected).rgb * vec3(.5, .5, .6) * shadow;
 		}
 
 		//Opacity calculation using compositing:
@@ -90,7 +110,7 @@ void main()
 		//if the currently composited colour alpha is already fully saturated
 		//we terminated the loop
 		if( vFragColor.a>0.8) {
-		    vFragColor.a = 0.8f;
+		    vFragColor.a = 0.8;
 			break;
 		}
 	}

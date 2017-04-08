@@ -17,6 +17,7 @@ RendererRayCasting::RendererRayCasting(GLfloat rayStepSize, SkyBox* skyBox) :
         _rayStepSize(rayStepSize),
         _skyBox(skyBox){
     _shader = new Shader("shader/raycaster.vert", "shader/raycaster.frag");
+    _lightDir = glm::normalize(glm::vec3(0.5, -0.2, 1));
 }
 
 RendererRayCasting::~RendererRayCasting() {
@@ -25,6 +26,7 @@ RendererRayCasting::~RendererRayCasting() {
 
 void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep interpolated data
     glm::vec3 stepDimension = step->getParticleNumberPerDirection();
+    uint32_t symmetricSize = stepDimension.x * stepDimension.x * stepDimension.x;
     //Load buffer to 3D texture
     particleCount = count;
     GLfloat* pData = new GLfloat[particleCount*4];
@@ -41,6 +43,8 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
         //pData[i] = step->getParticle(i).density >= 0.0f ? 255 : 0;
         //pData[i] = 1.0f;
     }
+
+    //std::memset(&pData[index], 0.0f, (symmetricSize - particleCount) * 4);
 
     glGenTextures(1, &texture);
     glActiveTexture(GL_TEXTURE0);
@@ -105,6 +109,7 @@ void RendererRayCasting::render(Camera *camera, WindowHandler *wHandler) {
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     glUniform3fv(glGetUniformLocation(_shader->Program, "camPos"), 1, glm::value_ptr(camPos));
+    glUniform3fv(glGetUniformLocation(_shader->Program, "lightDir"), 1, glm::value_ptr(_lightDir));
     glUniform3fv(glGetUniformLocation(_shader->Program, "step_size"), 1, glm::value_ptr(step_size));
     glUniform1i(glGetUniformLocation(_shader->Program, "cubeTexture"), 1);
 
