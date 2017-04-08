@@ -28,7 +28,7 @@ vec3 getNormal(vec3 at) {
 vec3 getShadow(vec3 at) {
     vec3 dataPos = at;
     vec3 geomDir = -lightDir;
-    vec3 dirStep = geomDir * step_size;
+    vec3 dirStep = geomDir * step_size * 5;
     bool shadow = false;
 
     for (int i = 0; i < MAX_SAMPLES; i++) {
