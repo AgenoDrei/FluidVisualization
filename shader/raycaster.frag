@@ -27,7 +27,6 @@ vec3 getNormal(vec3 at) {
 }
 
 vec3 getShadow(vec3 at) {
-    //vec3 randomFactor = vec3(texture(randomValues, vec2(at.x, at.y)).r);
     vec3 dataPos = at;
     vec3 geomDir = normalize(lightPos - dataPos);
     //vec3 geomDir = -lightDir;
@@ -51,8 +50,9 @@ vec3 getShadow(vec3 at) {
 
 void main()
 {
+    vec3 randomFactor = vec3(texture(randomValues, vec2(vUV.x, vUV.y)).r);
 	//get the 3D texture coordinates for lookup into the volume dataset
-	vec3 dataPos = vUV;
+	vec3 dataPos = vUV + randomFactor;
 	vec3 normal = vec3(1.0f);
 	vFragColor.rgba = vec4(0.0f);
 

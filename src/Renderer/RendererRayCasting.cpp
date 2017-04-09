@@ -18,7 +18,7 @@ RendererRayCasting::RendererRayCasting(GLfloat rayStepSize, SkyBox* skyBox) :
         _rayStepSize(rayStepSize),
         _skyBox(skyBox){
     _shader = new Shader("shader/raycaster.vert", "shader/raycaster.frag");
-    _lightPos = glm::vec3(0.75f, 0.5f, -1.0f);
+    _lightPos = glm::vec3(0.75f, 0.75f, -1.0f);
     srand(100);
 }
 
@@ -49,7 +49,7 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
     //std::memset(&pData[index], 0.0f, (symmetricSize - particleCount) * 4);
 
     glGenTextures(1, &_texture);
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_3D, _texture);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);      // GL_CLAMP_TO_BORDER instead of GL_CLAMP resolved GL_INVALID_ENUM error
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
@@ -96,19 +96,19 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
 
 void RendererRayCasting::createShaderRandomValues() {
     GLfloat* randomValues = new GLfloat[800*600];
-    GLfloat maxRandomValue = 0.001;
+    GLfloat maxRandomValue = 0.0001f;
     for(auto i = 0u; i < 800 * 600; i++) {
-        randomValues[i] = rand() / RAND_MAX * maxRandomValue;
+        randomValues[i] = rand() / (GLfloat)RAND_MAX * maxRandomValue;
     }
 
     glGenTextures(1, &_randomTexture);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, _randomTexture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_R, 800, 600, 0, GL_R, GL_FLOAT, randomValues);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 800, 600, 0, GL_RED, GL_FLOAT, randomValues);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -139,7 +139,7 @@ void RendererRayCasting::render(Camera *camera, WindowHandler *wHandler) {
     glUniform3fv(glGetUniformLocation(_shader->Program, "lightPos"), 1, glm::value_ptr(_lightPos));
     glUniform3fv(glGetUniformLocation(_shader->Program, "step_size"), 1, glm::value_ptr(step_size));
     glUniform1i(glGetUniformLocation(_shader->Program, "cubeTexture"), 1);
-    glUniform1i(glGetUniformLocation(_shader->Program, "randomValues"), 1);
+    glUniform1i(glGetUniformLocation(_shader->Program, "randomValues"), 2);
 
     glBindVertexArray(_cubeVAO);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
@@ -156,7 +156,7 @@ void RendererRayCasting::changeStepSize(GLfloat value) {
 }
 
 void RendererRayCasting::changeLightPos() {
-    _lightPos = (_lightPos == glm::vec3(0.25f, 0.5f, -1.0f)) ? glm::vec3(0.75f, 0.5f, -1.0f) : glm::vec3(0.25f, 0.5f, -1.0f);
+    _lightPos = (_lightPos == glm::vec3(0.25f, 0.75f, -1.0f)) ? glm::vec3(0.75f, 0.75f, -1.0f) : glm::vec3(0.25f, 0.75f, -1.0f);
 }
 
 
