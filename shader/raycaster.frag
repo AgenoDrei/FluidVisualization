@@ -5,9 +5,10 @@ in vec3 vUV;				//3D texture coordinates form vertex shader interpolated by rast
 
 uniform sampler3D	volume;		//volume dataset
 uniform samplerCube cubeTexture;
+uniform sampler2D   randomValues;
 uniform vec3		camPos;		//camera position
 uniform vec3		step_size;	//ray step size
-uniform vec3        lightDir;   //directional light
+uniform vec3        lightPos;   //directional light
 
 //constants
 const int MAX_SAMPLES = 300;	//total samples for each ray march step
@@ -26,9 +27,11 @@ vec3 getNormal(vec3 at) {
 }
 
 vec3 getShadow(vec3 at) {
+    //vec3 randomFactor = vec3(texture(randomValues, vec2(at.x, at.y)).r);
     vec3 dataPos = at;
-    vec3 geomDir = -lightDir;
-    vec3 dirStep = geomDir * step_size * 5;
+    vec3 geomDir = normalize(lightPos - dataPos);
+    //vec3 geomDir = -lightDir;
+    vec3 dirStep = geomDir * step_size * 2.0f;
     bool shadow = false;
 
     for (int i = 0; i < MAX_SAMPLES; i++) {
@@ -54,14 +57,10 @@ void main()
 	vFragColor.rgba = vec4(0.0f);
 
 	//Getting the ray marching direction:
-	//get the object space position by subracting 0.5 from the
-	//3D texture coordinates. Then subtraact it from camera position
-	//and normalize to get the ray marching direction
 	vec3 geomDir = normalize(vUV - camPos);
 	//vec3 geomDir = normalize(vUV - camPos);
 
-	//multiply the raymarching direction with the step size to get the
-	//sub-step size we need to take at each raymarching step
+	//multiply the raymarching direction with the step size to get the sub-step size we need to take at each raymarching step
 	vec3 dirStep = geomDir * step_size;
 
 	//flag to indicate if the raymarch loop should terminate
@@ -107,8 +106,6 @@ void main()
 		vFragColor.a += prev_alpha;
 
 		//early ray termination
-		//if the currently composited colour alpha is already fully saturated
-		//we terminated the loop
 		if( vFragColor.a>0.8) {
 		    vFragColor.a = 0.8;
 			break;

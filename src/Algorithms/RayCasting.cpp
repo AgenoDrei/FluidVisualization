@@ -7,6 +7,7 @@
 #include "RayCasting.h"
 #include "DataManagement/Timestep.h"
 #include "SkyBox.h"
+#include "WindowHandler.h"
 
 RayCasting::RayCasting(SkyBox* skyBox) {
     std::unique_ptr<RendererRayCasting> renderer(new RendererRayCasting(0.005f, skyBox));
@@ -31,5 +32,16 @@ std::string RayCasting::getName() const {
 }
 
 void RayCasting::processKeyboard(WindowHandler* windowHandler) {
-
+    if(windowHandler->getKey('i')) {
+        _renderer->changeStepSize(0.001);
+    }
+    if(windowHandler->getKey('o')) {
+        _renderer->changeStepSize(-0.001);
+    }
+    if(windowHandler->getKey('i')) {
+        _renderer->changeStepSize(0.001);
+    }
+    if(windowHandler->getKeyDebounce('p')) {
+        _renderer->changeLightPos();
+    }
 }
