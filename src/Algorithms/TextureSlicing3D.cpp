@@ -82,7 +82,7 @@ void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
 }
 
 void TextureSlicing3D::setConfiguration(Configuration* configuration) {
-    if(configuration->TextureSlicing3D.numSlices != -1) {
+    if(configuration->TextureSlicing3D.numSlices > 0) {
         setNumSlices(configuration->TextureSlicing3D.numSlices);
     }
 }
