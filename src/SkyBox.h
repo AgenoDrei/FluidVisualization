@@ -6,11 +6,13 @@
 
 #include <vector>
 #include <glm/mat4x4.hpp>
+#include <string>
 
 class SkyBoxShader;
 class VertexArrayBuffer;
 class WindowHandler;
 class BaseCamera;
+class Shader;
 
 class SkyBox {
 private:
@@ -28,6 +30,7 @@ public:
     void render(BaseCamera *camera, WindowHandler *wHandler, glm::mat4x4 model);
 
     GLuint getTexturePointer();
+    void activate(Shader* shader, std::string name);
 };
 
 

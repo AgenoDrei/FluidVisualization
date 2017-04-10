@@ -12,6 +12,7 @@
 #include "Shader/Shader.h"
 #include "Cameras/Camera.h"
 #include "SkyBox.h"
+#include "Texture.h"
 #include <stdlib.h>
 
 RendererRayCasting::RendererRayCasting(GLfloat rayStepSize, SkyBox* skyBox) :
@@ -48,21 +49,8 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
 
     //std::memset(&pData[index], 0.0f, (symmetricSize - particleCount) * 4);
 
-    glGenTextures(1, &_texture);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_3D, _texture);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);      // GL_CLAMP_TO_BORDER instead of GL_CLAMP resolved GL_INVALID_ENUM error
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA4, stepDimension.x, stepDimension.y, stepDimension.z, 0, GL_RGBA, GL_FLOAT, pData); //Remove magic numbers
-    //glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, 100, 100, 100, 0, GL_RED, GL_UNSIGNED_BYTE, pData); //Remove magic numbers
-    //glGenerateMipmap(GL_TEXTURE_3D);
-    glBindTexture(GL_TEXTURE_3D, 0);
+    _texture = new Texture(stepDimension.x, stepDimension.y, stepDimension.z, THREE, GL_CLAMP_TO_BORDER, GL_LINEAR, "volume");
+    _texture->setData(pData, GL_RGBA4, GL_RGBA);
 
     createShaderRandomValues();
 
@@ -101,26 +89,12 @@ void RendererRayCasting::createShaderRandomValues() {
         randomValues[i] = rand() / (GLfloat)RAND_MAX * maxRandomValue;
     }
 
-    glGenTextures(1, &_randomTexture);
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, _randomTexture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 800, 600, 0, GL_RED, GL_FLOAT, randomValues);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    _randomTexture = new Texture(800, 600, 0, TWO, GL_CLAMP_TO_EDGE, GL_NEAREST, "randomValues");
+    _randomTexture->setData(randomValues, GL_RED, GL_RED);
 }
 
 void RendererRayCasting::render(Camera *camera, WindowHandler *wHandler) {
     glEnable(GL_BLEND);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_3D, _texture);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, _skyBox->getTexturePointer());
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, _randomTexture);
 
     glm::mat4 model, view, projection;
     model = glm::translate(model, glm::vec3(0.0f));
@@ -131,6 +105,11 @@ void RendererRayCasting::render(Camera *camera, WindowHandler *wHandler) {
     glm::vec3 step_size = glm::vec3(_rayStepSize);
 
     _shader->use();
+
+    _skyBox->activate(_shader, "cubeTexture");
+    _texture->activate(_shader);
+    _randomTexture->activate(_shader);
+
     // Pass the uniforms to the shader
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
@@ -138,8 +117,6 @@ void RendererRayCasting::render(Camera *camera, WindowHandler *wHandler) {
     glUniform3fv(glGetUniformLocation(_shader->Program, "camPos"), 1, glm::value_ptr(camPos));
     glUniform3fv(glGetUniformLocation(_shader->Program, "lightPos"), 1, glm::value_ptr(_lightPos));
     glUniform3fv(glGetUniformLocation(_shader->Program, "step_size"), 1, glm::value_ptr(step_size));
-    glUniform1i(glGetUniformLocation(_shader->Program, "cubeTexture"), 1);
-    glUniform1i(glGetUniformLocation(_shader->Program, "randomValues"), 2);
 
     glBindVertexArray(_cubeVAO);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
