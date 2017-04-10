@@ -33,13 +33,10 @@ std::string RayCasting::getName() const {
 
 void RayCasting::processKeyboard(WindowHandler* windowHandler) {
     if(windowHandler->getKey('i')) {
-        _renderer->changeStepSize(0.001);
+        _renderer->changeStepSize(0.0001);
     }
     if(windowHandler->getKey('o')) {
-        _renderer->changeStepSize(-0.001);
-    }
-    if(windowHandler->getKey('i')) {
-        _renderer->changeStepSize(0.001);
+        _renderer->changeStepSize(-0.0001);
     }
     if(windowHandler->getKeyDebounce('p')) {
         _renderer->changeLightPos();
@@ -50,3 +47,7 @@ void RayCasting::processKeyboard(WindowHandler* windowHandler) {
 void RayCasting::setConfiguration(Configuration* configuration) {
 
 }
+
+void RayCasting::nextTimestep(Timestep* step) {
+
+};

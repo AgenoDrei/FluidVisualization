@@ -86,3 +86,7 @@ void TextureSlicing3D::setConfiguration(Configuration* configuration) {
         setNumSlices(configuration->TextureSlicing3D.numSlices);
     }
 }
+
+void TextureSlicing3D::nextTimestep(Timestep* step) {
+
+};

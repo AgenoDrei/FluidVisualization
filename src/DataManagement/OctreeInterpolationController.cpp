@@ -8,7 +8,7 @@
 OctreeInterpolationController::OctreeInterpolationController(GLfloat minSize, GLfloat distanceCorrectionFactor) :
         interpolatedData(nullptr),
         sourceData(nullptr),
-        minSize(minSize),
+        _minSize(minSize),
         distanceCorrectionFactor(distanceCorrectionFactor){}
 
 OctreeInterpolationController::~OctreeInterpolationController() {
@@ -47,6 +47,7 @@ void OctreeInterpolationController::compute(GLfloat resolutionX, GLfloat resolut
     uint32_t arraySize = (uint32_t) (resolutionX * resolutionY * resolutionZ);
     Particle* grid = new Particle[arraySize];
     float maxDistance = 1.0f / resolutionX / distanceCorrectionFactor;
+    //float maxDistance = 0.005f;
 
     for(auto z = 0u; z < resolutionZ; z++) {
         for(auto y = 0u; y < resolutionY; y++) {
@@ -95,10 +96,11 @@ void OctreeInterpolationController::buildOctree(OctreeNode* node) {
     if(node->getInsertListSize() == 1) {
         node->addData(node->getInsertListElement(0));
         return;
-    } else if(node->length < minSize) {
-        for(auto i = 0u; i < node->getInsertListSize(); i++ ) {
+    } else if(node->length <= _minSize) {
+        for(auto i = 0u; i < node->getInsertListSize(); i++) {
             node->addData(node->getInsertListElement(i));
         }
+        return;
     } else if(node->getInsertListSize() < 1) {
         return;
     }
@@ -137,12 +139,14 @@ void OctreeInterpolationController::buildOctree(OctreeNode* node) {
 
 OctreeNode* OctreeInterpolationController::searchNode(glm::vec3 searchPosition) {
     OctreeNode* node = root;
+    OctreeNode* parent = nullptr;
     uint32_t depth = 1;
 
     while(!node->isExitNode()) {
         for(auto i = 0u; i < 8; i++) {
             OctreeNode* child = node->getNode(i);
             if(child->isContained(searchPosition)) {
+                parent = node;
                 node = child;
                 depth++;
                 break;
@@ -152,6 +156,8 @@ OctreeNode* OctreeInterpolationController::searchNode(glm::vec3 searchPosition) 
 
     if(!node->isEmptyNode())
         return node;
+    else if (depth > 8)
+        return parent;
     else
         return nullptr;
 }

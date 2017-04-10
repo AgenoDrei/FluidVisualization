@@ -110,14 +110,14 @@ void init(Configuration* parameter) {
     /*std::string path = std::getenv("HOME");
     auto data = DataImporter::load(path + "/Downloads/drop_100.dat");*/
     auto data = DataImporter::load(parameter->pathToData);
-    //auto interpolationController = new CpuInterpolationController();
-    //auto interpolatedData = interpolationController->interpolateData(data, 100, 50, 100);
-    auto interpolatedData = data;
-    auto firstTimestep = interpolatedData->getTimestep(0);
+    auto interpolationController = new OctreeInterpolationController(0.01, 1.0);
+    auto interpolatedData = interpolationController->interpolateData(data, 200, 200, 200);
+    //auto interpolatedData = data;
+    //auto firstTimestep = interpolatedData->getTimestep(0);
     //DataExporter::write("/home/simon/Downloads/drop_normals_100.dat", interpolatedData);
     //delete interpolationController; TODO: segfault --- simon whats going on? Create the controller on stack?
 
-    fluidVisualisation = new FluidVisualisation(firstTimestep, parameter);
+    fluidVisualisation = new FluidVisualisation(interpolatedData, parameter);
     fluidVisualisation->init(window);
 
     std::cout << "Log> FluidVisualization init done" << std::endl;

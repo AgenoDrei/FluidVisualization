@@ -21,4 +21,6 @@ public:
     virtual void processKeyboard(WindowHandler* windowHandler) override;
 
     virtual void setConfiguration(Configuration* configuration) override;
+
+    virtual void nextTimestep(Timestep* step) override;
 };

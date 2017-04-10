@@ -36,3 +36,7 @@ void ParticlePoints::processKeyboard(WindowHandler* windowHandler) {
 void ParticlePoints::setConfiguration(Configuration* configuration) {
 
 }
+
+void ParticlePoints::nextTimestep(Timestep* step) {
+
+};

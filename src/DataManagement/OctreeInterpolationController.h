@@ -22,8 +22,7 @@ private:
     DataSet* interpolatedData;
     DataSet* sourceData;
     OctreeNode* root;
-    bool minDepthCorrection;
-    uint32_t minSize;
+    GLfloat _minSize;
     GLfloat distanceCorrectionFactor;
 public:
     OctreeInterpolationController(GLfloat minSize, GLfloat distanceCorrectionFactor);

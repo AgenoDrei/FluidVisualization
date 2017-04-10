@@ -57,3 +57,7 @@ void MarchingCubes::setConfiguration(Configuration* configuration) {
         _renderer->enableReflection();
     }
 }
+
+void MarchingCubes::nextTimestep(Timestep* step) {
+
+};
