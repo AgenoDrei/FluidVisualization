@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <glm/vec4.hpp>
 #include <glm/vec3.hpp>
+#include <Texture.h>
 
 class Camera;
 class WindowHandler;
@@ -12,6 +13,7 @@ class Timestep;
 class Shader;
 class SkyBox;
 class Shader;
+class Texture;
 
 class RendererRayCasting {
 public:
@@ -23,7 +25,9 @@ public:
     void changeLightPos();
     void createShaderRandomValues();
 private:
-    GLuint _cubeVAO, _cubeVBO, _cubeEBO, _texture, _randomTexture;
+    GLuint _cubeVAO, _cubeVBO, _cubeEBO;
+    Texture* _texture;
+    Texture* _randomTexture;
     uint32_t _particleCount;
     Shader* _shader;
     GLfloat _rayStepSize;

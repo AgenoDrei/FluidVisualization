@@ -124,3 +124,10 @@ void SkyBox::render(BaseCamera *camera, WindowHandler *wHandler, glm::mat4x4 mod
 GLuint SkyBox::getTexturePointer() {
     return _texture;
 }
+
+void SkyBox::activate(Shader* shader, std::string name) {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, _texture);
+    glUniform1i(glGetUniformLocation(shader->Program, name.c_str()), 0);
+
+}

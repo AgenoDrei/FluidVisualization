@@ -19,8 +19,8 @@ SET(RENDERER_H Renderer/RendererDebugQuad.h Renderer/RendererMarchingCubes.h Ren
 SET(SHADER_CPP Shader/GroundShader.cpp Shader/MarchingCubesShader.cpp Shader/ReflectionShader.cpp Shader/MVPShader.cpp Shader/Shader.cpp Shader/SkyBoxShader.cpp)
 SET(SHADER_CH Shader/GroundShader.h Shader/MarchingCubesShader.h Shader/ReflectionShader.h Shader/MVPShader.h Shader/Shader.h Shader/SkyBoxShader.h)
 
-SET(SRC_CPP main.cpp FluidVisualisation.cpp Ground.cpp SkyBox.cpp VertexPositionNormal.cpp VertexArrayBuffer.cpp WindowHandler.cpp)
-SET(SRC_H main.h FluidVisualisation.h Ground.h SkyBox.h VertexPositionNormal.h VertexArrayBuffer.h WindowHandler.h)
+SET(SRC_CPP main.cpp FluidVisualisation.cpp Ground.cpp SkyBox.cpp VertexPositionNormal.cpp VertexArrayBuffer.cpp WindowHandler.cpp Texture.cpp)
+SET(SRC_H main.h FluidVisualisation.h Ground.h SkyBox.h VertexPositionNormal.h VertexArrayBuffer.h WindowHandler.h Texture.h)
 
 SET(SRC ${SRC_CPP} ${SRC_H} ${ALGORITHM_CPP} ${ALGORITHM_H} ${CAMERAS_CPP} ${CAMERAS_H} ${DATA_MANAGEMENT_CPP} ${DATA_MANAGEMENT_H} ${RENDERER_CPP} ${RENDERER_H} ${SHADER_CPP} ${SHADER_H})
 
