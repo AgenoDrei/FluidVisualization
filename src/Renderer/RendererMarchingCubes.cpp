@@ -45,12 +45,14 @@ RendererMarchingCubes::RendererMarchingCubes(SkyBox* skyBox) :
     glGenTextures(1, &_depthTexture);
     glBindTexture(GL_TEXTURE_2D, _depthTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 8192, 8192, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,  _depthTexture, 0);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  _depthTexture, 0);
 
     glDrawBuffer(GL_NONE); // No color buffer is drawn to
     glReadBuffer(GL_NONE);
@@ -127,13 +129,13 @@ void RendererMarchingCubes::renderReflectionMap(BaseCamera *camera, WindowHandle
 }
 
 glm::mat4 RendererMarchingCubes::getDepthProjectionMatrix() {
-    return glm::ortho<float>(-2, 2, -2, 2, -10.0f, 10.0f);
+    return glm::ortho<float>(-2, 2, -2, 2, -10.0f, 30.0f);
 }
 
 void RendererMarchingCubes::renderShadowMap(BaseCamera *camera, WindowHandler *wHandler) {
     glBindFramebuffer(GL_FRAMEBUFFER, _shadowMapFramebuffer);
-    glViewport(0, 0, 8192, 8192);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glViewport(0, 0, 2048, 2048);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glm::vec3 lightInvDir = glm::vec3(0.3f,1.0,2);
 
@@ -144,10 +146,10 @@ void RendererMarchingCubes::renderShadowMap(BaseCamera *camera, WindowHandler *w
     _shadowShader->use();
     _shadowShader->setModelViewProjection(depthModelMatrix, depthViewMatrix, depthProjectionMatrix);
 
-    //glEnable(GL_DEPTH_TEST);
+    //glDisable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
+    glCullFace(GL_BACK);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
