@@ -3,6 +3,7 @@
 #include "Particle.h"
 #include "DataSet.h"
 #include <iostream>
+#include <glm/ext.hpp>
 
 DataSet* DataImporter::load(std::string path) {
     std::ifstream file(path.c_str(), std::ifstream::binary);
@@ -26,6 +27,8 @@ DataSet* DataImporter::load(std::string path) {
     }
 
     file.close();
+
+    std::cout<<"Dimensions: "<<glm::to_string(timesteps[0]->getParticleNumberPerDirection())<<std::endl;
 
 	return new DataSet(numberParticles, numberTimesteps, timesteps);
 }
