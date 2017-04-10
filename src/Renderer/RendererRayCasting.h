@@ -19,13 +19,16 @@ public:
     ~RendererRayCasting();
     void setData(Timestep* step, uint32_t count);
     void render(Camera* camera, WindowHandler* wHandler);
+    void changeStepSize(GLfloat value);
+    void changeLightPos();
+    void createShaderRandomValues();
 private:
-    GLuint cubeVAO, cubeVBO, cubeEBO, texture;
-    uint32_t particleCount;
-    glm::vec4* buffer;
+    GLuint _cubeVAO, _cubeVBO, _cubeEBO, _texture, _randomTexture;
+    uint32_t _particleCount;
     Shader* _shader;
     GLfloat _rayStepSize;
     SkyBox* _skyBox;
+    glm::vec3 _lightPos;
 };
 
 
