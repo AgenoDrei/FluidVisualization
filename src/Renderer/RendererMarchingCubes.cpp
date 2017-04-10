@@ -118,6 +118,16 @@ void RendererMarchingCubes::disableReflection() {
     _shader->disableReflection();
 }
 
+void RendererMarchingCubes::enableShadow() {
+    _shader->use();
+    _shader->enableShadow();
+}
+
+void RendererMarchingCubes::disableShadow() {
+    _shader->use();
+    _shader->disableShadow();
+}
+
 void RendererMarchingCubes::renderReflectionMap(BaseCamera *camera, WindowHandler *wHandler) {
     glBindFramebuffer(GL_FRAMEBUFFER, _reflectionFramebuffer);
     glViewport(0, 0, 2048, 2048);
@@ -134,7 +144,7 @@ glm::mat4 RendererMarchingCubes::getDepthProjectionMatrix() {
 
 void RendererMarchingCubes::renderShadowMap(BaseCamera *camera, WindowHandler *wHandler) {
     glBindFramebuffer(GL_FRAMEBUFFER, _shadowMapFramebuffer);
-    glViewport(0, 0, 2048, 2048);
+    glViewport(0, 0, 8192, 8192);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glm::vec3 lightInvDir = glm::vec3(0.3f,1.0,2);

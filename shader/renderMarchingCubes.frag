@@ -11,6 +11,7 @@ uniform sampler2D ourTexture;
 uniform sampler2D shadowMap;
 
 uniform float reflection;
+uniform float shadow;
 
 
 /*uniform mat4 reflectionView;
@@ -18,8 +19,10 @@ varying vec3 interpolatedVertexObject;*/
 
 void main() {
     float visibility = 1.0;
-    if(texture(shadowMap, shadowCoord.xy).z < shadowCoord.z){
-        visibility = 0.5f;
+    if(shadow != 0) {
+        if(texture(shadowMap, shadowCoord.xy).z < shadowCoord.z){
+            visibility = 0.5f;
+        }
     }
     //visibility = texture( shadowMap, vec3(shadowCoord.xy, (shadowCoord.z)/shadowCoord.w) );
     //float visibility = texture( shadowMap, vec3(shadowCoord.xy, (shadowCoord.z)/shadowCoord.w) );

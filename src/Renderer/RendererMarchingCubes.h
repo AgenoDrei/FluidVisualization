@@ -42,6 +42,9 @@ public:
     void enableReflection();
     void disableReflection();
 
+    void enableShadow();
+    void disableShadow();
+
     void addTriangles(const std::vector<Triangle>& triangles);
     void addVertexIndexBuffer(const std::vector<VertexPositionNormal>& vertices, const std::vector<int>& indices);
 
