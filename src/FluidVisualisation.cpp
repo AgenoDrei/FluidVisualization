@@ -3,6 +3,7 @@
 #include "WindowHandler.h"
 #include "Renderer/TextRenderer.h"
 #include "DataManagement/Timestep.h"
+#include "DataManagement/DataSet.h"
 
 #include "Algorithms/MarchingCubes.h"
 #include "Algorithms/TextureSlicing3D.h"
@@ -14,9 +15,9 @@
 
 #include <iostream>
 
-FluidVisualisation::FluidVisualisation(Timestep* data, Configuration* configuration) :
+FluidVisualisation::FluidVisualisation(DataSet* data, Configuration* configuration) :
     _data(data) {
-    glm::vec3 partNumsPerDir = _data->getParticleNumberPerDirection();
+    glm::vec3 partNumsPerDir = _data->getTimestep(_currentTimestep)->getParticleNumberPerDirection();
     _skyBox = new SkyBox();
     _textRenderer = new TextRenderer("../fonts/arial.ttf");
 
@@ -62,9 +63,15 @@ void FluidVisualisation::init(WindowHandler* windowHandler) {
 void FluidVisualisation::switchAlgorithm(std::unique_ptr<BaseAlgorithm>* newAlgorithm) {
     _currentAlgorithm = nullptr;
 
-    newAlgorithm->get()->init(_data);
+    newAlgorithm->get()->init(_data->getTimestep(_currentTimestep));
 
     _currentAlgorithm = newAlgorithm;
+}
+
+void FluidVisualisation::nextTimestep() {
+    _currentTimestep = (_currentTimestep + 1) % _data->getNumberTimesteps();
+    std::cout << "Current: " << _currentTimestep << " | " << _data->getNumberTimesteps() << std::endl;
+    _currentAlgorithm->get()->nextTimestep(_data->getTimestep(_currentTimestep));
 }
 
 void FluidVisualisation::render() {
@@ -111,5 +118,10 @@ void FluidVisualisation::doMovement() {
             switchAlgorithm(&(*place));
         }
     }
+    if(_windowHandler->getKeyDebounce('k')) {
+        std::cout<<"Switching Timestep"<<std::endl;
+        nextTimestep();
+    }
+
     _currentAlgorithm->get()->processKeyboard(_windowHandler);
 }

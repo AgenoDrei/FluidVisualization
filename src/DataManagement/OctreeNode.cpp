@@ -35,15 +35,11 @@ void OctreeNode::addData(Particle particle) {
 }
 
 bool OctreeNode::isExitNode() {
-    if(exitNode)
-        return true;
-    return false;
+    return exitNode;
 }
 
 bool OctreeNode::isEmptyNode() {
-    if(emptyNode)
-        return true;
-    return false;
+   return emptyNode;
 }
 
 void OctreeNode::setChildNodes(OctreeNode **nodes) {

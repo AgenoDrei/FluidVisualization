@@ -8,6 +8,7 @@ class WindowHandler;
 class BaseAlgorithm;
 class SkyBox;
 class Camera;
+class DataSet;
 class Timestep;
 class TextRenderer;
 class Configuration;
@@ -16,19 +17,21 @@ class FluidVisualisation {
 private:
     std::vector<std::unique_ptr<BaseAlgorithm>> _algorithms;
     std::unique_ptr<BaseAlgorithm>* _currentAlgorithm;
+    uint32_t _currentTimestep = 0;
 
     SkyBox* _skyBox;
 
     WindowHandler* _windowHandler;
     Camera* _camera;
 
-    Timestep* _data;
+    DataSet* _data;
 
     void switchAlgorithm(std::unique_ptr<BaseAlgorithm>* newAlgorithm);
+    void nextTimestep();
 
     TextRenderer* _textRenderer;
 public:
-    FluidVisualisation(Timestep* data, Configuration* configuration);
+    FluidVisualisation(DataSet* data, Configuration* configuration);
 
     ~FluidVisualisation();
 

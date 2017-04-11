@@ -21,6 +21,8 @@ public:
     virtual void processKeyboard(WindowHandler* windowHandler) = 0;
 
     virtual void setConfiguration(Configuration* configuration) = 0;
+
+    virtual void nextTimestep(Timestep* step) = 0;
 };
 
 
