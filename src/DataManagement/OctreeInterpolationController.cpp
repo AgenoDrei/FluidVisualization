@@ -13,25 +13,29 @@ OctreeInterpolationController::OctreeInterpolationController(GLfloat minSize, GL
 
 OctreeInterpolationController::~OctreeInterpolationController() {
     delete [] interpolatedData;
+    delete [] sourceData;
 }
 
 DataSet* OctreeInterpolationController::interpolateData(DataSet *data, GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ) {
-    std::cout << "Log> Start building Octree..." << std::endl;
-    prepareData(data);
-    std::cout << "Log> Finished building Octree DONE" << std::endl;
-    std::cout << "Log> Start interpolation..." << std::endl;
-    compute(resolutionX, resolutionY, resolutionZ);
-    std::cout << "Log> Finished interpolation DONE" << std::endl;
+    std::cout << "Log> Start Octree interpolation" << std::endl;
+    auto timesteps = new Timestep*[data->getNumberTimesteps()];
+
+    for(auto i = 0u; i < data->getNumberTimesteps(); i++) {
+        prepareData(data->getTimestep(i));
+        compute(resolutionX, resolutionY, resolutionZ);
+        timesteps[i] = lastInterpolated;
+    }
+
+    interpolatedData = new DataSet(((uint32_t)resolutionX*resolutionY*resolutionZ), data->getNumberTimesteps(), timesteps);
+    std::cout << "Log> Finished Octree interpolation" << std::endl;
     return interpolatedData;
 }
 
-void OctreeInterpolationController::prepareData(DataSet *data) {
+void OctreeInterpolationController::prepareData(Timestep *step) {
     glm::vec3 rootPos = glm::vec3(0.0f);
     GLfloat rootSize = 1.0f;
     root = new OctreeNode(rootPos, rootSize);
 
-    //ToDo: Insert all data in insert List of root node
-    Timestep* step = data->getTimestep(0);
     for(auto i = 0u; i < step->getSize(); i++) {
         root->addInsert(step->getParticle(i));
     }
@@ -83,11 +87,11 @@ void OctreeInterpolationController::compute(GLfloat resolutionX, GLfloat resolut
         }
     }
 
-    auto timesteps = new Timestep*[1];
-    timesteps[0] = new Timestep(grid, arraySize);
-    auto result = new DataSet(arraySize, 1, timesteps);
+    //auto timesteps = new Timestep*[1];
+    lastInterpolated = new Timestep(grid, arraySize);
+    //auto result = new DataSet(arraySize, 1, timesteps);
 
-    interpolatedData = result;
+    //interpolatedData = result;
 }
 
 //Recursive function for octree

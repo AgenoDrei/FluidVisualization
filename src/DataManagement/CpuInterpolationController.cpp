@@ -16,12 +16,12 @@ CpuInterpolationController::~CpuInterpolationController() {
     delete [] interpolatedData;
 }
 
-void CpuInterpolationController::prepareData(DataSet* data) {
-    sourceData = data; //ToDo Load data
+void CpuInterpolationController::prepareData(Timestep* step) {
+    sourceData = step; //ToDo Load data
 }
 
 DataSet* CpuInterpolationController::interpolateData(DataSet *data, GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ) {
-    prepareData(data);
+    prepareData(data->getTimestep(0));
     compute(resolutionX, resolutionY, resolutionZ);
     return interpolatedData;
 }
@@ -43,8 +43,8 @@ void CpuInterpolationController::compute(GLfloat resolutionX, GLfloat resolution
                 float distance = FLT_MAX;
                 uint32_t nearestNeighbor = 0;
 
-                for(uint32_t l = 0; l < sourceData->getTimestep(0)->getSize(); l++) {
-                    float tmpDistance = glm::distance(sourceData->getTimestep(0)->getParticle(l).position, position);
+                for(uint32_t l = 0; l < sourceData->getSize(); l++) {
+                    float tmpDistance = glm::distance(sourceData->getParticle(l).position, position);
                     if(tmpDistance < distance) {
                         distance = tmpDistance;
                         nearestNeighbor = i;
@@ -58,8 +58,8 @@ void CpuInterpolationController::compute(GLfloat resolutionX, GLfloat resolution
                 //std::cout << "Found particle: " << data.getTimestep(0)->getParticle(nearestNeighbor) << " for: " << glm::to_string(position) << std::endl;
                 if(distance <= maxDistance && nearestNeighbor != -1u) {
                     //grid[index]= new Particle(position, glm::vec3(0.0f), glm::vec3(0.0f),density, 0);
-                    grid[index].density = sourceData->getTimestep(0)->getParticle(nearestNeighbor).density;
-                    grid[index].normal = sourceData->getTimestep(0)->getParticle(nearestNeighbor).normal;
+                    grid[index].density = sourceData->getParticle(nearestNeighbor).density;
+                    grid[index].normal = sourceData->getParticle(nearestNeighbor).normal;
                     //data.getTimestep(0)->removeParticle(nearestNeighbor);
                     found++;
                     //std::cout << "Log> Interpolated lattice " << newParticle << " with Particle" << data.getTimestep(0)->getParticle(nearestNeighbor) << "with distance " << distance << std::endl;

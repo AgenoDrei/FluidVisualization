@@ -15,10 +15,10 @@ public:
     DataSet* interpolateData(DataSet* data, GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ);
 
 private:
-    void prepareData(DataSet* data);
+    void prepareData(Timestep* step);
     void compute(GLfloat resolutionX, GLfloat resolutionY, GLfloat resolutionZ);
     DataSet* interpolatedData;
-    DataSet* sourceData;
+    Timestep* sourceData;
 };
 
 

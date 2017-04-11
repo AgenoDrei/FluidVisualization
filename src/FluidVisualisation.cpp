@@ -69,7 +69,8 @@ void FluidVisualisation::switchAlgorithm(std::unique_ptr<BaseAlgorithm>* newAlgo
 }
 
 void FluidVisualisation::nextTimestep() {
-    _currentTimestep = _currentTimestep + 1 % _data->getNumberTimesteps();
+    _currentTimestep = (_currentTimestep + 1) % _data->getNumberTimesteps();
+    std::cout << "Current: " << _currentTimestep << " | " << _data->getNumberTimesteps() << std::endl;
     _currentAlgorithm->get()->nextTimestep(_data->getTimestep(_currentTimestep));
 }
 
