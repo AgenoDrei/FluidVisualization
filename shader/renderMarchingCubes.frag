@@ -20,8 +20,15 @@ varying vec3 interpolatedVertexObject;*/
 void main() {
     float visibility = 1.0;
     if(shadow != 0) {
-        if(texture(shadowMap, shadowCoord.xy).z < shadowCoord.z){
-            visibility = 0.5f;
+        if(shadowCoord.z > 0.1) {
+            visibility = 1;
+        } else {
+            vec3 projCoords = shadowCoord.xyz / shadowCoord.w;
+            projCoords = projCoords * 0.5 + 0.5;
+            if(texture(shadowMap, projCoords.xy).z < projCoords.z){
+                visibility = 0.5f;
+                //visibility = texture(shadowMap, shadowCoord.xy).z;
+            }
         }
     }
     //visibility = texture( shadowMap, vec3(shadowCoord.xy, (shadowCoord.z)/shadowCoord.w) );

@@ -44,13 +44,15 @@ RendererMarchingCubes::RendererMarchingCubes(SkyBox* skyBox) :
 
     glGenTextures(1, &_depthTexture);
     glBindTexture(GL_TEXTURE_2D, _depthTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 8192, 8192, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
     glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  _depthTexture, 0);
 
@@ -63,6 +65,8 @@ RendererMarchingCubes::RendererMarchingCubes(SkyBox* skyBox) :
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // reset framebuffer
 
     _debugRenderer = new TextureRenderer(_depthTexture);
+
+    enableShadow();
 }
 
 void RendererMarchingCubes::addTriangles(const std::vector<Triangle>& triangles) {
@@ -139,19 +143,21 @@ void RendererMarchingCubes::renderReflectionMap(BaseCamera *camera, WindowHandle
 }
 
 glm::mat4 RendererMarchingCubes::getDepthProjectionMatrix() {
-    return glm::ortho<float>(-2, 2, -2, 2, -10.0f, 30.0f);
+    return glm::ortho<float>(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 40.0f);
 }
 
 void RendererMarchingCubes::renderShadowMap(BaseCamera *camera, WindowHandler *wHandler) {
     glBindFramebuffer(GL_FRAMEBUFFER, _shadowMapFramebuffer);
-    glViewport(0, 0, 8192, 8192);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glViewport(0, 0, 1024, 1024);
+    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+    glClear(GL_DEPTH_BUFFER_BIT);
 
-    glm::vec3 lightInvDir = glm::vec3(0.3f,1.0,2);
+    //glm::vec3 lightInvDir = glm::vec3(0.3f,1.0,2);
+    glm::vec3 lightInvDir = glm::vec3(-0.25f,0.75,1.0);
 
     glm::mat4 depthProjectionMatrix = getDepthProjectionMatrix();
     glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0,0,0), glm::vec3(0,1,0));
-    glm::mat4 depthModelMatrix = glm::mat4(0);
+    glm::mat4 depthModelMatrix = glm::mat4(1.0f);
 
     _shadowShader->use();
     _shadowShader->setModelViewProjection(depthModelMatrix, depthViewMatrix, depthProjectionMatrix);
@@ -204,24 +210,27 @@ void RendererMarchingCubes::renderWithShadow(BaseCamera *camera, WindowHandler *
     auto reflectionViewMatrix = reflectionCamera->GetViewMatrix();
     _shader->setReflectionView(reflectionViewMatrix);
 
-    glm::vec3 lightInvDir = glm::vec3(0.3f,1.0,2);
+    //glm::vec3 lightInvDir = glm::vec3(0.3f,1.0,2);
+    glm::vec3 lightInvDir = glm::vec3(-0.25f,0.75,1.0);
 
     glm::mat4 depthProjectionMatrix = getDepthProjectionMatrix();
     glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0,0,0), glm::vec3(0,1,0));
-    glm::mat4 depthModelMatrix = glm::mat4(0);
-    glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix;
+    glm::mat4 depthModelMatrix = glm::mat4(1.0f);
+    glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
     glm::mat4 biasMatrix(
             0.5, 0.0, 0.0, 0.0,
             0.0, 0.5, 0.0, 0.0,
             0.0, 0.0, 0.5, 0.0,
             0.5, 0.5, 0.5, 1.0
     );
-    glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
+    //glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
+    glm::mat4 depthBiasMVP = depthMVP;
 
     _shader->setDepthBiasMVP(depthBiasMVP);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, _reflectionTexture);
+    //glBindTexture(GL_TEXTURE_2D, _depthTexture);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, _depthTexture);

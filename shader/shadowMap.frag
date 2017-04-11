@@ -2,7 +2,7 @@
 
 void main(){
     // Not really needed, OpenGL does it anyway
-    //fragmentdepth = gl_FragCoord.z;
-    //gl_FragDepth = 10.5f;
+    //fragmentdepth = 0.0f;
+    //gl_FragDepth = 0.5;
     //fragmentdepth = 1.0f;
 }
