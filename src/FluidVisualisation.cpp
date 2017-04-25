@@ -63,7 +63,7 @@ void FluidVisualisation::switchAlgorithm(std::unique_ptr<BaseAlgorithm>* newAlgo
 }
 
 void FluidVisualisation::render() {
-    _skyBox->render(_camera, _windowHandler);
+    //_skyBox->render(_camera, _windowHandler);
 
     if(*_currentAlgorithm) { // only render the algorithm if one is selected
         _currentAlgorithm->get()->render(_camera, _windowHandler);

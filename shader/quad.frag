@@ -8,5 +8,9 @@ uniform sampler2D ourTexture;
 void main()
 {
     //color = vec4(ourColor, 1.0f);
-    color = texture(ourTexture, texCord);
+    float depthValue = texture(ourTexture, texCord).r;
+    //color = vec4(vec3(depthValue), 1.0);
+    color = vec4(depthValue, 0.0, 0.0f, 1.0f);
+    //color =  texture(ourTexture, texCord);
+    //color.a = 1;
 }

@@ -15,6 +15,7 @@ public:
     ~RendererDebugQuad();
     void setData(Timestep* step, uint32_t count);
     void render(BaseCamera* camera, WindowHandler* wHandler);
+    void render(BaseCamera *camera, WindowHandler *wHandler, GLuint textureId);
 private:
     GLuint VAO, VBO, texture;
     glm::vec4* buffer;

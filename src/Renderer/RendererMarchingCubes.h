@@ -17,12 +17,14 @@ class MarchingCubesRenderObject;
 class SkyBox;
 class ShadowMapShader;
 class TextureRenderer;
+class RendererDebugQuad;
 
 class RendererMarchingCubes {
 private:
     MarchingCubesShader* _shader;
     ShadowMapShader* _shadowShader;
     SkyBox* _skyBox;
+    RendererDebugQuad* _debug;
 
     GLuint _reflectionTexture, _reflectionFramebuffer, _reflectionDepthBuffer, _shadowMapFramebuffer, _depthTexture;
 

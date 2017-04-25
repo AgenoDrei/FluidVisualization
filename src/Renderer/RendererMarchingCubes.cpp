@@ -4,17 +4,21 @@
 #include "Shader/MarchingCubesShader.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/ext.hpp>
+#include <DataManagement/Timestep.h>
 #include "Algorithms/MarchingCubes/MarchingCubesRenderObject.h"
 #include "SkyBox.h"
 #include "WindowHandler.h"
 #include "TextureRenderer.h"
 #include "Cameras/ReflectionCamera.h"
 #include "Shader/ShadowMapShader.h"
+#include "Renderer/RendererDebugQuad.h"
 
 RendererMarchingCubes::RendererMarchingCubes(SkyBox* skyBox) :
     _skyBox(skyBox) {
     _shader = new MarchingCubesShader();
     _shadowShader = new ShadowMapShader();
+    _debug = new RendererDebugQuad();
+    _debug->setData(nullptr, 0);
 
     glGenFramebuffers(1, &_reflectionFramebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, _reflectionFramebuffer);
@@ -44,17 +48,13 @@ RendererMarchingCubes::RendererMarchingCubes(SkyBox* skyBox) :
 
     glGenTextures(1, &_depthTexture);
     glBindTexture(GL_TEXTURE_2D, _depthTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  _depthTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,  _depthTexture, 0);
 
     glDrawBuffer(GL_NONE); // No color buffer is drawn to
     glReadBuffer(GL_NONE);
@@ -143,26 +143,26 @@ void RendererMarchingCubes::renderReflectionMap(BaseCamera *camera, WindowHandle
 }
 
 glm::mat4 RendererMarchingCubes::getDepthProjectionMatrix() {
-    return glm::ortho<float>(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 40.0f);
+    return glm::ortho<float>(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 1.0);
 }
 
 void RendererMarchingCubes::renderShadowMap(BaseCamera *camera, WindowHandler *wHandler) {
-    glBindFramebuffer(GL_FRAMEBUFFER, _shadowMapFramebuffer);
     glViewport(0, 0, 1024, 1024);
-    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+    glBindFramebuffer(GL_FRAMEBUFFER, _shadowMapFramebuffer);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_DEPTH_BUFFER_BIT);
 
     //glm::vec3 lightInvDir = glm::vec3(0.3f,1.0,2);
-    glm::vec3 lightInvDir = glm::vec3(-0.25f,0.75,1.0);
+    glm::vec3 lightInvDir = glm::vec3(0.0f, 0.76f, 1.0f);
 
     glm::mat4 depthProjectionMatrix = getDepthProjectionMatrix();
-    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0,0,0), glm::vec3(0,1,0));
-    glm::mat4 depthModelMatrix = glm::mat4(1.0f);
+    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 depthModelMatrix = glm::mat4();
 
     _shadowShader->use();
     _shadowShader->setModelViewProjection(depthModelMatrix, depthViewMatrix, depthProjectionMatrix);
 
-    //glDisable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -191,14 +191,16 @@ void RendererMarchingCubes::renderShadowMap(BaseCamera *camera, WindowHandler *w
 void RendererMarchingCubes::render(BaseCamera *camera, WindowHandler *wHandler) {
     renderShadowMap(camera, wHandler);
 
-    renderWithShadow(camera, wHandler);
+    _debug->render(camera, wHandler, _depthTexture);
+
+    //renderWithShadow(camera, wHandler);
 }
 
 void RendererMarchingCubes::renderWithShadow(BaseCamera *camera, WindowHandler *wHandler) {
     auto reflectionCamera = new ReflectionCamera(camera, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
 
     //TODO: set clipping
-    renderReflectionMap(reflectionCamera, wHandler);
+    //renderReflectionMap(reflectionCamera, wHandler);
 
     /*_debugRenderer->render(camera, wHandler);
     return;*/
@@ -211,12 +213,11 @@ void RendererMarchingCubes::renderWithShadow(BaseCamera *camera, WindowHandler *
     _shader->setReflectionView(reflectionViewMatrix);
 
     //glm::vec3 lightInvDir = glm::vec3(0.3f,1.0,2);
-    glm::vec3 lightInvDir = glm::vec3(-0.25f,0.75,1.0);
+    glm::vec3 lightInvDir = glm::vec3(0.0f, 0.76f, 1.0f);
 
     glm::mat4 depthProjectionMatrix = getDepthProjectionMatrix();
     glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0,0,0), glm::vec3(0,1,0));
-    glm::mat4 depthModelMatrix = glm::mat4(1.0f);
-    glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+    glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix;
     glm::mat4 biasMatrix(
             0.5, 0.0, 0.0, 0.0,
             0.0, 0.5, 0.0, 0.0,
@@ -235,7 +236,7 @@ void RendererMarchingCubes::renderWithShadow(BaseCamera *camera, WindowHandler *
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, _depthTexture);
 
-    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
     glEnable(GL_BLEND);
