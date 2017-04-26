@@ -17,7 +17,9 @@
 
 RendererRayCasting::RendererRayCasting(GLfloat rayStepSize, SkyBox* skyBox) :
         _rayStepSize(rayStepSize),
-        _skyBox(skyBox){
+        _skyBox(skyBox),
+        _reflection(false),
+        _shadow(true){
     _shader = new Shader("shader/raycaster.vert", "shader/raycaster.frag");
     _lightPos = glm::vec3(0.75f, 0.75f, -1.0f);
     srand(100);
@@ -134,6 +136,20 @@ void RendererRayCasting::changeStepSize(GLfloat value) {
 
 void RendererRayCasting::changeLightPos() {
     _lightPos = (_lightPos == glm::vec3(0.25f, 0.75f, -1.0f)) ? glm::vec3(0.75f, 0.75f, -1.0f) : glm::vec3(0.25f, 0.75f, -1.0f);
+}
+
+void RendererRayCasting::toggleReflection() {
+    _shader->use();
+    _reflection = !_reflection;
+    glUniform1f(glGetUniformLocation(_shader->Program, "reflection"), _reflection);
+    _shader->unUse();
+}
+
+void RendererRayCasting::toggleShadow() {
+    _shader->use();
+    _shadow = !_shadow;
+    glUniform1f(glGetUniformLocation(_shader->Program, "shadow"), _shadow);
+    _shader->unUse();
 }
 
 

@@ -24,6 +24,8 @@ public:
     void changeStepSize(GLfloat value);
     void changeLightPos();
     void createShaderRandomValues();
+    void toggleReflection();
+    void toggleShadow();
 private:
     GLuint _cubeVAO, _cubeVBO, _cubeEBO;
     Texture* _texture;
@@ -33,6 +35,7 @@ private:
     GLfloat _rayStepSize;
     SkyBox* _skyBox;
     glm::vec3 _lightPos;
+    bool _reflection, _shadow;
 };
 
 

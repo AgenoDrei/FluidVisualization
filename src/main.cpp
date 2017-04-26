@@ -40,12 +40,26 @@ int main(int argc, const char* argv[]) {
             parameter.MarchingCubes.reflection = pt.get<bool>("MarchingCube.Reflection");
         }
 
+        auto interpolation = pt.get_child_optional("Main.Interpolation");
+        if(interpolation) {
+            parameter.interpolation = pt.get<bool>("Main.Interpolation");
+        }
+
 
         auto numSlices = pt.get_child_optional("TextureSlicing3D.NumSlices");
         if(numSlices) {
             parameter.TextureSlicing3D.numSlices = pt.get<int>("TextureSlicing3D.NumSlices");
         } else {
             parameter.TextureSlicing3D.numSlices = -1;
+        }
+
+        auto reflectionRayCasting = pt.get_child_optional("RayCasting.Reflection");
+        if(reflectionRayCasting) {
+            parameter.RayCasting.reflection = pt.get<bool>("RayCasting.Reflection");
+        }
+        auto shadowRayCasting = pt.get_child_optional("RayCasting.Shadow");
+        if(reflectionRayCasting) {
+            parameter.RayCasting.reflection = pt.get<bool>("RayCasting.Shadow");
         }
     }
 
@@ -70,6 +84,9 @@ int main(int argc, const char* argv[]) {
     } else if(parameter.algorithm == "") {
         parameter.algorithm = "pointCloud";
     }
+    if(vm.count("interpolation")) {
+        parameter.interpolation = vm["interpolation"].as<std::string>() == "true" ? true : false;
+    }
 
     std::cout<<"Input file: "<<parameter.pathToData<<std::endl;
 
@@ -92,6 +109,7 @@ po::variables_map setupCommandLine(int argc, const char* argv[], po::options_des
             ("help", "produce help message")
             ("input-file", po::value<std::string>(), "input file")
             ("algorithm", po::value<std::string>(), "Default Algorithm")
+            ("interpolation", po::value<std::string>(), "Interpolation")
             ;
 
     po::positional_options_description p;
@@ -111,7 +129,10 @@ void init(Configuration* parameter) {
     auto data = DataImporter::load(path + "/Downloads/drop_100.dat");*/
     auto data = DataImporter::load(parameter->pathToData);
     auto interpolationController = new OctreeInterpolationController(0.01, 1.0);
-    auto interpolatedData = interpolationController->interpolateData(data, 200, 200, 200);
+    auto interpolatedData = data;
+    if(parameter->interpolation)
+        interpolatedData = interpolationController->interpolateData(data, 200, 200, 200);
+
     //auto interpolatedData = data;
     //auto firstTimestep = interpolatedData->getTimestep(0);
     //DataExporter::write("/home/simon/Downloads/drop_normals_100.dat", interpolatedData);

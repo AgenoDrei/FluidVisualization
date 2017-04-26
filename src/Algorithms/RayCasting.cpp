@@ -41,11 +41,17 @@ void RayCasting::processKeyboard(WindowHandler* windowHandler) {
     if(windowHandler->getKeyDebounce('p')) {
         _renderer->changeLightPos();
     }
+    if(windowHandler->getKeyDebounce('r')) {
+        _renderer->toggleReflection();
+    }
+    if(windowHandler->getKeyDebounce('g')) {
+        _renderer->toggleShadow();
+    }
 
 }
 
 void RayCasting::setConfiguration(Configuration* configuration) {
-
+    conf = configuration;
 }
 
 void RayCasting::nextTimestep(Timestep* step) {

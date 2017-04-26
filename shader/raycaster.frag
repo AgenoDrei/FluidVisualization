@@ -9,6 +9,8 @@ uniform sampler2D   randomValues;
 uniform vec3		camPos;		//camera position
 uniform vec3		step_size;	//ray step size
 uniform vec3        lightPos;   //directional light
+uniform float       reflection;
+uniform float       shadow;
 
 //constants
 const int MAX_SAMPLES = 300;	//total samples for each ray march step
@@ -26,7 +28,18 @@ vec3 getNormal(vec3 at) {
     return normalize(n);
 }
 
+vec3 getReflection(vec3 dir, vec3 n) {
+    if(reflection != 1.0f)
+        return vec3(1.0f);
+
+    vec3 reflected = reflect(dir, n);
+    return texture(cubeTexture, reflected).rgb;
+}
+
 vec3 getShadow(vec3 at) {
+    if(shadow != 1.0f)
+        return vec3(1.0f);
+
     vec3 dataPos = at;
     vec3 geomDir = normalize(lightPos - dataPos);
     //vec3 geomDir = -lightDir;
@@ -89,9 +102,12 @@ void main()
 		if(sampleValue != 0.0f && !fluidEntered) {
 		    fluidEntered = true;
 		    vec3 normal = getNormal(dataPos);
-		    vec3 reflected = reflect(geomDir, normal);
-		    vec3 shadow = getShadow(dataPos);
-            vFragColor.rgb = texture(cubeTexture, reflected).rgb * vec3(.5, .5, .6) * shadow;
+		    vec3 reflections = getReflection(geomDir, normal);
+		    vec3 shadows = getShadow(dataPos);
+		    if(reflection != 1.0f && shadow != 1.0f)
+		        vFragColor.rgb = normal;
+		    else
+                vFragColor.rgb = reflections * vec3(.5, .5, .6) * shadows;
 		}
 
 		//Opacity calculation using compositing:
