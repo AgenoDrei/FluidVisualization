@@ -1,17 +1,21 @@
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
+#include <glm/ext.hpp>
 #include "MarchingCubesShader.h"
 
 MarchingCubesShader::MarchingCubesShader()
     : ReflectionShader("shader/renderMarchingCubes.vert", "shader/renderMarchingCubes.frag") {
 
+    use();
+
     _reflectionViewLocation = glGetUniformLocation(Program, "reflectionView");
     _depthBiasMVPLocation = glGetUniformLocation(Program, "depthBiasMVP");
 
     auto texLoc = glGetUniformLocation(Program, "ourTexture");
-    glUniform1i(texLoc, 0);
+    glUniform1i(texLoc, 1);
 
     texLoc = glGetUniformLocation(Program, "shadowMap");
-    glUniform1i(texLoc, 1);
+    glUniform1i(texLoc, 2);
 
     _shadowLocation = glGetUniformLocation(Program, "shadow");
 }

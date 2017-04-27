@@ -7,6 +7,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <glm/detail/type_mat.hpp>
+#include <Shader/Shader.h>
+#include <Shader/MVPShader.h>
 #include "Algorithms/MarchingCubes/Triangle.h"
 
 class WindowHandler;
@@ -18,6 +20,7 @@ class SkyBox;
 class ShadowMapShader;
 class TextureRenderer;
 class RendererDebugQuad;
+class MVPShader;
 
 class RendererMarchingCubes {
 private:
@@ -53,6 +56,8 @@ public:
     void render(BaseCamera *camera, WindowHandler *wHandler);
 
     void clean();
+
+    glm::mat4* getShadowMVP();
 };
 
 

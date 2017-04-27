@@ -5,6 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/ext.hpp>
 #include <DataManagement/Timestep.h>
+#include <iostream>
 #include "Algorithms/MarchingCubes/MarchingCubesRenderObject.h"
 #include "SkyBox.h"
 #include "WindowHandler.h"
@@ -146,26 +147,33 @@ glm::mat4 RendererMarchingCubes::getDepthProjectionMatrix() {
     return glm::ortho<float>(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 1.0);
 }
 
+glm::mat4* RendererMarchingCubes::getShadowMVP() {
+    glm::mat4* mvp = new glm::mat4[3];
+    mvp[0] = glm::mat4();
+    mvp[1] = glm::lookAt(glm::vec3(0.5f, 0.6f, 1.0f), glm::vec3(0.5f, 0.25f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f));
+    mvp[2] = glm::ortho<float>(-0.75f, 0.75f, -0.75f, 0.75f, 0.1f, 1.0);
+
+    return mvp;
+}
+
 void RendererMarchingCubes::renderShadowMap(BaseCamera *camera, WindowHandler *wHandler) {
     glViewport(0, 0, 1024, 1024);
     glBindFramebuffer(GL_FRAMEBUFFER, _shadowMapFramebuffer);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    //glm::vec3 lightInvDir = glm::vec3(0.3f,1.0,2);
-    glm::vec3 lightInvDir = glm::vec3(0.0f, 0.76f, 1.0f);
+    glm::mat4* lightSpaceMatrix = getShadowMVP();
 
-    glm::mat4 depthProjectionMatrix = getDepthProjectionMatrix();
-    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::mat4 depthModelMatrix = glm::mat4();
+    //std::cout << glm::to_string(lightSpaceMatrix[2] * lightSpaceMatrix[1]) << std::endl;
+
 
     _shadowShader->use();
-    _shadowShader->setModelViewProjection(depthModelMatrix, depthViewMatrix, depthProjectionMatrix);
+    _shadowShader->setModelViewProjection(lightSpaceMatrix[0], lightSpaceMatrix[1], lightSpaceMatrix[2]);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -191,57 +199,49 @@ void RendererMarchingCubes::renderShadowMap(BaseCamera *camera, WindowHandler *w
 void RendererMarchingCubes::render(BaseCamera *camera, WindowHandler *wHandler) {
     renderShadowMap(camera, wHandler);
 
-    _debug->render(camera, wHandler, _depthTexture);
+    //_debug->render(camera, wHandler, _depthTexture);
 
-    //renderWithShadow(camera, wHandler);
+    renderWithShadow(camera, wHandler);
 }
 
 void RendererMarchingCubes::renderWithShadow(BaseCamera *camera, WindowHandler *wHandler) {
-    auto reflectionCamera = new ReflectionCamera(camera, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
+    //auto reflectionCamera = new ReflectionCamera(camera, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //TODO: set clipping
     //renderReflectionMap(reflectionCamera, wHandler);
-
-    /*_debugRenderer->render(camera, wHandler);
-    return;*/
 
     glm::mat4 model = glm::mat4();
     _shader->use();
     _shader->setModelViewProjection(model, camera, wHandler);
 
-    auto reflectionViewMatrix = reflectionCamera->GetViewMatrix();
-    _shader->setReflectionView(reflectionViewMatrix);
+    //auto reflectionViewMatrix = reflectionCamera->GetViewMatrix();
+    //_shader->setReflectionView(reflectionViewMatrix);
 
     //glm::vec3 lightInvDir = glm::vec3(0.3f,1.0,2);
-    glm::vec3 lightInvDir = glm::vec3(0.0f, 0.76f, 1.0f);
+    glm::mat4* lightViewMatrix = getShadowMVP();
 
-    glm::mat4 depthProjectionMatrix = getDepthProjectionMatrix();
-    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0,0,0), glm::vec3(0,1,0));
-    glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix;
-    glm::mat4 biasMatrix(
-            0.5, 0.0, 0.0, 0.0,
-            0.0, 0.5, 0.0, 0.0,
-            0.0, 0.0, 0.5, 0.0,
-            0.5, 0.5, 0.5, 1.0
-    );
-    //glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
-    glm::mat4 depthBiasMVP = depthMVP;
+    glm::mat4 depthMVP = lightViewMatrix[2] * lightViewMatrix[1];
+    //std::cout << glm::to_string(depthMVP) << std::endl;
+    //glm::mat4 depthBiasMVP = depthMVP;
 
-    _shader->setDepthBiasMVP(depthBiasMVP);
+    _shader->setDepthBiasMVP(depthMVP);
 
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, _reflectionTexture);
     //glBindTexture(GL_TEXTURE_2D, _depthTexture);
 
-    glActiveTexture(GL_TEXTURE1);
+    glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, _depthTexture);
 
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_FRONT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 
     for(auto object : _objects) {
         glBindVertexArray(object->getVertexBuffer()->getVAO());

@@ -2,12 +2,12 @@
 
 in vec3 ourColor;
 in vec4 reflectionMapCoordinates;
-in vec4 shadowCoord;
+in vec4 fragPosLight;
+in vec3 fragPos;
 
 out vec4 color;
 
 uniform sampler2D ourTexture;
-
 uniform sampler2D shadowMap;
 
 uniform float reflection;
@@ -31,9 +31,12 @@ void main() {
             }
         }
     }*/
-    vec3 projCoords = shadowCoord.xyz / shadowCoord.w;
-     projCoords = projCoords * 0.5 + 0.5;
-    if(texture(shadowMap, projCoords.xy).r < projCoords.z){
+    vec3 projCoords = fragPosLight.xyz / fragPosLight.w;
+    projCoords = projCoords * 0.5 + 0.5;
+    float closestDepth = texture(shadowMap, projCoords.xy).r;
+    float currentDepth = projCoords.z;
+    float shadow = currentDepth - 0.05 > closestDepth ? 1.0 : 0.0;
+    if(shadow == 1.0f){
         visibility = 0.5f;
     }
 
