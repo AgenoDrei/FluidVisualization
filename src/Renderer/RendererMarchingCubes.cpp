@@ -137,6 +137,8 @@ void RendererMarchingCubes::renderReflectionMap(BaseCamera *camera, WindowHandle
     glBindFramebuffer(GL_FRAMEBUFFER, _reflectionFramebuffer);
     glViewport(0, 0, 2048, 2048);
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     _skyBox->render(camera, wHandler);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -205,18 +207,18 @@ void RendererMarchingCubes::render(BaseCamera *camera, WindowHandler *wHandler) 
 }
 
 void RendererMarchingCubes::renderWithShadow(BaseCamera *camera, WindowHandler *wHandler) {
-    //auto reflectionCamera = new ReflectionCamera(camera, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    auto reflectionCamera = new ReflectionCamera(camera, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //TODO: set clipping
-    //renderReflectionMap(reflectionCamera, wHandler);
+    renderReflectionMap(reflectionCamera, wHandler);
 
     glm::mat4 model = glm::mat4();
     _shader->use();
     _shader->setModelViewProjection(model, camera, wHandler);
 
-    //auto reflectionViewMatrix = reflectionCamera->GetViewMatrix();
-    //_shader->setReflectionView(reflectionViewMatrix);
+    auto reflectionViewMatrix = reflectionCamera->GetViewMatrix();
+    _shader->setReflectionView(reflectionViewMatrix);
 
     //glm::vec3 lightInvDir = glm::vec3(0.3f,1.0,2);
     glm::mat4* lightViewMatrix = getShadowMVP();
