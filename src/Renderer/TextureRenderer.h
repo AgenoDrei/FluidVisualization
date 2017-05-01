@@ -5,7 +5,7 @@
 #include <GL/gl.h>
 
 class WindowHandler;
-class Camera;
+class BaseCamera;
 class Shader;
 
 class TextureRenderer {
@@ -15,7 +15,7 @@ private:
 public:
     TextureRenderer(GLuint texture);
 
-    void render(Camera *camera, WindowHandler *wHandler);
+    void render(BaseCamera *camera, WindowHandler *wHandler);
 };
 
 

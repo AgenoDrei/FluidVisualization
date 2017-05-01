@@ -49,22 +49,42 @@ void RendererDebugQuad::setData(Timestep* step, uint32_t count) {
     glBindVertexArray(0);
 
     //Texture Stuff
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// Set texture wrapping to GL_REPEAT (usually basic wrapping method)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    if(count > 0) {
+        glGenTextures(1, &texture);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+                        GL_CLAMP_TO_EDGE);    // Set texture wrapping to GL_REPEAT (usually basic wrapping method)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, glm::sqrt(count), glm::sqrt(count), 0, GL_RGBA, GL_FLOAT, buffer);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, glm::sqrt(count), glm::sqrt(count), 0, GL_RGBA, GL_FLOAT, buffer);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
 
 }
 
-void RendererDebugQuad::render(Camera *camera, WindowHandler *wHandler) {
+void RendererDebugQuad::render(BaseCamera *camera, WindowHandler *wHandler) {
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture);
+
+    shader->use();
+
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, verticeCount);
+    glBindVertexArray(0);
+
+}
+
+void RendererDebugQuad::render(BaseCamera *camera, WindowHandler *wHandler, GLuint textureId) {
+    //glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+
+    glCullFace(GL_FRONT);
 
     shader->use();
 

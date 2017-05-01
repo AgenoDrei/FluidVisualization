@@ -16,8 +16,8 @@ SET(DATA_MANAGEMENT_H DataManagement/CpuInterpolationController.h DataManagement
 SET(RENDERER_CPP Renderer/RendererDebugQuad.cpp Renderer/RendererMarchingCubes.cpp Renderer/RendererParticles.cpp Renderer/TextureRenderer.cpp Renderer/TextRenderer.cpp Renderer/TextureSlicingRenderer.cpp Renderer/RendererRayCasting.cpp)
 SET(RENDERER_H Renderer/RendererDebugQuad.h Renderer/RendererMarchingCubes.h Renderer/RendererParticles.h Renderer/TextureRenderer.h Renderer/TextRenderer.h Renderer/TextureSlicingRenderer.h Renderer/RendererRayCasting.h)
 
-SET(SHADER_CPP Shader/GroundShader.cpp Shader/MarchingCubesShader.cpp Shader/ReflectionShader.cpp Shader/MVPShader.cpp Shader/Shader.cpp Shader/SkyBoxShader.cpp)
-SET(SHADER_CH Shader/GroundShader.h Shader/MarchingCubesShader.h Shader/ReflectionShader.h Shader/MVPShader.h Shader/Shader.h Shader/SkyBoxShader.h)
+SET(SHADER_CPP Shader/ShadowMapShader.cpp Shader/GroundShader.cpp Shader/MarchingCubesShader.cpp Shader/ReflectionShader.cpp Shader/MVPShader.cpp Shader/Shader.cpp Shader/SkyBoxShader.cpp)
+SET(SHADER_CH Shader/ShadowMapShader.h Shader/GroundShader.h Shader/MarchingCubesShader.h Shader/ReflectionShader.h Shader/MVPShader.h Shader/Shader.h Shader/SkyBoxShader.h)
 
 SET(SRC_CPP main.cpp FluidVisualisation.cpp Ground.cpp SkyBox.cpp VertexPositionNormal.cpp VertexArrayBuffer.cpp WindowHandler.cpp Texture.cpp)
 SET(SRC_H main.h FluidVisualisation.h Ground.h SkyBox.h VertexPositionNormal.h VertexArrayBuffer.h WindowHandler.h Texture.h)

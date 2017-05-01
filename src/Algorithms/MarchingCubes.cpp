@@ -50,6 +50,14 @@ void MarchingCubes::processKeyboard(WindowHandler* windowHandler) {
     if(windowHandler->getKey('t')) {
         _renderer->disableReflection();
     }
+
+    if(windowHandler->getKey('o')) {
+        _renderer->enableShadow();
+    }
+
+    if(windowHandler->getKey('i')) {
+        _renderer->disableShadow();
+    }
 }
 
 void MarchingCubes::setConfiguration(Configuration* configuration) {

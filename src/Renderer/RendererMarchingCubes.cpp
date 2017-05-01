@@ -4,15 +4,22 @@
 #include "Shader/MarchingCubesShader.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/ext.hpp>
+#include <DataManagement/Timestep.h>
+#include <iostream>
 #include "Algorithms/MarchingCubes/MarchingCubesRenderObject.h"
 #include "SkyBox.h"
 #include "WindowHandler.h"
 #include "TextureRenderer.h"
 #include "Cameras/ReflectionCamera.h"
+#include "Shader/ShadowMapShader.h"
+#include "Renderer/RendererDebugQuad.h"
 
 RendererMarchingCubes::RendererMarchingCubes(SkyBox* skyBox) :
     _skyBox(skyBox) {
     _shader = new MarchingCubesShader();
+    _shadowShader = new ShadowMapShader();
+    _debug = new RendererDebugQuad();
+    _debug->setData(nullptr, 0);
 
     glGenFramebuffers(1, &_reflectionFramebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, _reflectionFramebuffer);
@@ -36,9 +43,31 @@ RendererMarchingCubes::RendererMarchingCubes(SkyBox* skyBox) :
         throw "fail";
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    _debugRenderer = new TextureRenderer(_reflectionTexture);
+    glGenFramebuffers(1, &_shadowMapFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, _shadowMapFramebuffer);
+
+    glGenTextures(1, &_depthTexture);
+    glBindTexture(GL_TEXTURE_2D, _depthTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,  _depthTexture, 0);
+
+    glDrawBuffer(GL_NONE); // No color buffer is drawn to
+    glReadBuffer(GL_NONE);
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)  {
+        throw "fail";
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0); // reset framebuffer
+
+    _debugRenderer = new TextureRenderer(_depthTexture);
+
+    enableShadow();
 }
 
 void RendererMarchingCubes::addTriangles(const std::vector<Triangle>& triangles) {
@@ -94,25 +123,95 @@ void RendererMarchingCubes::disableReflection() {
     _shader->disableReflection();
 }
 
+void RendererMarchingCubes::enableShadow() {
+    _shader->use();
+    _shader->enableShadow();
+}
+
+void RendererMarchingCubes::disableShadow() {
+    _shader->use();
+    _shader->disableShadow();
+}
+
 void RendererMarchingCubes::renderReflectionMap(BaseCamera *camera, WindowHandler *wHandler) {
     glBindFramebuffer(GL_FRAMEBUFFER, _reflectionFramebuffer);
     glViewport(0, 0, 2048, 2048);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     _skyBox->render(camera, wHandler);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, wHandler->getWidth(), wHandler->getHeight());
+}
 
+glm::mat4 RendererMarchingCubes::getDepthProjectionMatrix() {
+    return glm::ortho<float>(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 1.0);
+}
+
+glm::mat4* RendererMarchingCubes::getShadowMVP() {
+    glm::mat4* mvp = new glm::mat4[3];
+    mvp[0] = glm::mat4();
+    mvp[1] = glm::lookAt(glm::vec3(0.5f, 0.6f, 1.0f), glm::vec3(0.5f, 0.25f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f));
+    mvp[2] = glm::ortho<float>(-0.75f, 0.75f, -0.75f, 0.75f, 0.1f, 1.0);
+
+    return mvp;
+}
+
+void RendererMarchingCubes::renderShadowMap(BaseCamera *camera, WindowHandler *wHandler) {
+    glViewport(0, 0, 1024, 1024);
+    glBindFramebuffer(GL_FRAMEBUFFER, _shadowMapFramebuffer);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    glm::mat4* lightSpaceMatrix = getShadowMVP();
+
+    //std::cout << glm::to_string(lightSpaceMatrix[2] * lightSpaceMatrix[1]) << std::endl;
+
+
+    _shadowShader->use();
+    _shadowShader->setModelViewProjection(lightSpaceMatrix[0], lightSpaceMatrix[1], lightSpaceMatrix[2]);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    for(auto object : _objects) {
+        glBindVertexArray(object->getVertexBuffer()->getVAO());
+        if(object->isIndexed()) {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->getIndexBuffer());
+
+            glDrawElements(GL_TRIANGLES, object->getNumberIndices(), GL_UNSIGNED_INT, (void*)0);
+
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        } else {
+            glDrawArrays(GL_TRIANGLES, 0, object->getVertexBuffer()->getSize());
+        }
+        glBindVertexArray(0);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, wHandler->getWidth(), wHandler->getHeight());
 }
 
 void RendererMarchingCubes::render(BaseCamera *camera, WindowHandler *wHandler) {
+    renderShadowMap(camera, wHandler);
+
+    //_debug->render(camera, wHandler, _depthTexture);
+
+    renderWithShadow(camera, wHandler);
+}
+
+void RendererMarchingCubes::renderWithShadow(BaseCamera *camera, WindowHandler *wHandler) {
     auto reflectionCamera = new ReflectionCamera(camera, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //TODO: set clipping
     renderReflectionMap(reflectionCamera, wHandler);
-
-    /*_debugRenderer->render(camera, wHandler);
-    return;*/
 
     glm::mat4 model = glm::mat4();
     _shader->use();
@@ -120,14 +219,31 @@ void RendererMarchingCubes::render(BaseCamera *camera, WindowHandler *wHandler) 
 
     auto reflectionViewMatrix = reflectionCamera->GetViewMatrix();
     _shader->setReflectionView(reflectionViewMatrix);
+
+    //glm::vec3 lightInvDir = glm::vec3(0.3f,1.0,2);
+    glm::mat4* lightViewMatrix = getShadowMVP();
+
+    glm::mat4 depthMVP = lightViewMatrix[2] * lightViewMatrix[1];
+    //std::cout << glm::to_string(depthMVP) << std::endl;
+    //glm::mat4 depthBiasMVP = depthMVP;
+
+    _shader->setDepthBiasMVP(depthMVP);
+
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, _reflectionTexture);
+    //glBindTexture(GL_TEXTURE_2D, _depthTexture);
+
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, _depthTexture);
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
+    glDepthFunc(GL_LESS);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_FRONT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 
     for(auto object : _objects) {
         glBindVertexArray(object->getVertexBuffer()->getVAO());
