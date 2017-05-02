@@ -6,6 +6,7 @@ class Configuration {
 public:
     std::string pathToData;
     std::string algorithm;
+    bool interpolation;
 
     struct {
         bool reflection;
@@ -14,4 +15,9 @@ public:
     struct {
         int numSlices;
     } TextureSlicing3D;
+
+    struct {
+        bool reflection;
+        bool shadow;
+    } RayCasting;
 };

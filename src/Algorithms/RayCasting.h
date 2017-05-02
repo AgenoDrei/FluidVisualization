@@ -8,10 +8,12 @@
 
 class RendererRayCasting;
 class SkyBox;
+class Configuration;
 
 class RayCasting : public BaseAlgorithm {
 protected:
     std::unique_ptr<RendererRayCasting> _renderer;
+    Configuration* conf;
 public:
     RayCasting(SkyBox*);
 
