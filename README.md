@@ -43,5 +43,7 @@ Running the application with specified inputfile and starting with specific algo
 - W/A/S/D - Move
 - N/M or PageUp/PageDown - Up/Down
 - L - Toggle Algorithm
-- R/T - [MarchingCubes] Toggle Reflection
+- R - Toggle Reflection
+- T - Toggle Shadows
 - F/G - [TextureSlicing] Increase / Decrease Number of slices
+- I/O - [Ray Casting] Increase / Decrease Ray Length
