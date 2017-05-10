@@ -61,6 +61,8 @@ int main(int argc, const char* argv[]) {
         if(reflectionRayCasting) {
             parameter.RayCasting.reflection = pt.get<bool>("RayCasting.Shadow");
         }
+    } else {
+        parameter.TextureSlicing3D.numSlices = 42;
     }
 
     po::options_description desc("Allowed options");

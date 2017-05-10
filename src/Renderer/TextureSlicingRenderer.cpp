@@ -75,14 +75,9 @@ void TextureSlicingRenderer::setBufferData(glm::vec3 *vTextureSlices) {
     glBufferSubData(GL_ARRAY_BUFFER, 0, _sizeofTextureSlicesVolume, &(vTextureSlices[0].x));
 }
 
-void TextureSlicingRenderer::enableReflection() {
+void TextureSlicingRenderer::toggleReflection() {
     _shader->use();
-    _shader->enableReflection();
-}
-
-void TextureSlicingRenderer::disableReflection() {
-    _shader->use();
-    _shader->disableReflection();
+    _shader->toggleReflection();
 }
 
 void TextureSlicingRenderer::render(BaseCamera* camera, WindowHandler* wHandler) {

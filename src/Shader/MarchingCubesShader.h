@@ -5,6 +5,7 @@
 class MarchingCubesShader : public ReflectionShader {
 protected:
     GLint _reflectionViewLocation, _depthBiasMVPLocation, _shadowLocation;
+    GLfloat _shadowing;
 public:
     MarchingCubesShader();
 
@@ -12,6 +13,7 @@ public:
 
     void setDepthBiasMVP(glm::mat4& depthBiasMVP);
 
+    void toggleShadow();
     void enableShadow();
     void disableShadow();
 };

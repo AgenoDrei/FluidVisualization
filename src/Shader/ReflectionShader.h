@@ -11,10 +11,9 @@ class WindowHandler;
 
 class ReflectionShader : public MVPShader {
 protected:
+    GLfloat _reflecting;
     GLint _reflectionLocation;
 public:
     ReflectionShader(const GLchar* vertexShader, const GLchar* fragmentShader);
-
-    void enableReflection();
-    void disableReflection();
+    void toggleReflection();
 };

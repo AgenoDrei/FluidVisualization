@@ -17,8 +17,7 @@ public:
     void setBufferData(glm::vec3* vTextureSlices);
     void updateSizeofTextureSlicesVolume(int numSlices);
     void render(BaseCamera* camera, WindowHandler* wHandler);
-    void enableReflection();
-    void disableReflection();
+    void toggleReflection();
     glm::vec3 viewDirOnSlicing;
 private:
     SkyBox* _skyBox;

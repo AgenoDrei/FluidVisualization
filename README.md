@@ -40,10 +40,10 @@ Running the application with specified inputfile and starting with specific algo
 
 ## Keys
 
-- W/A/S/D - Move
-- N/M or PageUp/PageDown - Up/Down
+- W,A,S,D - Move
+- N,M or PageUp,PageDown - Up/Down
 - L - Toggle Algorithm
 - R - Toggle Reflection
+- I,O - Increase/Decrease level of detail (Ray Casting: Ray-length, Texture Slicing: Number of slices)
 - T - Toggle Shadows
-- F/G - [TextureSlicing] Increase / Decrease Number of slices
-- I/O - [Ray Casting] Increase / Decrease Ray Length
+- P - Toggle Light-Positioning (for direction of shadows)

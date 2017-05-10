@@ -6,17 +6,16 @@
 
 ReflectionShader::ReflectionShader(const GLchar* vertexShader, const GLchar* fragmentShader)
         : MVPShader(vertexShader, fragmentShader) {
-
+    _reflecting = 0;
     _reflectionLocation = glGetUniformLocation(Program, "reflection");
 }
 
-void ReflectionShader::enableReflection() {
-    GLfloat value = 1;
-    glUniform1fv(_reflectionLocation, 1, &value);
+void ReflectionShader::toggleReflection() {
+    if (!_reflecting) {
+        _reflecting = 1;
+        glUniform1fv(_reflectionLocation, 1, &_reflecting);
+    } else {
+        _reflecting = 0;
+        glUniform1fv(_reflectionLocation, 1, &_reflecting);
+    }
 }
-
-void ReflectionShader::disableReflection() {
-    GLfloat value = 0;
-    glUniform1fv(_reflectionLocation, 1, &value);
-}
-
