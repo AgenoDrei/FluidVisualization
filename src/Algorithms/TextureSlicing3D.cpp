@@ -66,11 +66,12 @@ void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
 }
 
 void TextureSlicing3D::setConfiguration(Configuration* configuration) {
-    if(configuration->TextureSlicing3D.numSlices > 0) {
+    if(configuration->TextureSlicing3D.numSlices > 0)
         setNumSlices(configuration->TextureSlicing3D.numSlices);
-    }
+    if (configuration->TextureSlicing3D.reflection)
+        _renderer->toggleReflection();
 }
 
 void TextureSlicing3D::nextTimestep(Timestep* step) {
-
+    init(step);
 };

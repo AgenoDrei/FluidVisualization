@@ -43,6 +43,7 @@ Running the application with specified inputfile and starting with specific algo
 - W,A,S,D - Move
 - N,M or PageUp,PageDown - Up/Down
 - L - Toggle Algorithm
+- K - Next timestep
 - R - Toggle Reflection
 - I,O - Increase/Decrease level of detail (Ray Casting: Ray-length, Texture Slicing: Number of slices)
 - T - Toggle Shadows

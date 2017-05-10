@@ -52,11 +52,12 @@ void MarchingCubes::processKeyboard(WindowHandler* windowHandler) {
 }
 
 void MarchingCubes::setConfiguration(Configuration* configuration) {
-    if(configuration->MarchingCubes.reflection) {
+    if(configuration->MarchingCubes.reflection)
         _renderer->toggleReflection();
-    }
+    if(configuration->MarchingCubes.shadow)
+        _renderer->toggleShadow();
 }
 
 void MarchingCubes::nextTimestep(Timestep* step) {
-
+    init(step);
 };
