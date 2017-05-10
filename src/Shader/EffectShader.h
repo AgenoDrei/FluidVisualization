@@ -9,11 +9,11 @@
 class BaseCamera;
 class WindowHandler;
 
-class ReflectionShader : public MVPShader {
+class EffectShader : public MVPShader {
 protected:
-    GLfloat _reflecting;
-    GLint _reflectionLocation;
+    bool _reflecting, _shadowing;
 public:
-    ReflectionShader(const GLchar* vertexShader, const GLchar* fragmentShader);
+    EffectShader(const GLchar* vertexShader, const GLchar* fragmentShader);
     void toggleReflection();
+    void toggleShadow();
 };

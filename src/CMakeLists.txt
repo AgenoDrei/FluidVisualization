@@ -13,11 +13,11 @@ SET(CAMERAS_H Cameras/BaseCamera.h Cameras/Camera.h Cameras/ReflectionCamera.h)
 SET(DATA_MANAGEMENT_CPP DataManagement/CpuInterpolationController.cpp DataManagement/DataExporter.cpp DataManagement/DataImporter.cpp DataManagement/DataSet.cpp DataManagement/OctreeInterpolationController.cpp DataManagement/OctreeNode.cpp DataManagement/Particle.cpp DataManagement/Timestep.cpp)
 SET(DATA_MANAGEMENT_H DataManagement/CpuInterpolationController.h DataManagement/DataExporter.h DataManagement/DataImporter.h DataManagement/DataSet.h DataManagement/OctreeInterpolationController.h DataManagement/OctreeNode.h DataManagement/Particle.h DataManagement/Timestep.h DataManagement/InterpolationController.h)
 
-SET(RENDERER_CPP Renderer/RendererDebugQuad.cpp Renderer/RendererMarchingCubes.cpp Renderer/RendererParticles.cpp Renderer/TextureRenderer.cpp Renderer/TextRenderer.cpp Renderer/TextureSlicingRenderer.cpp Renderer/RendererRayCasting.cpp)
-SET(RENDERER_H Renderer/RendererDebugQuad.h Renderer/RendererMarchingCubes.h Renderer/RendererParticles.h Renderer/TextureRenderer.h Renderer/TextRenderer.h Renderer/TextureSlicingRenderer.h Renderer/RendererRayCasting.h)
+SET(RENDERER_CPP Renderer/RendererDebugQuad.cpp Renderer/RendererMarchingCubes.cpp Renderer/RendererParticles.cpp Renderer/TextureRenderer.cpp Renderer/TextRenderer.cpp Renderer/RendererTextureSlicing.cpp Renderer/RendererRayCasting.cpp)
+SET(RENDERER_H Renderer/RendererDebugQuad.h Renderer/RendererMarchingCubes.h Renderer/RendererParticles.h Renderer/TextureRenderer.h Renderer/TextRenderer.h Renderer/RendererTextureSlicing.h Renderer/RendererRayCasting.h)
 
-SET(SHADER_CPP Shader/ShadowMapShader.cpp Shader/GroundShader.cpp Shader/MarchingCubesShader.cpp Shader/ReflectionShader.cpp Shader/MVPShader.cpp Shader/Shader.cpp Shader/SkyBoxShader.cpp)
-SET(SHADER_CH Shader/ShadowMapShader.h Shader/GroundShader.h Shader/MarchingCubesShader.h Shader/ReflectionShader.h Shader/MVPShader.h Shader/Shader.h Shader/SkyBoxShader.h)
+SET(SHADER_CPP Shader/ShadowMapShader.cpp Shader/GroundShader.cpp Shader/MarchingCubesShader.cpp Shader/EffectShader.cpp Shader/MVPShader.cpp Shader/Shader.cpp Shader/SkyBoxShader.cpp)
+SET(SHADER_CH Shader/ShadowMapShader.h Shader/GroundShader.h Shader/MarchingCubesShader.h Shader/EffectShader.h Shader/MVPShader.h Shader/Shader.h Shader/SkyBoxShader.h)
 
 SET(SRC_CPP main.cpp FluidVisualisation.cpp Ground.cpp SkyBox.cpp VertexPositionNormal.cpp VertexArrayBuffer.cpp WindowHandler.cpp Texture.cpp)
 SET(SRC_H main.h FluidVisualisation.h Ground.h SkyBox.h VertexPositionNormal.h VertexArrayBuffer.h WindowHandler.h Texture.h)

@@ -1,10 +1,8 @@
 #include <Configuration.h>
 #include "TextureSlicing3D.h"
 #include "TextureSlicer/TextureSlicer.h"
-#include "Renderer/TextureSlicingRenderer.h"
-
+#include "Renderer/RendererTextureSlicing.h"
 #include "WindowHandler.h"
-#include "Cameras/BaseCamera.h"
 
 TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uint dimZ, SkyBox* skyBox) {
     auto front = camera->getFront();
@@ -20,8 +18,6 @@ TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uin
 
     numSlices = 64;
     setNumSlices(numSlices);
-    _initedDecSlicesPress = false;
-    _initedIncSlicesPress = false;
 }
 
 TextureSlicing3D::~TextureSlicing3D() {}

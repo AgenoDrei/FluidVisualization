@@ -114,11 +114,13 @@ void RendererMarchingCubes::clean() { // todo delete all stuff
 void RendererMarchingCubes::toggleReflection() {
     _shader->use();
     _shader->toggleReflection();
+    _shader->unUse();
 }
 
 void RendererMarchingCubes::toggleShadow() {
     _shader->use();
     _shader->toggleShadow();
+    _shader->unUse();
 }
 
 void RendererMarchingCubes::renderReflectionMap(BaseCamera *camera, WindowHandler *wHandler) {
