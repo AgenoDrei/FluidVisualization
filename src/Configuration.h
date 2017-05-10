@@ -10,9 +10,11 @@ public:
 
     struct {
         bool reflection;
+        bool shadow;
     } MarchingCubes;
 
     struct {
+        bool reflection;
         int numSlices;
     } TextureSlicing3D;
 

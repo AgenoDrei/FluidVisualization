@@ -1,10 +1,8 @@
 #include <Configuration.h>
 #include "TextureSlicing3D.h"
 #include "TextureSlicer/TextureSlicer.h"
-#include "Renderer/TextureSlicingRenderer.h"
-
+#include "Renderer/RendererTextureSlicing.h"
 #include "WindowHandler.h"
-#include "Cameras/BaseCamera.h"
 
 TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uint dimZ, SkyBox* skyBox) {
     auto front = camera->getFront();
@@ -20,8 +18,6 @@ TextureSlicing3D::TextureSlicing3D(BaseCamera* camera, uint dimX, uint dimY, uin
 
     numSlices = 64;
     setNumSlices(numSlices);
-    _initedDecSlicesPress = false;
-    _initedIncSlicesPress = false;
 }
 
 TextureSlicing3D::~TextureSlicing3D() {}
@@ -54,39 +50,28 @@ std::string TextureSlicing3D::getName() const{
 }
 
 void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
-    if(windowHandler->getKey('r')) {
-        _renderer->enableReflection();
+    if(windowHandler->getKeyDebounce('r')) {
+        _renderer->toggleReflection();
     }
-
-    if(windowHandler->getKey('t')) {
-        _renderer->disableReflection();
-    }
-
     if(windowHandler->getKey('f')) {
-        _initedDecSlicesPress = true;
+        if (numSlices > 1) {
+            numSlices -= 1;
+            setNumSlices(numSlices);
+        }
     }
     if(windowHandler->getKey('g')) {
-        _initedIncSlicesPress = true;
-    }
-    if(!windowHandler->getKey('f') && _initedDecSlicesPress) {
-        if (numSlices > 1)
-            numSlices /= 2;
+        numSlices += 1;
         setNumSlices(numSlices);
-        _initedDecSlicesPress = false;
-    }
-    if(!windowHandler->getKey('g') && _initedIncSlicesPress) {
-        numSlices *= 2;
-        setNumSlices(numSlices);
-        _initedIncSlicesPress = false;
     }
 }
 
 void TextureSlicing3D::setConfiguration(Configuration* configuration) {
-    if(configuration->TextureSlicing3D.numSlices > 0) {
+    if(configuration->TextureSlicing3D.numSlices > 0)
         setNumSlices(configuration->TextureSlicing3D.numSlices);
-    }
+    if (configuration->TextureSlicing3D.reflection)
+        _renderer->toggleReflection();
 }
 
 void TextureSlicing3D::nextTimestep(Timestep* step) {
-
+    init(step);
 };

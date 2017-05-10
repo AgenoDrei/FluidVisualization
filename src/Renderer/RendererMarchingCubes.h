@@ -44,8 +44,8 @@ private:
 public:
     RendererMarchingCubes(SkyBox* skyBox);
 
-    void enableReflection();
-    void disableReflection();
+    void toggleReflection();
+    void toggleShadow();
 
     void enableShadow();
     void disableShadow();

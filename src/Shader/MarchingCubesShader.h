@@ -1,19 +1,14 @@
 #pragma once
 
-#include "Shader/ReflectionShader.h"
+#include "Shader/EffectShader.h"
 
-class MarchingCubesShader : public ReflectionShader {
+class MarchingCubesShader : public EffectShader {
 protected:
-    GLint _reflectionViewLocation, _depthBiasMVPLocation, _shadowLocation;
+    GLint _reflectionViewLocation, _depthBiasMVPLocation;
 public:
     MarchingCubesShader();
-
     void setReflectionView(glm::mat4& view);
-
     void setDepthBiasMVP(glm::mat4& depthBiasMVP);
-
-    void enableShadow();
-    void disableShadow();
 };
 
 

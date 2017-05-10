@@ -35,10 +35,8 @@ void main() {
         vFragColor.rgb = texture(cube_texture, reflected).rgb;
         vFragColor.a = texture(volume, vUV).r * alphaFactorInc;
 
-        //vFragColor = vec4(0.0f, 0.0f, 1.0f, texture(volume, vUV).r * alphaFactorInc);   // Note that the density is being read in as GL_RED value
-        //    vFragColor = vec4(0.0f, 0.0f, 1.0f, .5f);   // show plain slices ...
     } else {
-        vFragColor = vec4(0.0f, 0.0f, 1.0f, texture(volume, vUV).r * alphaFactorInc);   // Note that the density is being read in as GL_RED value
-//        vFragColor = vec4(0.0f, 0.0f, 1.0f, .5f);   // show plain slices ...
+        vFragColor = vec4(getNormal(vUV), texture(volume, vUV).r * alphaFactorInc);   // Note that the density is being read in as GL_RED value
     }
+//    vFragColor = vec4(0.0f, 0.0f, 1.0f, .5f);   // show plain slices ...
 }

@@ -34,18 +34,20 @@ int main(int argc, const char* argv[]) {
         if(inputFile) {
             parameter.pathToData = pt.get<std::string>("Main.InputFile");
         }
+        auto interpolation = pt.get_child_optional("Main.Interpolation");
+        if(interpolation) {
+            parameter.interpolation = pt.get<bool>("Main.Interpolation");
+        }
 
         auto marchingCubeReflection = pt.get_child_optional("MarchingCube.Reflection");
         if(marchingCubeReflection) {
             parameter.MarchingCubes.reflection = pt.get<bool>("MarchingCube.Reflection");
         }
 
-        auto interpolation = pt.get_child_optional("Main.Interpolation");
-        if(interpolation) {
-            parameter.interpolation = pt.get<bool>("Main.Interpolation");
+        auto textureSlicingReflection = pt.get_child_optional("TextureSlicing3D.Reflection");
+        if(textureSlicingReflection) {
+            parameter.TextureSlicing3D.numSlices = pt.get<bool>("TextureSlicing3D.Reflection");
         }
-
-
         auto numSlices = pt.get_child_optional("TextureSlicing3D.NumSlices");
         if(numSlices) {
             parameter.TextureSlicing3D.numSlices = pt.get<int>("TextureSlicing3D.NumSlices");
@@ -61,6 +63,13 @@ int main(int argc, const char* argv[]) {
         if(reflectionRayCasting) {
             parameter.RayCasting.reflection = pt.get<bool>("RayCasting.Shadow");
         }
+    } else {
+        parameter.MarchingCubes.reflection = false;
+        parameter.MarchingCubes.shadow = false;
+        parameter.TextureSlicing3D.reflection = false;
+        parameter.TextureSlicing3D.numSlices = 42;
+        parameter.RayCasting.reflection = false;
+        parameter.RayCasting.shadow = false;
     }
 
     po::options_description desc("Allowed options");

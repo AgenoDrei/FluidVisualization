@@ -10,9 +10,8 @@ class Camera;
 class WindowHandler;
 class DataSet;
 class Timestep;
-class Shader;
 class SkyBox;
-class Shader;
+class EffectShader;
 class Texture;
 
 class RendererRayCasting {
@@ -31,11 +30,10 @@ private:
     Texture* _texture;
     Texture* _randomTexture;
     uint32_t _particleCount;
-    Shader* _shader;
+    EffectShader* _shader;
     GLfloat _rayStepSize;
     SkyBox* _skyBox;
     glm::vec3 _lightPos;
-    bool _reflection, _shadow;
 };
 
 

@@ -66,8 +66,6 @@ RendererMarchingCubes::RendererMarchingCubes(SkyBox* skyBox) :
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // reset framebuffer
 
     _debugRenderer = new TextureRenderer(_depthTexture);
-
-    enableShadow();
 }
 
 void RendererMarchingCubes::addTriangles(const std::vector<Triangle>& triangles) {
@@ -113,24 +111,16 @@ void RendererMarchingCubes::clean() { // todo delete all stuff
     _objects.clear();
 }
 
-void RendererMarchingCubes::enableReflection() {
+void RendererMarchingCubes::toggleReflection() {
     _shader->use();
-    _shader->enableReflection();
+    _shader->toggleReflection();
+    _shader->unUse();
 }
 
-void RendererMarchingCubes::disableReflection() {
+void RendererMarchingCubes::toggleShadow() {
     _shader->use();
-    _shader->disableReflection();
-}
-
-void RendererMarchingCubes::enableShadow() {
-    _shader->use();
-    _shader->enableShadow();
-}
-
-void RendererMarchingCubes::disableShadow() {
-    _shader->use();
-    _shader->disableShadow();
+    _shader->toggleShadow();
+    _shader->unUse();
 }
 
 void RendererMarchingCubes::renderReflectionMap(BaseCamera *camera, WindowHandler *wHandler) {
@@ -259,3 +249,4 @@ void RendererMarchingCubes::renderWithShadow(BaseCamera *camera, WindowHandler *
         glBindVertexArray(0);
     }
 }
+

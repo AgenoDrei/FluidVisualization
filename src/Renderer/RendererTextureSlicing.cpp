@@ -1,14 +1,14 @@
 #include <iostream>
 #include <SkyBox.h>
-#include "TextureSlicingRenderer.h"
+#include "RendererTextureSlicing.h"
 
 #include "DataManagement/DataSet.h"
 #include "DataManagement/Timestep.h"
 #include "WindowHandler.h"
-#include "Shader/ReflectionShader.h"
+#include "Shader/EffectShader.h"
 
 TextureSlicingRenderer::TextureSlicingRenderer(uint32_t dimX, uint32_t dimY, uint32_t dimZ, SkyBox* skyBox) {
-    _shader = new ReflectionShader("shader/textureSlicer.vert", "shader/textureSlicer.frag");
+    _shader = new EffectShader("shader/textureSlicer.vert", "shader/textureSlicer.frag");
     _skyBox = skyBox;
     TextureSlicingRenderer::_sizeofTextureSlicesVolume = 42*12*sizeof(glm::vec3);  // default numSlices is 42
     TextureSlicingRenderer::_dimX = dimX;
@@ -75,26 +75,18 @@ void TextureSlicingRenderer::setBufferData(glm::vec3 *vTextureSlices) {
     glBufferSubData(GL_ARRAY_BUFFER, 0, _sizeofTextureSlicesVolume, &(vTextureSlices[0].x));
 }
 
-void TextureSlicingRenderer::enableReflection() {
+void TextureSlicingRenderer::toggleReflection() {
     _shader->use();
-    _shader->enableReflection();
-}
-
-void TextureSlicingRenderer::disableReflection() {
-    _shader->use();
-    _shader->disableReflection();
+    _shader->toggleReflection();
+    _shader->unUse();
 }
 
 void TextureSlicingRenderer::render(BaseCamera* camera, WindowHandler* wHandler) {
-    glm::mat4 model, view, projection;
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-    view = camera->GetViewMatrix();
-    projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
+    glm::mat4 model = glm::mat4();
 
     _shader->use();
-    glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+    _shader->setModelViewProjection(model, camera, wHandler);
     glUniform1f(glGetUniformLocation(_shader->Program, "alphaFactorInc"), 50.0f);
     glUniform1i(glGetUniformLocation(_shader->Program, "volume"), 0);
     glUniform1i(glGetUniformLocation(_shader->Program, "cube_texture"), 1);
@@ -105,5 +97,6 @@ void TextureSlicingRenderer::render(BaseCamera* camera, WindowHandler* wHandler)
     glBindVertexArray(_VAO);
     glDrawArrays(GL_TRIANGLES, 0, _sizeofTextureSlicesVolume / sizeof(glm::vec3));
     glBindVertexArray(0);
+
     _shader->unUse();
 }

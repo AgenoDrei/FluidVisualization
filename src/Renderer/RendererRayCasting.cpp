@@ -9,25 +9,19 @@
 #include "RendererRayCasting.h"
 #include "DataManagement/Particle.h"
 #include "DataManagement/Timestep.h"
-#include "Shader/Shader.h"
 #include "Cameras/Camera.h"
 #include "SkyBox.h"
-#include "Texture.h"
-#include <stdlib.h>
+#include <Shader/EffectShader.h>
 
 RendererRayCasting::RendererRayCasting(GLfloat rayStepSize, SkyBox* skyBox) :
         _rayStepSize(rayStepSize),
-        _skyBox(skyBox),
-        _reflection(false),
-        _shadow(true){
-    _shader = new Shader("shader/raycaster.vert", "shader/raycaster.frag");
+        _skyBox(skyBox){
+    _shader = new EffectShader("shader/raycaster.vert", "shader/raycaster.frag");
     _lightPos = glm::vec3(0.75f, 0.75f, -1.0f);
     srand(100);
 }
 
-RendererRayCasting::~RendererRayCasting() {
-
-}
+RendererRayCasting::~RendererRayCasting() {}
 
 void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep interpolated data
     glm::vec3 stepDimension = step->getParticleNumberPerDirection();
@@ -98,28 +92,18 @@ void RendererRayCasting::createShaderRandomValues() {
 void RendererRayCasting::render(Camera *camera, WindowHandler *wHandler) {
     glEnable(GL_BLEND);
 
-    glm::mat4 model, view, projection;
-    model = glm::translate(model, glm::vec3(0.0f));
-    view = camera->GetViewMatrix();
-    projection = camera->GetProjectonMatrix(wHandler, 0.1f, 10.0f);
-
+    glm::mat4 model = glm::mat4();
     glm::vec3 camPos = camera->Position;
     glm::vec3 step_size = glm::vec3(_rayStepSize);
 
     _shader->use();
-
     _skyBox->activate(_shader, "cubeTexture");
     _texture->activate(_shader);
     _randomTexture->activate(_shader);
-
-    // Pass the uniforms to the shader
-    glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(_shader->Program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    _shader->setModelViewProjection(model, camera, wHandler);
     glUniform3fv(glGetUniformLocation(_shader->Program, "camPos"), 1, glm::value_ptr(camPos));
     glUniform3fv(glGetUniformLocation(_shader->Program, "lightPos"), 1, glm::value_ptr(_lightPos));
     glUniform3fv(glGetUniformLocation(_shader->Program, "step_size"), 1, glm::value_ptr(step_size));
-
     glBindVertexArray(_cubeVAO);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
     glBindVertexArray(0);
@@ -127,7 +111,6 @@ void RendererRayCasting::render(Camera *camera, WindowHandler *wHandler) {
     glDisable(GL_BLEND);
 
     _shader->unUse();
-
 }
 
 void RendererRayCasting::changeStepSize(GLfloat value) {
@@ -140,15 +123,13 @@ void RendererRayCasting::changeLightPos() {
 
 void RendererRayCasting::toggleReflection() {
     _shader->use();
-    _reflection = !_reflection;
-    glUniform1f(glGetUniformLocation(_shader->Program, "reflection"), _reflection);
+    _shader->toggleReflection();
     _shader->unUse();
 }
 
 void RendererRayCasting::toggleShadow() {
     _shader->use();
-    _shadow = !_shadow;
-    glUniform1f(glGetUniformLocation(_shader->Program, "shadow"), _shadow);
+    _shader->toggleShadow();
     _shader->unUse();
 }
 
