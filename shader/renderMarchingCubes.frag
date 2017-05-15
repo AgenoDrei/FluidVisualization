@@ -34,10 +34,13 @@ void main() {
     vec3 projCoords = fragPosLight.xyz / fragPosLight.w;
     projCoords = projCoords * 0.5 + 0.5;
     float closestDepth = texture(shadowMap, projCoords.xy).r;
-    float currentDepth = projCoords.z;
-    float shadow = currentDepth - 0.05 > closestDepth ? 1.0 : 0.0;
-    if(shadow == 1.0f){
-        visibility = 0.5f;
+
+    if (shadow != 0) {
+        float currentDepth = projCoords.z;
+        float shadow = currentDepth - 0.05 > closestDepth ? 1.0 : 0.0;
+        if(shadow == 1.0f){
+            visibility = 0.5f;
+        }
     }
 
     //visibility = texture( shadowMap, vec3(shadowCoord.xy, (shadowCoord.z)/shadowCoord.w) );

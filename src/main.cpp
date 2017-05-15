@@ -43,6 +43,10 @@ int main(int argc, const char* argv[]) {
         if(marchingCubeReflection) {
             parameter.MarchingCubes.reflection = pt.get<bool>("MarchingCube.Reflection");
         }
+        auto marchingCubeShadow = pt.get_child_optional("MarchingCube.Shadow");
+        if(marchingCubeShadow) {
+            parameter.MarchingCubes.shadow = pt.get<bool>("MarchingCube.Shadow");
+        }
 
         auto textureSlicingReflection = pt.get_child_optional("TextureSlicing3D.Reflection");
         if(textureSlicingReflection) {
@@ -60,9 +64,10 @@ int main(int argc, const char* argv[]) {
             parameter.RayCasting.reflection = pt.get<bool>("RayCasting.Reflection");
         }
         auto shadowRayCasting = pt.get_child_optional("RayCasting.Shadow");
-        if(reflectionRayCasting) {
-            parameter.RayCasting.reflection = pt.get<bool>("RayCasting.Shadow");
+        if(shadowRayCasting) {
+            parameter.RayCasting.shadow = pt.get<bool>("RayCasting.Shadow");
         }
+
     } else {
         parameter.MarchingCubes.reflection = false;
         parameter.MarchingCubes.shadow = false;
