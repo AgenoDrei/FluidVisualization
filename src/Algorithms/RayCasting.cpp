@@ -4,6 +4,7 @@
 
 #include <Renderer/RendererRayCasting.h>
 #include <memory>
+#include <Configuration.h>
 #include "RayCasting.h"
 #include "DataManagement/Timestep.h"
 #include "SkyBox.h"
@@ -51,7 +52,11 @@ void RayCasting::processKeyboard(WindowHandler* windowHandler) {
 }
 
 void RayCasting::setConfiguration(Configuration* configuration) {
-    conf = configuration;
+//    conf = configuration;
+    if(configuration->RayCasting.reflection)
+        _renderer->toggleReflection();
+    if(configuration->RayCasting.shadow)
+        _renderer->toggleShadow();
 }
 
 void RayCasting::nextTimestep(Timestep* step) {

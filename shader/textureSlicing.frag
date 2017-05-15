@@ -8,7 +8,7 @@ layout(location = 0) out vec4 vFragColor;
 uniform sampler3D volume;		// volume dataset
 uniform float alphaFactorInc;   // adjust for overly opace values
 uniform samplerCube cube_texture;
-uniform mat4 view; // view matrix
+uniform mat4 view;
 uniform float reflection;
 
 const float epsilon = 0.001;
@@ -38,5 +38,5 @@ void main() {
     } else {
         vFragColor = vec4(getNormal(vUV), texture(volume, vUV).r * alphaFactorInc);   // Note that the density is being read in as GL_RED value
     }
-//    vFragColor = vec4(0.0f, 0.0f, 1.0f, .5f);   // show plain slices ...
+//    vFragColor = vec4(0.0f, 0.0f, 1.0f, .5f);   // show plain slices (-> Cube) ...
 }

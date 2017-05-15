@@ -8,7 +8,7 @@
 #include "Shader/EffectShader.h"
 
 TextureSlicingRenderer::TextureSlicingRenderer(uint32_t dimX, uint32_t dimY, uint32_t dimZ, SkyBox* skyBox) {
-    _shader = new EffectShader("shader/textureSlicer.vert", "shader/textureSlicer.frag");
+    _shader = new EffectShader("shader/textureSlicing.vert", "shader/textureSlicing.frag");
     _skyBox = skyBox;
     TextureSlicingRenderer::_sizeofTextureSlicesVolume = 42*12*sizeof(glm::vec3);  // default numSlices is 42
     TextureSlicingRenderer::_dimX = dimX;

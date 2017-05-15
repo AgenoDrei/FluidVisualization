@@ -53,6 +53,7 @@ A config.ini file will have the following structure:
 >Shadow={0 / 1}
 >
 >[TextureSlicing3D]<br>
+>Reflection={0 / 1}<br>
 >NumSlices={1 / 2 / ...}
 >
 >[RayCasting]<br>
@@ -60,7 +61,8 @@ A config.ini file will have the following structure:
 >Shadow={0 / 1}
 
 where each value in curly braces may be chosen and writen plain (without braces: e.g. *Reflection=1*).
-All options except for _InputFile_ are optional.
+All options except for _InputFile_ are optional. 
+Note that *StartAlgorithm* has the displayed Algorithm-Names as Input, NOT the ones displayed in brackets in the config file.
 
 ## Keys
 

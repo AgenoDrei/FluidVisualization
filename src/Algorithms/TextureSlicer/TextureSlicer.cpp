@@ -4,9 +4,8 @@
 TextureSlicer::TextureSlicer() {
     numSlices = 42;     // default is 42
     _vTextureSlices = new glm::vec3[numSlices*12];
-//    _vTextureSlices = (glm::vec3*) malloc (sizeof(glm::vec3) * numSlices * 12);
 
-    // xyz-coordinates for each UC-vertice
+    // xyz-coordinates for each UC-vertex
     _ucVertices = new glm::vec3[8] {
         glm::vec3(0,0,0),
         glm::vec3(1,0,0),
@@ -55,8 +54,7 @@ glm::vec3* TextureSlicer::getSlicedVolume() {
 }
 
 void TextureSlicer::sliceVolumedata(glm::vec3 viewDir) {
-    std::cout << "Slicing for viewDirSlicing: " << glm::to_string(viewDir) << std::endl;
-
+//    std::cout << "Slicing for viewDirSlicing: " << glm::to_string(viewDir) << std::endl;
     float minDist, maxDist;
     int maxIdx;
     glm::vec3 vecStart[12], vecDir[12];
@@ -96,10 +94,7 @@ void TextureSlicer::calcVecsAndLambdas(glm::vec3 viewDir, float minDist, float m
     float plane_dist = minDist,    //set the minimum distance as the plane_dist
             plane_dist_inc = (maxDist-minDist)/float(numSlices),
             denom;
-//
-//        vecStart[i] = _ucVertices[_ucEdgesPos[_possibleTraverses[max_index][i]][0]];     // get positionVector
-//        vecDir[i] = _ucVertices[_ucEdgesPos[_possibleTraverses[max_index][i]][1]] - vecStart[i];   // get directionVector based from positionVector and accoridng traverse direction
-//
+
     int* chosenTraverse = &(_possibleTraverses[maxIdx*12]);  //chosenTraverse is int[12] ...
     for(int i=0;i<12;i++) {     //for all edges
         int edgeIdx = chosenTraverse[i];

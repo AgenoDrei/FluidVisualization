@@ -26,45 +26,37 @@ int main(int argc, const char* argv[]) {
 
         boost::property_tree::ptree pt;
         boost::property_tree::ini_parser::read_ini("config.ini", pt);
-        auto algorithm = pt.get_child_optional("Main.StartAlgorithm");
-        if(algorithm) {
+
+        if(pt.get_child_optional("Main.StartAlgorithm")) {
             parameter.algorithm = pt.get<std::string>("Main.StartAlgorithm");
         }
-        auto inputFile = pt.get_child_optional("Main.InputFile");
-        if(inputFile) {
+        if(pt.get_child_optional("Main.InputFile")) {
             parameter.pathToData = pt.get<std::string>("Main.InputFile");
         }
-        auto interpolation = pt.get_child_optional("Main.Interpolation");
-        if(interpolation) {
+        if(pt.get_child_optional("Main.Interpolation")) {
             parameter.interpolation = pt.get<bool>("Main.Interpolation");
         }
 
-        auto marchingCubeReflection = pt.get_child_optional("MarchingCube.Reflection");
-        if(marchingCubeReflection) {
+        if(pt.get_child_optional("MarchingCube.Reflection")) {
             parameter.MarchingCubes.reflection = pt.get<bool>("MarchingCube.Reflection");
         }
-        auto marchingCubeShadow = pt.get_child_optional("MarchingCube.Shadow");
-        if(marchingCubeShadow) {
+        if(pt.get_child_optional("MarchingCube.Shadow")) {
             parameter.MarchingCubes.shadow = pt.get<bool>("MarchingCube.Shadow");
         }
 
-        auto textureSlicingReflection = pt.get_child_optional("TextureSlicing3D.Reflection");
-        if(textureSlicingReflection) {
-            parameter.TextureSlicing3D.numSlices = pt.get<bool>("TextureSlicing3D.Reflection");
+        if(pt.get_child_optional("TextureSlicing3D.Reflection")) {
+            parameter.TextureSlicing3D.reflection = pt.get<bool>("TextureSlicing3D.Reflection");
         }
-        auto numSlices = pt.get_child_optional("TextureSlicing3D.NumSlices");
-        if(numSlices) {
+        if(pt.get_child_optional("TextureSlicing3D.NumSlices")) {
             parameter.TextureSlicing3D.numSlices = pt.get<int>("TextureSlicing3D.NumSlices");
         } else {
             parameter.TextureSlicing3D.numSlices = -1;
         }
 
-        auto reflectionRayCasting = pt.get_child_optional("RayCasting.Reflection");
-        if(reflectionRayCasting) {
+        if(pt.get_child_optional("RayCasting.Reflection")) {
             parameter.RayCasting.reflection = pt.get<bool>("RayCasting.Reflection");
         }
-        auto shadowRayCasting = pt.get_child_optional("RayCasting.Shadow");
-        if(shadowRayCasting) {
+        if(pt.get_child_optional("RayCasting.Shadow")) {
             parameter.RayCasting.shadow = pt.get<bool>("RayCasting.Shadow");
         }
 
@@ -139,18 +131,11 @@ po::variables_map setupCommandLine(int argc, const char* argv[], po::options_des
 void init(Configuration* parameter) {
     std::cout << "Log> FluidVisualization init running" << std::endl;
 
-    /*std::string path = std::getenv("HOME");
-    auto data = DataImporter::load(path + "/Downloads/drop_100.dat");*/
     auto data = DataImporter::load(parameter->pathToData);
     auto interpolationController = new OctreeInterpolationController(0.01, 1.0);
     auto interpolatedData = data;
     if(parameter->interpolation)
         interpolatedData = interpolationController->interpolateData(data, 200, 200, 200);
-
-    //auto interpolatedData = data;
-    //auto firstTimestep = interpolatedData->getTimestep(0);
-    //DataExporter::write("/home/simon/Downloads/drop_normals_100.dat", interpolatedData);
-    //delete interpolationController; TODO: segfault --- simon whats going on? Create the controller on stack?
 
     fluidVisualisation = new FluidVisualisation(interpolatedData, parameter);
     fluidVisualisation->init(window);

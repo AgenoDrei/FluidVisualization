@@ -3,7 +3,7 @@
 #include "MarchingCubesShader.h"
 
 MarchingCubesShader::MarchingCubesShader()
-    : EffectShader("shader/renderMarchingCubes.vert", "shader/renderMarchingCubes.frag") {
+    : EffectShader("shader/marchingCubes.vert", "shader/marchingCubes.frag") {
 
     use();
 

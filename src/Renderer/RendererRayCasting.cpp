@@ -16,7 +16,7 @@
 RendererRayCasting::RendererRayCasting(GLfloat rayStepSize, SkyBox* skyBox) :
         _rayStepSize(rayStepSize),
         _skyBox(skyBox){
-    _shader = new EffectShader("shader/raycaster.vert", "shader/raycaster.frag");
+    _shader = new EffectShader("shader/raycasting.vert", "shader/raycasting.frag");
     _lightPos = glm::vec3(0.75f, 0.75f, -1.0f);
     srand(100);
 }
