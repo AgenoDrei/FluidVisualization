@@ -40,3 +40,6 @@ void ParticlePoints::setConfiguration(Configuration* configuration) {
 void ParticlePoints::nextTimestep(Timestep* step) {
     init(step);
 };
+
+void ParticlePoints::setLight(BaseLight* light) {
+}

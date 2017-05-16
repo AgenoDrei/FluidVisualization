@@ -29,6 +29,7 @@ public:
 
     virtual void nextTimestep(Timestep* step) override;
 
+    virtual void setLight(BaseLight* light) override;
 };
 
 

@@ -62,3 +62,6 @@ void RayCasting::setConfiguration(Configuration* configuration) {
 void RayCasting::nextTimestep(Timestep* step) {
     init(step);
 };
+
+void RayCasting::setLight(BaseLight* light) {
+}

@@ -75,3 +75,6 @@ void TextureSlicing3D::setConfiguration(Configuration* configuration) {
 void TextureSlicing3D::nextTimestep(Timestep* step) {
     init(step);
 };
+
+void TextureSlicing3D::setLight(BaseLight* light) {
+}

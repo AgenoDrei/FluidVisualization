@@ -14,6 +14,7 @@
 #include <Algorithms/ParticlePoints.h>
 
 #include <iostream>
+#include <Renderer/Lighting/DirectionalLight.h>
 
 FluidVisualisation::FluidVisualisation(DataSet* data, Configuration* configuration) :
     _data(data) {
@@ -23,9 +24,12 @@ FluidVisualisation::FluidVisualisation(DataSet* data, Configuration* configurati
 
     _camera = new Camera(glm::vec3(0.5f, 0.4f, 1.7f));
 
+    auto light = new DirectionalLight();
+
     std::unique_ptr<BaseAlgorithm> particlePoints(new ParticlePoints());
     particlePoints->setConfiguration(configuration);
     std::unique_ptr<BaseAlgorithm> marchingCubes(new MarchingCubes(_skyBox));
+    marchingCubes->setLight(light);
     marchingCubes->setConfiguration(configuration);
     std::unique_ptr<BaseAlgorithm> textureSlicing3D(new TextureSlicing3D(_camera, (uint)partNumsPerDir.x, (uint)partNumsPerDir.y, (uint)partNumsPerDir.z, _skyBox));
     textureSlicing3D->setConfiguration(configuration);
@@ -36,7 +40,6 @@ FluidVisualisation::FluidVisualisation(DataSet* data, Configuration* configurati
     _algorithms.push_back(std::move(marchingCubes));
     _algorithms.push_back(std::move(rayCasting));
     _algorithms.push_back(std::move(textureSlicing3D));
-
 
     switchAlgorithm(findAlgorithm(configuration->algorithm));
 }

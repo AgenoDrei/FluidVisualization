@@ -6,6 +6,7 @@ class BaseCamera;
 class WindowHandler;
 class Timestep;
 class Configuration;
+class BaseLight;
 
 class BaseAlgorithm {
 protected:
@@ -23,6 +24,8 @@ public:
     virtual void setConfiguration(Configuration* configuration) = 0;
 
     virtual void nextTimestep(Timestep* step) = 0;
+
+    virtual void setLight(BaseLight* light) = 0;
 };
 
 

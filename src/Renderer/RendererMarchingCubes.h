@@ -21,6 +21,7 @@ class ShadowMapShader;
 class TextureRenderer;
 class RendererDebugQuad;
 class MVPShader;
+class DirectionalLight;
 
 class RendererMarchingCubes {
 private:
@@ -34,21 +35,18 @@ private:
     std::list<MarchingCubesRenderObject*> _objects;
 
     void renderReflectionMap(BaseCamera *camera, WindowHandler *wHandler);
-    void renderShadowMap(BaseCamera *camera, WindowHandler *wHandler);
+    void renderShadowMap(WindowHandler *wHandler);
 
     void renderWithShadow(BaseCamera *camera, WindowHandler *wHandler);
 
-    glm::mat4 getDepthProjectionMatrix();
-
     TextureRenderer* _debugRenderer;
+
+    DirectionalLight* _light;
 public:
     RendererMarchingCubes(SkyBox* skyBox);
 
     void toggleReflection();
     void toggleShadow();
-
-    void enableShadow();
-    void disableShadow();
 
     void addTriangles(const std::vector<Triangle>& triangles);
     void addVertexIndexBuffer(const std::vector<VertexPositionNormal>& vertices, const std::vector<int>& indices);
@@ -58,6 +56,8 @@ public:
     void clean();
 
     glm::mat4* getShadowMVP();
+
+    void setLight(DirectionalLight* light);
 };
 
 

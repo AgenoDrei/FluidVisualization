@@ -14,7 +14,7 @@ RendererDebugQuad::~RendererDebugQuad() {
 }
 
 void RendererDebugQuad::setData(Timestep* step, uint32_t count) {
-    std::cout << "Log> Size of flaot: " << sizeof(float) << std::endl;
+    std::cout << "Log> Size of float: " << sizeof(float) << std::endl;
     GLfloat quadData [] = {
         1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
         1.0f, -1.0f, 0.0f, 1.0f, 0.0f,

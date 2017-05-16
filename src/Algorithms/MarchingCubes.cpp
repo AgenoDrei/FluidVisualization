@@ -10,6 +10,7 @@
 #include "MarchingCubes/MarchingCubesCalculator.h"
 #include "MarchingCubes/Grid.h"
 #include "MarchingCubes/VertexWelder.h"
+#include "Renderer/Lighting/DirectionalLight.h"
 
 MarchingCubes::MarchingCubes(SkyBox* skyBox) {
     std::unique_ptr<MarchingCubesCalculator> calculator(new MarchingCubesCalculator());
@@ -61,3 +62,10 @@ void MarchingCubes::setConfiguration(Configuration* configuration) {
 void MarchingCubes::nextTimestep(Timestep* step) {
     init(step);
 };
+
+void MarchingCubes::setLight(BaseLight* light) {
+    auto directionalLight = dynamic_cast<DirectionalLight*>(light);
+    if(directionalLight) {  
+        _renderer->setLight(directionalLight);
+    }
+}

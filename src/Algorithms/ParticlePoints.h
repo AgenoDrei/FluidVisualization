@@ -23,4 +23,6 @@ public:
     virtual void setConfiguration(Configuration* configuration) override;
 
     virtual void nextTimestep(Timestep* step) override;
+
+    virtual void setLight(BaseLight* light) override;
 };

@@ -13,6 +13,7 @@
 #include "Cameras/ReflectionCamera.h"
 #include "Shader/ShadowMapShader.h"
 #include "Renderer/RendererDebugQuad.h"
+#include "Renderer/Lighting/DirectionalLight.h"
 
 RendererMarchingCubes::RendererMarchingCubes(SkyBox* skyBox) :
     _skyBox(skyBox) {
@@ -104,10 +105,19 @@ void RendererMarchingCubes::addVertexIndexBuffer(const std::vector<VertexPositio
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
-    _objects.push_back(new MarchingCubesRenderObject(indices.size(), indexBuffer, vertexBuffer));
+    _objects.push_back(new MarchingCubesRenderObject((GLuint)indices.size(), indexBuffer, vertexBuffer));
 }
 
-void RendererMarchingCubes::clean() { // todo delete all stuff
+void RendererMarchingCubes::clean() {
+    for(auto o : _objects) {
+        if(o->isIndexed()) {
+            auto indexBuffer = o->getIndexBuffer();
+            glDeleteBuffers(1, &indexBuffer);
+        }
+
+        auto vertexBuffer = o->getVertexBuffer()->getVBO();
+        glDeleteBuffers(1, &vertexBuffer);
+    }
     _objects.clear();
 }
 
@@ -132,23 +142,23 @@ void RendererMarchingCubes::renderReflectionMap(BaseCamera *camera, WindowHandle
     _skyBox->render(camera, wHandler);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, wHandler->getWidth(), wHandler->getHeight());
-}
-
-glm::mat4 RendererMarchingCubes::getDepthProjectionMatrix() {
-    return glm::ortho<float>(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 1.0);
+    glViewport(0, 0, (GLsizei) wHandler->getWidth(), (GLsizei) wHandler->getHeight());
 }
 
 glm::mat4* RendererMarchingCubes::getShadowMVP() {
     glm::mat4* mvp = new glm::mat4[3];
     mvp[0] = glm::mat4();
-    mvp[1] = glm::lookAt(glm::vec3(0.5f, 0.6f, 1.0f), glm::vec3(0.5f, 0.25f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f));
+    if(!_light) {
+        mvp[1] = glm::lookAt(glm::vec3(0.5f, 0.6f, 1.0f), glm::vec3(0.5f, 0.25f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f));
+    } else {
+        mvp[1] = glm::lookAt(glm::vec3(0.5f, 0.6f, 1.0f), _light->direction, glm::vec3(0.0f, 1.0f, 0.0f));
+    }
     mvp[2] = glm::ortho<float>(-0.75f, 0.75f, -0.75f, 0.75f, 0.1f, 1.0);
 
     return mvp;
 }
 
-void RendererMarchingCubes::renderShadowMap(BaseCamera *camera, WindowHandler *wHandler) {
+void RendererMarchingCubes::renderShadowMap(WindowHandler *wHandler) {
     glViewport(0, 0, 1024, 1024);
     glBindFramebuffer(GL_FRAMEBUFFER, _shadowMapFramebuffer);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -156,19 +166,13 @@ void RendererMarchingCubes::renderShadowMap(BaseCamera *camera, WindowHandler *w
 
     glm::mat4* lightSpaceMatrix = getShadowMVP();
 
-    //std::cout << glm::to_string(lightSpaceMatrix[2] * lightSpaceMatrix[1]) << std::endl;
-
-
     _shadowShader->use();
     _shadowShader->setModelViewProjection(lightSpaceMatrix[0], lightSpaceMatrix[1], lightSpaceMatrix[2]);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     for(auto object : _objects) {
         glBindVertexArray(object->getVertexBuffer()->getVAO());
@@ -185,22 +189,18 @@ void RendererMarchingCubes::renderShadowMap(BaseCamera *camera, WindowHandler *w
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, wHandler->getWidth(), wHandler->getHeight());
+    glViewport(0, 0, (GLsizei) wHandler->getWidth(), (GLsizei) wHandler->getHeight());
 }
 
 void RendererMarchingCubes::render(BaseCamera *camera, WindowHandler *wHandler) {
-    renderShadowMap(camera, wHandler);
-
-    //_debug->render(camera, wHandler, _depthTexture);
+    renderShadowMap(wHandler);
 
     renderWithShadow(camera, wHandler);
 }
 
 void RendererMarchingCubes::renderWithShadow(BaseCamera *camera, WindowHandler *wHandler) {
     auto reflectionCamera = new ReflectionCamera(camera, glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //TODO: set clipping
     renderReflectionMap(reflectionCamera, wHandler);
 
     glm::mat4 model = glm::mat4();
@@ -210,30 +210,21 @@ void RendererMarchingCubes::renderWithShadow(BaseCamera *camera, WindowHandler *
     auto reflectionViewMatrix = reflectionCamera->GetViewMatrix();
     _shader->setReflectionView(reflectionViewMatrix);
 
-    //glm::vec3 lightInvDir = glm::vec3(0.3f,1.0,2);
     glm::mat4* lightViewMatrix = getShadowMVP();
 
     glm::mat4 depthMVP = lightViewMatrix[2] * lightViewMatrix[1];
-    //std::cout << glm::to_string(depthMVP) << std::endl;
-    //glm::mat4 depthBiasMVP = depthMVP;
-
     _shader->setDepthBiasMVP(depthMVP);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, _reflectionTexture);
-    //glBindTexture(GL_TEXTURE_2D, _depthTexture);
 
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, _depthTexture);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_FRONT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 
     for(auto object : _objects) {
         glBindVertexArray(object->getVertexBuffer()->getVAO());
@@ -248,5 +239,9 @@ void RendererMarchingCubes::renderWithShadow(BaseCamera *camera, WindowHandler *
         }
         glBindVertexArray(0);
     }
+}
+
+void RendererMarchingCubes::setLight(DirectionalLight* light) {
+    _light = light;
 }
 
