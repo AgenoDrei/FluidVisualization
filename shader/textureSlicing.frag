@@ -2,7 +2,6 @@
 
 in vec3 vUV;     //3D texture coordinates form vertex shader interpolated by rasterizer
 in vec3 pos_eye;
-in vec3 n_eye;
 layout(location = 0) out vec4 vFragColor;
 
 uniform sampler3D volume;		// volume dataset
