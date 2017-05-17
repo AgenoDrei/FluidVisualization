@@ -21,6 +21,7 @@ public:
     ~Texture();
     void setData(GLfloat* data, GLint internalFormat, GLenum format);
     void activate(Shader* shader);
+    static void reuseTextures();
 
     static GLuint textureIndex;
 private:

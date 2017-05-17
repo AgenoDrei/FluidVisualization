@@ -60,6 +60,7 @@ void RayCasting::setConfiguration(Configuration* configuration) {
 }
 
 void RayCasting::nextTimestep(Timestep* step) {
+    Texture::reuseTextures();
     init(step);
 };
 

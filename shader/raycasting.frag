@@ -42,7 +42,6 @@ vec3 getShadow(vec3 at) {
 
     vec3 dataPos = at;
     vec3 geomDir = normalize(lightPos - dataPos);
-    //vec3 geomDir = -lightDir;
     vec3 dirStep = geomDir * step_size * 2.0f;
     bool shadow = false;
 
@@ -89,9 +88,7 @@ void main()
 		    || dataPos.z > texMax.z || dataPos.z < texMin.z) {
 		    break;
 		}
-
-
-		/*stop = dot(sign(dataPos-texMin),sign(texMax-dataPos)) < 3.0;
+        /*stop = dot(sign(dataPos-texMin),sign(texMax-dataPos)) < 3.0;
 		if (stop)
 			break;*/
 
@@ -110,15 +107,8 @@ void main()
                 vFragColor.rgb = reflections * vec3(.5, .5, .6) * shadows;
 		}
 
-		//Opacity calculation using compositing:
-		//here we use front to back compositing scheme whereby the current sample
-		//value is multiplied to the currently accumulated alpha and then this product
-		//is subtracted from the sample value to get the alpha from the previous steps.
-		//Next, this alpha is multiplied with the current sample colour and accumulated
-		//to the composited colour. The alpha value from the previous steps is then
-		//accumulated to the composited colour alpha.
+		//Opacity calculation using front to back compositing:
 		float prev_alpha = sampleValue - (sampleValue * vFragColor.a);
-		//vFragColor.rgb = prev_alpha * sampleValue + vFragColor.rgb;
 		vFragColor.a += prev_alpha;
 
 		//early ray termination
