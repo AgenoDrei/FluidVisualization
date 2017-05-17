@@ -65,3 +65,7 @@ void Texture::activate(Shader* shader) {
     glUniform1i(glGetUniformLocation(shader->Program, _name.c_str()), _textureIndex);
 
 }
+
+void Texture::reuseTextures() {
+    Texture::textureIndex = 0;
+}

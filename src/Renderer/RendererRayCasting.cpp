@@ -25,14 +25,11 @@ RendererRayCasting::~RendererRayCasting() {}
 
 void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep interpolated data
     glm::vec3 stepDimension = step->getParticleNumberPerDirection();
-    //uint32_t symmetricSize = stepDimension.x * stepDimension.x * stepDimension.x;
     //Load buffer to 3D texture
     _particleCount = count;
     GLfloat* pData = new GLfloat[_particleCount*4];
-    //GLubyte* pData = new GLubyte[particleCount];
 
     uint32_t index = 0;
-
     for (auto i = 0u; i < count; i++) {
         Particle tmp = step->getParticle(i);
         pData[index++] = 0.0f;
@@ -43,10 +40,10 @@ void RendererRayCasting::setData(Timestep *step, uint32_t count) { // Timestep i
         //pData[i] = 1.0f;
     }
 
-    //std::memset(&pData[index], 0.0f, (symmetricSize - particleCount) * 4);
-
     _texture = new Texture(stepDimension.x, stepDimension.y, stepDimension.z, THREE, GL_CLAMP_TO_BORDER, GL_LINEAR, "volume");
     _texture->setData(pData, GL_RGBA4, GL_RGBA);
+
+    delete [] pData;
 
     createShaderRandomValues();
 
