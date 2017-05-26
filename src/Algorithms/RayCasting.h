@@ -11,6 +11,9 @@ class SkyBox;
 class Configuration;
 
 class RayCasting : public BaseAlgorithm {
+private:
+    bool _reflectionEnabled = true;
+    bool _shadowsEnabled = true;
 protected:
     std::unique_ptr<RendererRayCasting> _renderer;
     Configuration* conf;
@@ -24,6 +27,8 @@ public:
     virtual void render(BaseCamera* camera, WindowHandler* windowHandler) override;
 
     virtual std::string getName() const override;
+    virtual bool getReflection() const override;
+    virtual bool getShadows() const override;
 
     virtual void processKeyboard(WindowHandler* windowHandler) override;
 

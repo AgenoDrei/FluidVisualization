@@ -46,17 +46,23 @@ std::string MarchingCubes::getName() const {
 void MarchingCubes::processKeyboard(WindowHandler* windowHandler) {
     if(windowHandler->getKeyDebounce('r')) {
         _renderer->toggleReflection();
+        _reflectionEnabled = !_reflectionEnabled;
     }
     if(windowHandler->getKeyDebounce('t')) {
         _renderer->toggleShadow();
+        _shadowsEnabled = !_shadowsEnabled;
     }
 }
 
 void MarchingCubes::setConfiguration(Configuration* configuration) {
-    if(configuration->MarchingCubes.reflection)
+    if(configuration->MarchingCubes.reflection) {
         _renderer->toggleReflection();
-    if(configuration->MarchingCubes.shadow)
+        _reflectionEnabled = !_reflectionEnabled;
+    }
+    if(configuration->MarchingCubes.shadow) {
         _renderer->toggleShadow();
+        _shadowsEnabled = !_shadowsEnabled;
+    }
 }
 
 void MarchingCubes::nextTimestep(Timestep* step) {
@@ -68,4 +74,12 @@ void MarchingCubes::setLight(BaseLight* light) {
     if(directionalLight) {  
         _renderer->setLight(directionalLight);
     }
+}
+
+bool MarchingCubes::getShadows() const {
+    return _shadowsEnabled;
+}
+
+bool MarchingCubes::getReflection() const {
+    return _reflectionEnabled;
 }

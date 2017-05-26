@@ -22,8 +22,8 @@ SET(LIGHTING_H Renderer/Lighting/BaseLight.h Renderer/Lighting/DirectionalLight.
 SET(SHADER_CPP Shader/ShadowMapShader.cpp Shader/GroundShader.cpp Shader/MarchingCubesShader.cpp Shader/EffectShader.cpp Shader/MVPShader.cpp Shader/Shader.cpp Shader/SkyBoxShader.cpp)
 SET(SHADER_CH Shader/ShadowMapShader.h Shader/GroundShader.h Shader/MarchingCubesShader.h Shader/EffectShader.h Shader/MVPShader.h Shader/Shader.h Shader/SkyBoxShader.h)
 
-SET(SRC_CPP main.cpp FluidVisualisation.cpp Ground.cpp SkyBox.cpp VertexPositionNormal.cpp VertexArrayBuffer.cpp WindowHandler.cpp Texture.cpp)
-SET(SRC_H main.h FluidVisualisation.h Ground.h SkyBox.h VertexPositionNormal.h VertexArrayBuffer.h WindowHandler.h Texture.h)
+SET(SRC_CPP main.cpp FluidVisualisation.cpp Ground.cpp SkyBox.cpp VertexPositionNormal.cpp VertexArrayBuffer.cpp WindowHandler.cpp Texture.cpp CSVWriter.cpp)
+SET(SRC_H main.h FluidVisualisation.h Ground.h SkyBox.h VertexPositionNormal.h VertexArrayBuffer.h WindowHandler.h Texture.h CSVWriter.h)
 
 SET(SRC ${SRC_CPP} ${SRC_H} ${ALGORITHM_CPP} ${ALGORITHM_H} ${CAMERAS_CPP} ${CAMERAS_H} ${DATA_MANAGEMENT_CPP} ${DATA_MANAGEMENT_H} ${RENDERER_CPP} ${RENDERER_H} ${SHADER_CPP} ${SHADER_H} ${LIGHTING_CPP} ${LIGHTING_H})
 
