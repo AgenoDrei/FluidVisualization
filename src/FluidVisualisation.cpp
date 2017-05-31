@@ -9,6 +9,8 @@
 #include "Algorithms/TextureSlicing3D.h"
 #include "Algorithms/RayCasting.h"
 #include "Configuration.h"
+#include "CSVWriter.h"
+#include <chrono>
 
 #include <algorithm>
 #include <Algorithms/ParticlePoints.h>
@@ -42,11 +44,14 @@ FluidVisualisation::FluidVisualisation(DataSet* data, Configuration* configurati
     _algorithms.push_back(std::move(textureSlicing3D));
 
     switchAlgorithm(findAlgorithm(configuration->algorithm));
+
+    _performanceWriter = new CSVWriter("performance.csv");
 }
 
 FluidVisualisation::~FluidVisualisation() {
     delete _skyBox;
     delete _camera;
+    delete _performanceWriter;
 }
 
 std::unique_ptr<BaseAlgorithm>* FluidVisualisation::findAlgorithm(std::string name) {
@@ -80,11 +85,19 @@ void FluidVisualisation::nextTimestep() {
 void FluidVisualisation::render() {
     _skyBox->render(_camera, _windowHandler);
 
+    std::chrono::high_resolution_clock::time_point start, finish;
     if(*_currentAlgorithm) { // only render the algorithm if one is selected
+        start = std::chrono::high_resolution_clock::now();
         _currentAlgorithm->get()->render(_camera, _windowHandler);
+        finish = std::chrono::high_resolution_clock::now();
     }
 
     auto fps = _windowHandler->calculateFPS();
+
+    if(*_currentAlgorithm) {
+        _performanceWriter->writeFrame(_currentAlgorithm->get()->getName(), std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count(), fps, _currentAlgorithm->get()->getReflection(), _currentAlgorithm->get()->getShadows());
+    }
+
     _textRenderer->drawText(std::to_string(fps), glm::vec2(21.0f, 21.0f), 1.0f, glm::vec3(0.3f, 0.7f, 0.9f));
 
     _textRenderer->drawText("Current Alogirthm: " + _currentAlgorithm->get()->getName(), glm::vec2(21.0f, 550.0f), 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));

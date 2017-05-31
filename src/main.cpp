@@ -10,6 +10,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include "Configuration.h"
+#include <signal.h>
 
 WindowHandler* window;
 FluidVisualisation* fluidVisualisation;
@@ -96,6 +97,13 @@ int main(int argc, const char* argv[]) {
 
     std::cout<<"Input file: "<<parameter.pathToData<<std::endl;
 
+    struct sigaction sigIntHandlerAction;
+
+    sigIntHandlerAction.sa_handler = sigIntHandler;
+    sigemptyset(&sigIntHandlerAction.sa_mask);
+    sigIntHandlerAction.sa_flags = 0;
+    sigaction(SIGINT, &sigIntHandlerAction, NULL);
+
     //Window Initialisation
     window = new WindowHandler(800, 600);
     window->initWindow(argc, argv, &init, &mainLoop, &parameter);
@@ -104,6 +112,13 @@ int main(int argc, const char* argv[]) {
     delete window;
 
     return 0;
+}
+
+void sigIntHandler(int s) {
+    delete fluidVisualisation;
+    delete window;
+
+    exit(1);
 }
 
 void printHelp(boost::program_options::options_description& desc) {

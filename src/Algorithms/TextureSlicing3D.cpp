@@ -52,6 +52,7 @@ std::string TextureSlicing3D::getName() const{
 void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
     if(windowHandler->getKeyDebounce('r')) {
         _renderer->toggleReflection();
+        _reflectionEnabled = !_reflectionEnabled;
     }
     if(windowHandler->getKey('f')) {
         if (numSlices > 1) {
@@ -68,8 +69,10 @@ void TextureSlicing3D::processKeyboard(WindowHandler* windowHandler) {
 void TextureSlicing3D::setConfiguration(Configuration* configuration) {
     if(configuration->TextureSlicing3D.numSlices > 0)
         setNumSlices(configuration->TextureSlicing3D.numSlices);
-    if (configuration->TextureSlicing3D.reflection)
+    if (configuration->TextureSlicing3D.reflection) {
         _renderer->toggleReflection();
+        _reflectionEnabled = !_reflectionEnabled;
+    }
 }
 
 void TextureSlicing3D::nextTimestep(Timestep* step) {
@@ -77,4 +80,12 @@ void TextureSlicing3D::nextTimestep(Timestep* step) {
 };
 
 void TextureSlicing3D::setLight(BaseLight* light) {
+}
+
+bool TextureSlicing3D::getShadows() const {
+    return false;
+}
+
+bool TextureSlicing3D::getReflection() const {
+    return _reflectionEnabled;
 }

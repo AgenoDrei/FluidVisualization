@@ -18,6 +18,8 @@ public:
     virtual void render(BaseCamera* camera, WindowHandler* windowHandler) = 0;
 
     virtual std::string getName() const = 0;
+    virtual bool getReflection() const = 0;
+    virtual bool getShadows() const = 0;
 
     virtual void processKeyboard(WindowHandler* windowHandler) = 0;
 

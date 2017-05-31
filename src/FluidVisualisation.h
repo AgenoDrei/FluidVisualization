@@ -12,6 +12,7 @@ class DataSet;
 class Timestep;
 class TextRenderer;
 class Configuration;
+class CSVWriter;
 
 class FluidVisualisation {
 private:
@@ -30,6 +31,8 @@ private:
     void nextTimestep();
 
     TextRenderer* _textRenderer;
+
+    CSVWriter* _performanceWriter;
 public:
     FluidVisualisation(DataSet* data, Configuration* configuration);
 
