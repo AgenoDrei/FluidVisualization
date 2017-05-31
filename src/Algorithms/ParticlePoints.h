@@ -17,6 +17,8 @@ public:
     virtual void render(BaseCamera* camera, WindowHandler* windowHandler) override;
 
     virtual std::string getName() const override;
+    virtual bool getReflection() const override;
+    virtual bool getShadows() const override;
 
     virtual void processKeyboard(WindowHandler* windowHandler) override;
 

@@ -9,6 +9,9 @@ class RendererMarchingCubes;
 class SkyBox;
 
 class MarchingCubes : public BaseAlgorithm {
+private:
+    bool _reflectionEnabled = true;
+    bool _shadowsEnabled = true;
 protected:
     std::unique_ptr<MarchingCubesCalculator> _calculator;
     std::unique_ptr<RendererMarchingCubes> _renderer;
@@ -22,6 +25,8 @@ public:
     virtual void render(BaseCamera* camera, WindowHandler* windowHandler) override;
 
     virtual std::string getName() const override;
+    virtual bool getReflection() const override;
+    virtual bool getShadows() const override;
 
     virtual void processKeyboard(WindowHandler* windowHandler) override;
 

@@ -41,9 +41,11 @@ void RayCasting::processKeyboard(WindowHandler* windowHandler) {
     }
     if(windowHandler->getKeyDebounce('r')) {
         _renderer->toggleReflection();
+        _reflectionEnabled = !_reflectionEnabled;
     }
     if(windowHandler->getKeyDebounce('t')) {
         _renderer->toggleShadow();
+        _shadowsEnabled = !_shadowsEnabled;
     }
     if(windowHandler->getKeyDebounce('p')) {
         _renderer->changeLightPos();
@@ -53,10 +55,14 @@ void RayCasting::processKeyboard(WindowHandler* windowHandler) {
 
 void RayCasting::setConfiguration(Configuration* configuration) {
 //    conf = configuration;
-    if(configuration->RayCasting.reflection)
+    if(configuration->RayCasting.reflection) {
         _renderer->toggleReflection();
-    if(configuration->RayCasting.shadow)
+        _reflectionEnabled = !_reflectionEnabled;
+    }
+    if(configuration->RayCasting.shadow) {
         _renderer->toggleShadow();
+        _shadowsEnabled = !_shadowsEnabled;
+    }
 }
 
 void RayCasting::nextTimestep(Timestep* step) {
@@ -65,4 +71,13 @@ void RayCasting::nextTimestep(Timestep* step) {
 };
 
 void RayCasting::setLight(BaseLight* light) {
+}
+
+
+bool RayCasting::getShadows() const {
+    return _shadowsEnabled;
+}
+
+bool RayCasting::getReflection() const {
+    return _reflectionEnabled;
 }

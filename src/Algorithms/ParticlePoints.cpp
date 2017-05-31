@@ -43,3 +43,11 @@ void ParticlePoints::nextTimestep(Timestep* step) {
 
 void ParticlePoints::setLight(BaseLight* light) {
 }
+
+bool ParticlePoints::getShadows() const {
+    return false;
+}
+
+bool ParticlePoints::getReflection() const {
+    return false;
+}

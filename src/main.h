@@ -8,3 +8,4 @@ boost::program_options::variables_map setupCommandLine(int argc, const char* arg
 void mainLoop();
 void init(Configuration* parameter);
 void printHelp(boost::program_options::options_description& desc);
+void sigIntHandler(int s);

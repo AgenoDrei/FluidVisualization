@@ -10,6 +10,8 @@ class BaseCamera;
 class SkyBox;
 
 class TextureSlicing3D : public BaseAlgorithm {
+private:
+    bool _reflectionEnabled = true;
 protected:
     std::unique_ptr<TextureSlicer> _calculator;
     std::unique_ptr<TextureSlicingRenderer> _renderer;
@@ -20,6 +22,8 @@ public:
     virtual void init(Timestep* timestep) override;
     virtual void render(BaseCamera* camera, WindowHandler* windowHandler) override;
     virtual std::string getName() const override;
+    virtual bool getReflection() const override;
+    virtual bool getShadows() const override;
     void setNumSlices(int slices);
     virtual void processKeyboard(WindowHandler* windowHandler) override;
     virtual void setConfiguration(Configuration* configuration) override;

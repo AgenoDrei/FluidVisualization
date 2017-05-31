@@ -244,4 +244,3 @@ void RendererMarchingCubes::renderWithShadow(BaseCamera *camera, WindowHandler *
 void RendererMarchingCubes::setLight(DirectionalLight* light) {
     _light = light;
 }
-
